@@ -1,0 +1,409 @@
+1. Hacer un procedimiento que muestre el nombre y el salario del empleado cuyo código es 7082.
+
+Create or replace procedure Mostrar7082
+is
+	v_nombre emp.ename%type;
+	v_sal emp.sal%type;
+BEGIN
+	Select ename,sal into v_nombre,v_sal
+	from emp
+	where empno=7082;
+	dbms_output.put_line(v_nombre||' '||v_sal);
+
+EXCEPTION
+	when NO_DATA_FOUND then
+		dbms_output.put_line('No existe empleado con codigo 7082');
+	
+END Mostrar7082;
+/
+2. Hacer una funcion que reciba como parámetro un código de empleado y devuelva su nombre.
+
+Create or replace function DevolverNombre (p_codigo emp.empno%type)
+return emp.ename%type
+is
+	v_nombre emp.ename%type;
+BEGIN
+	Select ename into v_nombre
+	from emp
+	where empno=p_codigo;
+	return v_nombre;
+EXCEPTION
+	when NO_DATA_FOUND then
+		return '';
+END DevolverNombre;
+/
+
+Como usar funciones:
+
+Tipo 1-Select)
+Select DevolverNombre('7082') from dual;
+
+Tipo 2-Bloque Anonimo)
+Declare
+	v_nombre emp.ename%type;
+begin
+	v_nombre:=DevolverNombre('7082');
+	dbms_output.put_line(v_nombre);
+end;
+
+Tipo 3-Procedimiento de Prueba)
+
+create or replace procedure ProbarFuncion(p_codigo emp.empno%type)
+is
+	v_nombre emp.ename%type;
+begin
+	v_nombre:=DevolverNombre(p_codigo);
+	dbms_output.put_line(v_nombre);
+end ProbarFuncion;
+
+
+TIPO 4-MAS SIMPLE AUN PROCEDIMIENTOS)
+
+Create or replace procedure ProbarFuncion(p_codigo emp.empno%type)
+is
+begin
+	dbms_output.put_line(DevolverNombre(p_codigo));
+end ProbarFuncion;
+/
+
+HACER 3,4 Y 8 PARA JUEVES
+
+3. Crear un procedimiento PL/SQL que cuente el número de filas que hay en la tabla EMP (de Scottt),
+deposita el resultado en una variable y visualiza su contenido.
+
+Create or replace procedure ContarFilasEMP
+is
+	v_numfilas Number;
+begin
+	Select count(*) into v_numfilas
+	from emp;
+	dbms_output.put_line('El numero de empleado es '||v_numfilas);
+end ContarFilasEMP;
+/
+
+4. Codificar un procedimiento que reciba una cadena y la visualice al revés.
+
+Create or replace procedure CadenaInversa(v_cadena Varchar2)
+is
+	v_cadenainversa Varchar2(100):='';
+begin
+	for i in reverse 1..length(v_cadena) loop
+		v_cadenainversa :=  v_cadenainversa || substr(v_cadena,i,1);
+	end loop;
+	dbms_output.put_line(v_cadenainversa);
+end CadenaInversa;
+/
+
+8. Codificar un procedimiento que permita borrar un empleado cuyo número se pasará en la llamada.
+
+Create or replace procedure borrarempleado(v_codigo emp.empno%type)
+is
+begin
+	Delete
+	from emp
+	where empno=v_codigo;
+	if SQL%ROWCOUNT = 0 then
+		dbms_output.put_line('Empleado inexistente.');
+	end if;
+end borrarempleado;
+/
+
+
+#Esto hace que busque las filas que no tienen ese codigo y salga como un "error".
+#INSERT UPDATE Y DELETE NO LEVANTAN EXCEPCIONES.
+
+
+Cursores->
+Ejercicio inventadito.
+Muestra los nombres de todos los empleados.
+
+create or replace procedure Mostrartodos
+is
+	v_nombre emp.ename%type;
+
+	cursor c_emp is
+	select ename
+	from emp;
+begin
+	open c_emp;
+	fetch c_emp into v_nombre;
+	while c_emp%FOUND loop
+		dbms_output.put_line(v_nombre);
+		fetch c_emp into v_nombre;
+	end loop;
+	close c_emp;
+end;
+/
+
+Ejercicio inventadito 2.(Es el mismo que el 1)
+Muestra todos los nombres de los empleados de la empresa.
+
+Create or replace procedure MostrarEmpleados
+is
+	cursor c_emp is
+	select ename
+	from emp;
+	
+begin
+	open c_emp;
+	fetch c_emp into v_name;
+	while c_emp%FOUND loop
+	v_name emp.ename%type;
+	contador NUMBER(2) = 0;
+		contador := contador+1;
+		dbms_output.put_line ('Nombre de empleado: '||v_name);
+		fetch c_emp into v_name;
+	end loop;
+	if c_emp%ROWCOUNT = 0 then
+		dbms_output.put_line('No hay empleados');
+	end if;
+	close c_emp;
+end;
+/
+Ejercicio inventadito 3.
+Muestra el nombre y sueldo de los tres empleados que más ganan del departamento que reciba como parámetro y finalmente, muestre la suma de sus salarios.
+
+VERSION MUY FUNCIONADA es lA MEJOR OMG)
+Create or replace procedure MostrarNomSuel(p_nombre dept.dname%type)
+is
+	cursor c_emp is
+	select ename,sal
+	from emp
+	where deptno = (Select deptno
+			 from dept
+			 where dname= p_nombre)
+	order by sal;
+	
+	v_emp c_emp%rowtype;
+	v_acum NUMBER:=0;
+begin
+	ComprobarSiHay3(p_nombre);
+	open c_emp;
+	fetch c_emp into v_emp;
+	while c_emp%FOUND and c_emp%ROWCOUNT<=3 loop
+		ProcesarEmpleados(v_emp.ename,v_emp.sal,v_acum);
+		fetch c_emp into v_emp;
+	end loop;
+	MostrarTotal(v_acum);
+end;
+/
+
+Create or replace procedure ComprobarSiHay3 (p_nombredept dept.dname%type)
+is
+	v_numemp NUMBER:=0;
+begin
+	Select count(*) into v_numemp
+	from emp
+	where deptno = (Select deptno
+			from dept
+			where dname=p_nombredept);
+	if v_numemp <3 then
+	raise_application_error(-20001, 'Hay menos de tres empleados');
+	end if;
+end;
+/
+
+Create or replace procedure ProcesarEmpleados(p_nombre emp.ename%type,
+					      p_sal emp.sal%type,
+					      p_totalsal in out NUMBER)
+is
+begin
+	dbms_output.put_line(p_nombre||' '||p_sal);
+	p_totalsal:=p_totalsal+p_sal;
+end;
+/
+
+Create or replace procedure MostrarTotal(p_acum NUMBER)
+is
+begin
+	dbms_output.put_line('Total de los empleados: '||p_acum);
+end;
+/
+
+
+HACER 9, 11, 13, 16.
+
+9. Escribir un procedimiento que modifique la localidad de un departamento. El procedimiento
+recibirá como parámetros el número del departamento y la localidad nueva.
+
+Create or replace procedure ModificarLoc(p_deptno dept.deptno%type,p_loc dept.loc%type)
+is
+begin
+	Update dept
+	set loc = p_loc
+	where deptno=p_deptno;
+	if SQL%Rowcount!=0 then
+		dbms_output.put_line('Registro modificado');
+	else
+		dbms_output.put_line('No existe ese departamento.');
+	end if;
+end;
+/
+
+11. Realizar un procedimiento que reciba un número y muestre su tabla de multiplicar.
+
+Create or replace procedure TablaMult(v_num Number)
+is
+begin
+	for var in 1 .. 10 loop
+		dbms_output.put_line(v_num||' x '||var||' = '||v_num*var);
+	end loop;
+end;
+/
+		
+
+13. Procedimiento que recibe una letra e imprima si es vocal o consonante.
+
+Create or replace procedure VocalConsonante(p_letra VARCHAR2)
+is
+begin
+	if length(p_letra)=1 then
+		if upper(p_letra) in ('A','E','I','O','U') then
+			dbms_output.put_line('Es vocal.');
+		else
+			dbms_output.put_line('Es consonante.');
+		end if;
+	else
+		dbms_output.put_line('No es una letra.');
+	end if;
+end;
+/
+
+16. Diseñar un procedimiento que recibe por parámetros dos valores numéricos que representan la
+base y el exponente de una potencia donde el exponente es un número entero positivo o negativo. El
+procedimiento visualiza el valor de la potencia, teniendo en cuenta las siguientes consideraciones:
+1) Si la base y el exponente son cero, se mostrará un mensaje de error que diga "Datos erróneos".
+2) Si el exponente es cero la potencia es 1.
+3) Si el exponente es negativo la fórmula matemática de la potencia es pot = 1/base^exp. En este caso,
+si la base es cero escribir un mensaje de "Datos erróneos".
+Nota: No utilizar ninguna función que calcule la potencia.
+
+Create or replace procedure Potencia(p_base Number,p_exponente Number)
+is
+	v_resultado Number;
+
+HACER 19d,20 y 21
+
+19. Cree una tabla Tabla_Articulos con los siguientes atributos: código,
+nombre, precio e IVA. Introduzca datos de prueba utilizando la sentencia
+INSERT.
+CREATE TABLE Tabla_Articulos (
+codigo VARCHAR(5) PRIMARY KEY,
+nombre VARCHAR(20),
+precio NUMBER,
+IVA NUMBER);
+
+create or replace procedure hacerinserts
+is
+begin
+	for i in 1..10 loop
+		insert into Tabla_Articulos(codigo,nombre,precio,IVA)
+		values(i,'Articulo'||i,i,i);
+	end loop;
+end;
+/
+a) Construya un procedimiento que compruebe si el precio del artículo cuyo código es ‘A001’ es
+mayor que 10 euros y en caso afirmativo, imprima el nombre y el precio del artículo por pantalla.
+b) Construya un procedimiento que seleccione el artículo de mayor precio que esté almacenado en la
+tabla, almacene su valor en una variable y luego imprímalo.
+c) Construya un procedimiento que actualice el precio del artículo cuyo código es ‘A005’ según las
+siguientes indicaciones:
+− Si el artículo tiene un precio menor de 1 euro, su precio debe ser aumentado en 25 céntimos.
+− Si está comprendido entre 1 euro y 10 euros su precio aumentará un 10 % .Si excede los 10
+euros su precio aumentará en un 20 %.
+− Si el precio es NULL, el aumento es 0.
+d) Construya un procedimiento similar al del apartado c donde el usuario introduzca como
+parámetroel código del artículo que desee modificar su precio.
+
+
+Create or replace procedure PrecioAumentar(v_precio tabla_articulos.precio%type)
+is
+	v_resultado NUMBER;
+begin
+	if v_precio < 1 then
+		v_resultado:=v_precio+0.25;
+	elsif v_precio between 1 and 10 then
+		v_resultado:=v_precio+v_precio*0.10;
+	elsif v_precio > 10 then
+		v_resultado:=v_precio+v_precio*0.20;
+	elsif v_precio is NULL then
+		v_resultado:=v_precio;
+	end if;
+	
+end;
+/
+
+Create or replace procedure ObtenerPrecio(v_codigo Tabla_Articulos.codigo%type)
+is
+	v_precioantiguo Tabla_Articulos.precio%type;
+begin
+	Select precio into v_precioantiguo
+	from Tabla_Articulos
+	where codigo=v_codigo;
+	dbms_output.put_line(v_precioantiguo);
+end;
+/
+
+Create or replace procedure ObtenerUpdate(v_precio Tabla_Articulos.precio%type,v_codigo Tabla_Articulos.codigo%type)
+is
+begin
+	Update Tabla_Articulos
+	set precio=v_precio
+	where codigo=v_codigo;
+end;
+/
+
+Create or replace ProgramaFinal(p_codigo Tabla_Articulos.codigo%type)
+is
+	Precio:=ObtenerPrecio(p_codigo);
+begin
+	dbms_output.put_line(Precio);
+end;
+/
+
+
+20. Crear un procedimiento que en la tabla emp incrementar el salario el 10% a los empleados que
+tengan una comisión superior al 5% del salario.
+Create or replace procedure IncrementarSalario
+is
+begin
+	update emp
+	set sal = sal*1.1
+	where 0.05*sal<nvl(comm,0);
+	dbms_output.put_line(SQL%ROWCOUNT||' filas actualizadas');
+end;
+/
+
+
+21. Crear un procedimiento que inserte un empleado en la tabla EMP. Su número será superior a los
+existentes y la fecha de incorporación a la empresa será la actual.
+
+Create or replace procedure InsertarEmpleado
+is
+	v_empleado emp.empno%type;
+begin
+	ComprobarSiHayEmpleados;
+	select max(empno) into v_empleado
+	from emp;
+	insert into emp(empno,ename,hiredate)
+	values(v_empleado+1,'Pepe','02/02/13');
+end;
+/
+
+Create or replace procedure ComprobarSiHayEmpleados
+is
+	v_tabla_vacia exception;
+	v_numempleado number;
+begin
+	Select count(*) into v_numempleado
+	from emp;
+	if v_numempleado = 0 then
+		raise v_tabla_vacia;
+	end if;
+exception
+	when v_tabla_vacia then
+		insert into emp(empno,ename,hiredate)
+		values(1,'PEPE',sysdate);
+		raise;
+end;
+/

@@ -1,0 +1,390 @@
+Create table Cofradias
+(
+Codigo Varchar(2),
+NombreCorto Varchar(40),
+NombreReal Varchar(150),
+SedeSocial Varchar(25) UNIQUE,
+SedeCanonica Varchar(40),
+AnyoFundacion Numeric(4),
+DiaProcesion Varchar(20) NOT NULL,
+NumHermanos Numeric(4),
+HermanoMayor Varchar(25),
+CONSTRAINT pk_codigo_cofradia PRIMARY KEY(Codigo),
+CONSTRAINT nombre_corto_mayus check(NombreCorto=INITCAP(NombreCorto)),
+CONSTRAINT nombre_real_mayus check(NombreReal=UPPER(NombreReal)),
+CONSTRAINT sedecanonica_palabra check(SedeCanonica like '%Capilla%' or SedeCanonica like '%Parroquia%'),
+CONSTRAINT hermanomayor_empiezaD check(HermanoMayor like 'D%')
+);
+
+Create table Pasos
+(
+Nombre Varchar(35),
+Tipo Varchar(10),
+NumCostaleros Numeric(3),
+NumNazarenos Numeric(4),
+ColorCapa Varchar(10),
+ColorAntifaz Varchar(10),
+CodigoCofradia Varchar(2),
+CONSTRAINT pk_nombrepasos PRIMARY KEY(Nombre),
+CONSTRAINT fk_codigocofradia FOREIGN KEY(CodigoCofradia) REFERENCES Cofradias(Codigo),
+CONSTRAINT tipo_pasos_misteriopalio check(Tipo='Misterio' or Tipo='Palio'),
+CONSTRAINT numcostaleros_positivomenor150 check(NumCostaleros>=0 and NumCostaleros<150),
+CONSTRAINT numnazarenos_menor1000 check(NumNazarenos<1000),
+CONSTRAINT colorcapa_blanconegromarfilmorado check(ColorCapa in ('Blanco','Negro','Marfil','Morado')),
+CONSTRAINT colorantifaz_norosanoamarillo check(ColorAntifaz not in('Rosa','Amarillo'))
+);
+
+Create table Horarios
+(
+FechaHora timestamp,
+CodigoCofradia Varchar(2),
+Calle Varchar(25),
+CONSTRAINT fk_codcofradia FOREIGN KEY(CodigoCofradia) REFERENCES Cofradias(Codigo),
+CONSTRAINT pk_horarioskey PRIMARY KEY(FechaHora,CodigoCofradia),
+CONSTRAINT fechahora_marzo2013 check(to_char(FechaHora,'YYYY-MM')='2013-03')
+);
+
+
+Modificacion de Tablas
+--------------------
+Alter table Cofradias
+alter column NombreReal Type Varchar(300);
+
+Alter table Cofradias
+alter column HermanoMayor Type Varchar(50);
+
+Alter table Cofradias
+alter column DiaProcesion Type Varchar(50);
+
+Alter table Cofradias
+alter column SedeSocial Type Varchar(50);
+
+Modificacion de inserts
+--------------------------
+#Cofradias
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '01',
+        'La Borriquita',
+        'REAL HERMANDAD DE NUESTRO PADRE JESÚS EN SU SAGRADA ENTRADA EN JERUSALEM Y MARÍA STMA. DE LA ESTRELLA',
+        'c/ Melliza, 12',
+        'Parroquia Santa María Magdalena',
+        1953,
+        'Domingo de Ramos',
+        1050,
+        'D. Alejandro Jurado Mejías');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '02',
+        'El Cautivo',
+        'REAL HERMANDAD DEL SANTÍSIMO SACRAMENTO, NUESTRO PADRE JESÚS CAUTIVO Y MARÍA SANTÍSIMA DE LA ESPERANZA',
+        'c/ Hispalis, 7',
+        'Parroquia Ntra. Sra. del Rocío',
+        1939,
+        'Domingo de Ramos',
+        1370,
+        'D. Miguel Angel Jiménez Barbero');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '03',
+        'Amor Y Sacrificio',
+        'HERMANDAD DE LA SANTA CRUZ DE NUESTRO SEÑOR JESUCRISTO Y COFRADÍA DE NAZARENOS DE NUESTRO PADRE JESÚS EN LA PRESENTACIÓN AL PUEBLO, NUESTRA SEÑORA DEL AMOR Y SACRIFICIO Y SAN JOSÉ',
+        'c/ Gustavo Bacarisas, 10',
+        'Capilla de la Santa Cruz',
+        1980,
+        'Lunes Santo',
+        1385,
+        'D. Juan José Rodriguez Rubio');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '04',
+        'Pasión',
+        'REAL E ILUSTRE HERMANDAD Y COFRADÍA DE NAZARENOS DE NTRO. PADRE JESÚS DE LA PASIÓN Y NTRA. MADRE Y SEÑORA DEL AMPARO',
+        'Plaza de las Carmelitas, s/n',
+        'Parroquia Ntro. Padre Jesús de la Pasión',
+        1980,
+        'Martes Santo',
+        984,
+        'D. Jose Manuel Zamora Ruiz');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '05',
+        'Oración En El Huerto',
+        'ANTIGUA HERMANDAD DE MARÍA STMA. DEL ROSARIO Y COFRADÍA DE NAZARENOS DE LA SAGRADA ORACIÓN DE NTRO. SEÑOR JESUCRISTO EN EL HUERTO Y NTRA. MADRE Y SRA. DE LOS DOLORES',
+        'c/ Anibal González, 12',
+        'Parroquia Santa María Magdalena',
+        1575,
+        'Miércoles Santo',
+        1255,
+        'D. Francisco José Doval Olmedo');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '06',
+        'Sagrada Cena',
+        'HERMANDAD SACRAMENTAL DE LA SAGRADA CENA, JESÚS HUMILLADO Y NTRA. SRA. DEL AMPARO Y ESPERANZA',
+        'c/ La Hacendita, 36',
+        'Parroquia Ntra. Sra. del Amparo',
+        1988,
+        'JuevesSanto',
+        375,
+        'D. Francisco Moreno Aldea');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '07',
+        'Vera Cruz',
+        'ANTIGUA Y REAL HERMANDAD SACRAMENTAL Y COFRADÍA DE NAZARENOS DEL SANTO CRISTO DE LA VERA CRUZ, MARÍA SANTÍSIMA EN SUS MISTERIOS DEL MAYOR DOLOR Y ASUNCIÓN A LOS CIELOS Y SAN SEBASTIÁN MARTIR',
+        'c/ Tarancón, 25',
+        'Parroquia Ave María y San Luis',
+        1544,
+        'Jueves Santo',
+        1087,
+        'D. Jose Cardona Jiménez');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '08',
+        'Gran Poder',
+        'FERVOROSA HERMANDAD Y COFRADIA DE NAZARENOS DE NUESTRO PADRE JESÚS DEL GRAN PODER, MARIA SANTÍSIMA DEL MAYOR DOLOR Y TRASPASO Y SAN JUAN EVANGELISTA',
+        'c/ Real Utrera, 31',
+        'Parroquia Santa María Magdalena',
+        1899,
+        'Viernes Santo (Madrugada)',
+        1435,
+        'D. Mariano Sánchez Moreno');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values( '09',
+        'Amargura',
+        'FERVOROSA E ILUSTRE HERMANDAD Y COFRADÍA DE NAZARENOS DE NUESTRO PADRE JESÚS DESCENDIDO DE LA CRUZ Y NUESTRA MADRE Y SEÑORA DE LA AMARGURA Y SANTA ÁNGELA DE LA CRUZ',
+        'c/ Torremolinos, 18',
+        'Parroquia del Divino Salvador',
+        1952,
+        'Viernes Santo',
+        1100,
+        'D. Antonio Díaz Moreno');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, diaprocesion, numhermanos, hermanomayor)
+values( '10',
+        'Santo Entierro',
+        'ANTIGUA Y FERVOROSA HERMANDAD Y COFRADÍA DEL TRIUNFO DE LA SANTA CRUZ SOBRE LA MUERTE, SANTO ENTIERRO Y RESURRECCIÓN DE NUESTRO SEÑOR JESUCRISTO Y NUESTRA SEÑORA DE LA SOLEDAD',
+        'c/ Ntra. Sra. de Valme, 17',
+        'Parroquia Santa María Magdalena',
+        'Sabado Santo',
+        685,
+        'D. Guillermo López Rodríguez');
+
+#Pasos
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Entrada en Jerusalen', 'Misterio', 90, 210, 'Blanco', 'Blanco', '01');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. de la Estrella', 'Palio', 60, 200, 'Blanco', 'Rojo', '01');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntro. Padre Jesús Cautivo', 'Misterio', 60, 240, 'Blanco', 'Burdeos', '02');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Maria Santísima de la Esperanza', 'Palio', 60, 210, 'Blanco', 'Verde', '02');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Presentación al Pueblo', 'Misterio', 130, 200, 'Blanco', 'Azul', '03');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. del Amor y Sacrificio', 'Palio', 80, 250, 'Blanco', 'Azul', '03');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntro. Padre Jesús de la Pasión', 'Misterio', 80, 130, 'Blanco', 'Negro', '04');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. del Amparo', 'Palio', 70, 100, 'Blanco', 'Negro', '04');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Sagrada Oración en el Huerto', 'Misterio', 40, 210, 'Blanco', 'Morado', '05');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. de los Dolores', 'Palio', 35, 240, 'Blanco', 'Morado', '05');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Sagrada Cena', 'Misterio', 54, 130, 'Marfil', 'Burdeos', '06');
+insert into pasos(nombre, tipo, numcostaleros, colorcapa, colorantifaz, codigocofradia)
+values('Jesús Humillado', 'Misterio', 30, 'Marfil', 'Burdeos', '06');
+insert into pasos(nombre, tipo, numcostaleros, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. del Amparo y Esperanza', 'Palio', 30, 'Marfil', 'Burdeos', '06');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Cristo de la Vera Cruz', 'Misterio', 29, 210, 'Negro', 'Morado', '07');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Virgen del Mayor Dolor', 'Palio', 30, 100, 'Negro', 'Morado', '07');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntro. Padre Jesús del Gran Poder', 'Misterio', 35, 175, 'Morado', 'Morado', '08');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('María Santísima del Mayor Dolor', 'Palio', 30, 100, 'Morado', 'Morado', '08');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Jesús Descendido de la Cruz', 'Misterio', 110, 430, 'Blanco', 'Negro', '09');
+
+#Horarios
+
+#Borriquita
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 16:45','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 17:00','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 18:00','DD/MM/YY HH24:MI'),'Rivas');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 19:00','DD/MM/YY HH24:MI'),'Antonia Díaz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 19:30','DD/MM/YY HH24:MI'),'Plaza Emigrante');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 20:00','DD/MM/YY HH24:MI'),'Real Utrera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 20:30','DD/MM/YY HH24:MI'),'San Sebastián');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 21:00','DD/MM/YY HH24:MI'),'Canónigo');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 21:30','DD/MM/YY HH24:MI'),'Santa Maria Magdalena');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_TIMESTAMP('24/03/13 22:00','DD/MM/YY HH24:MI'),'Entrada');
+
+// Cautivo
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 17:30','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 18:00','DD/MM/YY HH24:MI'),'Virgen de los Desamparados');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 19:00','DD/MM/YY HH24:MI'),'Los Pirralos');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 19:30','DD/MM/YY HH24:MI'),'Santa Cruz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 20:00','DD/MM/YY HH24:MI'),'Santa María Magdalena');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 20:30','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 21:00','DD/MM/YY HH24:MI'),'La Mina');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 21:30','DD/MM/YY HH24:MI'),'Plaza del Emigrante');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 22:00','DD/MM/YY HH24:MI'),'Romera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 23:00','DD/MM/YY HH24:MI'),'Reyes Católicos');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_TIMESTAMP('24/03/13 00:00','DD/MM/YY HH24:MI'),'Entrada');
+
+// Amor y Sacrificio
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 17:00','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 18:00','DD/MM/YY HH24:MI'),'Esperanza');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 19:00','DD/MM/YY HH24:MI'),'Parque de la Alquería');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 19:30','DD/MM/YY HH24:MI'),'Pasarela');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 20:00','DD/MM/YY HH24:MI'),'Huerta Palacios');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 20:30','DD/MM/YY HH24:MI'),'Botica');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 21:00','DD/MM/YY HH24:MI'),'Santa María Magdalena');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 21:30','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 22:00','DD/MM/YY HH24:MI'),'Ntra. Sra. del Carmen');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('25/03/13 23:00','DD/MM/YY HH24:MI'),'Pasarela');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('26/03/13 00:00','DD/MM/YY HH24:MI'),'28 de Febrero');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_TIMESTAMP('26/03/13 01:00','DD/MM/YY HH24:MI'),'Entrada');
+
+// Pasión
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 16:00','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 17:00','DD/MM/YY HH24:MI'),'Avda. Triunfo');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 18:00','DD/MM/YY HH24:MI'),'Autovía');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 19:00','DD/MM/YY HH24:MI'),'Los Pirralos');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 19:30','DD/MM/YY HH24:MI'),'Carlos I');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 20:00','DD/MM/YY HH24:MI'),'Santa Cruz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 20:30','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 21:00','DD/MM/YY HH24:MI'),'Antonia Díaz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 21:30','DD/MM/YY HH24:MI'),'Manuel de Falla');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 22:00','DD/MM/YY HH24:MI'),'Romera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('26/03/13 23:00','DD/MM/YY HH24:MI'),'Reyes Católicos');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('27/03/13 00:00','DD/MM/YY HH24:MI'),'Virgen del Rocío');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('27/03/13 01:00','DD/MM/YY HH24:MI'),'Avenida del Triunfo');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_TIMESTAMP('27/03/13 02:00','DD/MM/YY HH24:MI'),'Entrada');
+
+// Oración en el Huerto
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('27/03/13 19:00','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('27/03/13 19:30','DD/MM/YY HH24:MI'),'Francesa');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('27/03/13 20:00','DD/MM/YY HH24:MI'),'Calderón de la Barca');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('27/03/13 20:30','DD/MM/YY HH24:MI'),'Manuel de Falla');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('27/03/13 21:00','DD/MM/YY HH24:MI'),'Churruca');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('27/03/13 21:30','DD/MM/YY HH24:MI'),'Real de Utrera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('27/03/13 22:30','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('27/03/13 23:00','DD/MM/YY HH24:MI'),'Melliza');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_TIMESTAMP('28/03/13 00:15','DD/MM/YY HH24:MI'),'Entrada');
+
+// Sagrada Cena
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 16:30','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 17:00','DD/MM/YY HH24:MI'),'Los Molares');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 18:00','DD/MM/YY HH24:MI'),'Lope de Vega');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 19:00','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 19:30','DD/MM/YY HH24:MI'),'San Francisco');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 20:00','DD/MM/YY HH24:MI'),'Antonia Díaz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 20:30','DD/MM/YY HH24:MI'),'Anibal González');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 21:00','DD/MM/YY HH24:MI'),'Rivas');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 21:30','DD/MM/YY HH24:MI'),'San José');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_TIMESTAMP('28/03/13 22:30','DD/MM/YY HH24:MI'),'Entrada');
+
+// Vera Cruz
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_TIMESTAMP('28/03/13 20:00','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_TIMESTAMP('28/03/13 20:30','DD/MM/YY HH24:MI'),'El Ejido');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_TIMESTAMP('28/03/13 21:00','DD/MM/YY HH24:MI'),'Manuel de Falla');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_TIMESTAMP('28/03/13 21:30','DD/MM/YY HH24:MI'),'Santa María Magdalena');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_TIMESTAMP('28/03/13 22:15','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_TIMESTAMP('28/03/13 23:00','DD/MM/YY HH24:MI'),'Real de Utrera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_TIMESTAMP('29/03/13 00:00','DD/MM/YY HH24:MI'),'Cristo de la Vera Cruz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_TIMESTAMP('29/03/13 00:30','DD/MM/YY HH24:MI'),'Entrada');
+
+

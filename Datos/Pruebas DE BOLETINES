@@ -1,0 +1,378 @@
+Consulta los nombres y oficios de los empleados del departamento 20 cuyo oficio sea igual al de cualquiera de los empleados del departamento SALES.
+
+Oficios del departamento "SALES"
+
+EMP
+ename
+job
+
+DEPT
+dname
+
+Select job
+From emp
+Where deptno = (select deptno
+		from dept
+		where dname='SALES')
+
+TODO
+
+select ename,job
+from emp
+where deptno= 20
+and job in (Select job
+	From emp
+	Where deptno = (select deptno
+			from dept
+			where dname='SALES'));
+
+
+Muestra los empleados cuyo nombre tiene 5 letras y ganan menos que el jefe de SMITH
+
+#Codigo de empleado del jefe de SMITH
+select mgr
+from emp
+where ename='SMITH'
+
+#Sueldo del jefe de SMITH
+
+select sal
+from emp
+where empno = (select mgr
+	       from emp
+	       where ename='SMITH')
+
+#Empleados cuyo nombre tiene 5 letras
+
+select ename
+from emp
+where length(ename)=5
+and sal < (select sal
+	  from emp     Cuidador
+	  where empno (= o in) (select mgr
+	       		 from emp
+	       		 where ename='SMITH'));
+
+select dname
+from dept
+where deptno in (select deptno
+		 from emp);
+# Muestra los empleados que ganan lo mismo que algun empleado del departamento 30
+
+SELECT * 
+FROM emp
+WHERE sal = ANY (SELECT sal
+                 FROM emp
+                 WHERE deptno = 30);
+
+Select *
+from emp
+where sal in (select sal
+	      from emp
+	      where deptno=30);
+
+#Muestra los empleados que ganan menos que todos los empleados del departamento 30
+
+SELECT * 
+FROM emp
+WHERE sal < ALL (SELECT sal
+                 FROM emp
+                 WHERE deptno = 30);
+
+Select *
+from emp
+where sal < (select MIN(sal)
+	     from emp
+	     where deptno=30);
+#Muestra los empleados que ganan menos que algun empleado del departamento 30
+
+SELECT * 
+FROM emp
+WHERE sal < ANY (SELECT sal
+                 FROM emp
+                 WHERE deptno = 30);
+
+Select *
+from emp
+where sal < (select MAX(sal)
+	     from emp
+	     where deptno=30);
+
+
+
+1)Consultar nombre de empleados, salario, nombre del departamento al que pertenecen y localidad de este.
+
+select ename,sal,dname,loc
+from emp e,dept d
+where e.deptno=d.deptno;
+
+2)Muestra los nombres de los empleados con un salario entre 500 y 1000, que entraron en la empresa en Mayo y cuyo oficio sea Manager
+
+select ename,sal,job
+from emp
+where sal between 500 and 1000
+and job = 'MANAGER'
+and hiredate = (select hiredate
+		from emp
+		where extract(MONTH from hiredate)=05);
+
+select ename
+from emp
+where sal between 500 and 1000
+and job='MANAGER'
+and to_char(hiredate,'MM')='05'
+
+
+3)Muestra los nombres de los departamentos que no tengan empleado con más de 10 años de antigüedad
+
+select dname,hiredate
+from emp e,dept d
+where e.deptno=d.deptno
+and (extract(YEAR from sysdate) - extract(YEAR from hiredate))<10;
+
+select dname,hiredate
+from emp e,dept d
+where e.deptno=d.deptno
+and (to_number(to_char(sysdate,'YYYY') - to_number(to_char(hiredate,'YYYY')) < 10;
+
+select dname
+from dept
+where deptno not in ( select deptno
+		      from emp
+		      where months_between(sysdate,hiredate)>120);
+
+4)Muestra los nombres de los departamentos que tengan algún empleado contratado en primavera.
+
+select dname
+from dept
+where deptno not in ( select deptno
+		      from emp
+		      where to_char(hiredate,'MMDD') >= '0321'
+		      and to_char(hiredate,'MMDD') <= '0621');
+
+
+
+
+# Muestra los codigos de los departamentos con mayor número de empleados.
+
+Primero mostramos el nº de empleados de cada departamento
+
+Select deptno,count(*)
+from emp
+group by deptno
+having count(*)=(Select max(count(*))
+		 from emp
+		 group by deptno);
+
+En MariaDB o Postgres
+
+Create view contadoresempleados
+as
+Select count(*) as numempleados
+from emp
+group by deptno;
+
+Select deptno,count(*)
+from emp
+group by deptno
+having count(*)=(Select max(numempleados)
+		 from contadoresempleados);
+
+Muestra el número de empleados que tengan comisión con más de diez años de antigüedad de cada oficio.
+Select count(comm)
+from emp
+where months_between(sysdate,hiredate)>120
+group by job;
+
+Muestra el salario más alto de cada departamento, siempre que sea mayor de 2000.
+
+Select max(sal)
+from emp	
+group by deptno
+having max(sal)>2000;
+
+Muestra el empleado que más gana de cada departamento con analistas:
+
+Select ename,deptno
+from emp
+where sal in (Select max(sal)
+	      from emp
+	      where job='ANALYST'
+	      group by deptno);
+
+Select ename
+from emp
+group by deptno
+having deptno in (Select distinct deptno
+		  from emp
+		  where job='ANALYST');
+
+Muestra el salario empleado que más gana de cada departamento con analistas:
+
+Select ename
+from emp e1
+where sal = (select max(sal)
+	     from emp e2
+	     where e1.deptno=e2.deptno
+	     and e2.deptno in (Select distinct deptno
+			       from emp
+			       where job='ANALYST'));
+
+
+Select ename
+from emp
+where (deptno,sal) in (Select deptno, max(sal)
+		       from emp
+		       group by deptno
+		       having deptno in (Select distinct deptno
+					 from emp
+					 where job='ANALYST'));
+
+
+
+
+
+
+Muestra el nombre del jefe del empleado más antigüo de cada oficio.
+Select ename
+from emp
+where empno in (Select mgr
+		from emp
+		where hiredate in (Select min(hiredate)
+				   from emp
+				   group by job));
+
+De los departamentos con más de dos empleados, muestra el nombre del departamento y la suma de sus salarios.
+Select dname,
+Muestra el salario más alto de cada departamento junto con el nombre del empleado que lo gana.
+
+
+
+
+
+
+COMBINACIONES EXTERNAS
+-------------------------------------------------------------------------
+
+Muestra el numero de empleados de todos y cada uno de los departamenos
+Select deptno, count(*) as numempleados
+from emp
+group by deptno;
+
+
+Select *
+from dept;
+
+Select d.deptno,count(*) as numempleados
+from emp e, dept d
+where e.deptno=d.deptno
+group by d.deptno;
+
+Select d.deptno,count(*) as numempleados
+from emp e, dept d
+where e.deptno(+)=d.deptno
+group by d.deptno;
+
+esta es la buena
+
+Select d.deptno,count(empno) as numempleados
+from emp e, dept d
+where e.deptno(+)=d.deptno
+group by d.deptno;
+
+esta es la cutre pero a veces es muy dificil y es necesario
+
+Select deptno,count(*)
+from emp
+group by deptno
+union
+select deptno,0
+from dept
+where deptno not in (select distinct deptno
+		     from emp);
+
+
+Operadores de conjuntos
+----------------------------------------------------------------------
+
+UNION SUMA TODO LO QUE ESTA ENTRE LAS TABLAS
+INTERSECT SE QUEDA LO QUE ES COMUN ENTRE LAS TABLAS
+MINUS RESTA LAS DOS TABLAS
+
+PRODUCTOS (Codigo,Nombre) 1
+VENTAS (codProducto,Fecha,Cantidad) N
+
+Haz una consulta que muestre los códigos de los productos que se han vendido tanto en enero como en febrero como en marzo de 2018.
+
+Select codProducto
+from ventas
+where to_char('YYYY/MM',Fecha)='2018/01'
+INTERSECT
+Select codProducto
+from ventas
+where to_char('YYYY/MM',Fecha)='2018/02'
+INTERSECT
+Select codProducto
+from ventas
+where to_char('YYYY',Fecha)='2018/03'
+
+
+
+Consultas correlacionadas
+--------------------------------------------------------------------
+
+Muestra los empleados que más ganan de su departamento
+
+
+Correlacionadas:
+
+Select *
+from emp e1
+where sal = (Select max(sal)
+	     from emp e2
+	     where e1.deptno=e.2deptno)
+
+Comparación de tuplas:
+
+Select *
+from emp
+where (deptno,sal) in (Select deptno,max(sal)
+		       from emp
+		       group by deptno);
+
+
+1.Mostrar los empleados más antiguos de cada departamento.
+
+Select *
+from emp e1
+where hiredate = (Select min(hiredate)
+		  from emp e2
+		  where e1.deptno=e2.deptno);
+
+Select *
+from emp
+where (deptno,hiredate) in (Select deptno,min(hiredate)
+			    from emp
+			    group by deptno);
+
+
+2.Mostrar los empleados cuyo sueldo es mayor de al media de su departamento.
+
+Select *
+from emp e1
+where sal > (Select avg(sal)
+	     from emp e2
+	     where e1.deptno=e2.deptno);
+
+
+
+3.Mostrar los departamentos que tienen algún empleado que suponga mas del 25% (comm+sal)*0.25 del coste total de personal de ese departamento, incluyendo salario y comisión.
+
+Select *
+from dept
+where deptno in (Select distinct deptno
+		 from emp e1
+		 where (nvl(comm,0)+sal) > (Select (sum(nvl(comm,0)+sal))*0.25
+		  			    from emp e2
+					    where e1.deptno=e2.deptno));
+

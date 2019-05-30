@@ -1,0 +1,66 @@
+    Nombre del instituto:
+
+	ies/nombre
+
+     <nombre>IES Gonzalo Nazareno</nombre>
+
+    Página web del Instituto:
+	
+	ies/web/text()
+
+     http://www.iesabastos.org
+
+    Nombre de los Ciclos Formativos:
+	
+	ies/ciclos/ciclo/nombre/text()
+
+     Administración de Sistemas Informáticos en Red
+     Desarrollo de Aplicaciones Web
+     Sistemas Microinformáticos y Redes
+
+    Siglas por las que se conocen los Ciclos Formativos:
+
+	/ies/ciclos/ciclo/@id
+     id="ASIR"
+     id="DAW"
+     id="SMR"
+
+    Años en los que se publicaron los decretos de título de los Ciclos Formativos:
+
+	ies/ciclos/ciclo/decretoTitulo/@año
+     año="2009"
+     año="2010"
+     año="2008"
+
+    Ciclos Formativos de Grado Medio (se trata de obtener el elemento completo): Nota: Resuelva este ejercicio de dos formas distintas, en un único paso de búsqueda y en dos pasos de búsqueda.
+
+	/ies/ciclos/ciclo[grado="Medio"]
+	//ciclo[grado="Medio"]
+	
+     <ciclo id="SMR">
+       <nombre>Sistemas Microinformáticos y Redes</nombre>
+       <grado>Medio</grado>
+       <decretoTitulo año="2008"/>
+     </ciclo>
+
+    Nombre de los Ciclos Formativos de Grado Superior: Nota: Resuelva este ejercicio de dos formas distintas, en un único paso de búsqueda y en dos pasos de búsqueda.
+
+	/ies/ciclos/ciclo[grado="Superior"]/nombre
+	//ciclo[grado="Superior"]/nombre
+     <nombre>Administración de Sistemas Informáticos en Red</nombre>
+     <nombre>Desarrollo de Aplicaciones Web</nombre>
+
+    Nombre de los Ciclos Formativos anteriores a 2010: Nota: Resuelva este ejercicio de dos formas distintas, en un único paso de búsqueda y en dos pasos de búsqueda.
+	
+	/ies/ciclos/ciclo/decretoTitulo[@año<2010]/../nombre/text()
+	//decretoTitulo[@año<2010]/../nombre/text()
+     Administración de Sistemas Informáticos en Red
+     Sistemas Microinformáticos y Redes
+
+    Nombre de los Ciclos Formativos de 2008 o 2010: Nota: Resuelva este ejercicio de dos formas distintas, en un único paso de búsqueda y en dos pasos de búsqueda.
+
+	/ies/ciclos/ciclo/decretoTitulo[@año=2010 or @año=2008]/../nombre/text()
+     Desarrollo de Aplicaciones Web
+     Sistemas Microinformáticos y Redes
+
+

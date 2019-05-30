@@ -1,0 +1,76 @@
+9.
+Select Nombre
+from Pilotos
+where Codigo in (Select CodPiloto
+                 from Resultados
+                 where NombreGP in (Select NombreGP
+                                    from Carreras
+                                    where Anyo='2010'
+                                    and NumVueltas in (Select min(NumVueltas)
+                                                       from Carreras)))
+and Codigo in (Select CodPiloto
+	       from Resultados
+	       where DistanciaGanador > '+00:02');
+
+10.
+Create view cuentapuestos
+as
+Select CodPiloto,count(Puesto) as cuenta
+from Resultados
+where Puesto = '1'
+group by CodPiloto;
+
+Select substring_index(Nombre,' ',-1),substring_index(CarreraDebut,' ',-1)
+from Pilotos
+where Codigo in (Select CodPiloto
+                 from cuentapuestos
+                 where cuenta in (Select max(cuenta)
+                                 from cuentapuestos));
+
+11.
+Select count(p.Codigo),e.Nombre
+from Pilotos p right outer join Escuderias e on (p.NombreEscuderia=e.Nombre)
+group by e.Nombre;
+
+12.
+Create view pilotosescuderias
+as
+Select distinct p.Codigo,e.Nombre, count(r.Puesto)
+from Pilotos p, Escuderias e , Resultados r
+where p.NombreEscuderia=e.Nombre
+and p.Codigo=r.CodPiloto
+and Puesto = '1'
+and r.NombreGP in (Select NombreGP
+                   from Carreras
+                   where extract(YEAR from FechaHoraInicio)='2010'
+                   and extract(HOUR_MINUTE from FechaHoraInicio)>='1415')
+group by p.Codigo
+having count(r.Puesto) > 1;
+
+13.
+Delete from Pilotos
+where Codigo in
+(
+Select Codigo
+from Pilotos
+where datediff(now(),FechaNacimiento)>='9125'
+and Codigo not in (Select CodPiloto
+                   from Resultados
+                   where Puesto in ('1','2','3')
+                   and Anyo='2011'
+                   except
+                   Select CodPiloto
+                   from Resultados
+                   where Puesto not in ('1','2','3')
+                   and Anyo='2011')
+);
+
+14.
+Select p.Nombre
+from Pilotos p,Escuderias e,Resultados r
+where p.NombreEscuderia=e.Nombre
+and p.Codigo=r.CodPiloto
+and e.Sede like '%Francia%'
+and Puesto = '1'
+group by p.Codigo
+having count(Puesto)>1;

@@ -1,0 +1,11 @@
+1: 0.25/0.5 El cursor es innecesario si haces la SELECT correcta. No puede haber instrucciones después del return pues no se ejecutarán nunca.
+2: 1/1.5 La estructura del código es muy mejorable.Hay procedimientos demasiado largos porque hacen varias cosas, cursores y variables declarados pero no usados...
+3: 1/1
+4: 0/1.5 Sin hacer
+5: 0/1 El UPDATE que rellena la columna inicialmente está mal.
+6: 0/1.5 El planteamiento es erróneo. Debes comparar la hora del riego que estás insertando con el resto de los riegos de la zona.
+7: /1.5
+8: /1.5
+
+PG1: -0.25/-1 Mismo error que en ORACLE.
+PG2: 0/-1

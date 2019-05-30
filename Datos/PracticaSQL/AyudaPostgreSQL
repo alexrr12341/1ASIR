@@ -1,0 +1,94 @@
+2.Cambio en el horario (Usar update)
+Modificar calle por la que paso esa cofradia,
+hacer subconsulta que te diga el codigo en semana santa con antifaz blanco en los nazarenos del paso de misterio.
+tanto en el set como en el where debes hacer SELECTS
+set especificas el campo y poner el campo que vas a cambiar
+
+Update Horarios
+Set Calle =(Select Calle
+            from Horarios
+            where CodigoCofradia  in (Select CodigoCofradia
+				      from Pasos
+				      where ColorAntifaz='Blanco'
+				      and Tipo='Misterio'
+				      and CodigoCofradia in (Select CodigoCofradia
+							     from Horarios
+							     where to_char(FechaHora,'DDHHMI') in (Select min(to_char(FechaHora,'DDHHMI'))
+											           from Horarios)))
+    	   and to_char(FechaHora,'HH24:MI') = '18:00')
+where CodigoCofradia = (Select CodigoCofradia
+		        from Pasos
+			where ColorAntifaz='Blanco'
+			and Tipo='Misterio'
+		        and CodigoCofradia in (Select CodigoCofradia
+					       from Horarios
+					       where to_char(FechaHora,'DDHHMI') in (Select min(to_char(FechaHora,'DDHHMI'))
+										     from Horarios)))
+and Calle='Canónigo';
+
+3.Buscar hora posterior a las 3 de la tarde, cuando entran no sean las 11 de la noche
+tienen mas de 350 nazarenos(sum)
+Muestra el nombre de los pasos
+
+Select Nombre
+from Pasos
+where CodigoCofradia not in (Select CodigoCofradia
+			     from Horarios
+		       	     where to_char(FechaHora,'HH24MI') not between '1500' and '2300')
+and CodigoCofradia in (Select CodigoCofradia
+		       from Pasos
+		       group by CodigoCofradia
+		       having sum(NumNazarenos)>350);
+
+4.Numero de pasos y costaleros de cada cofradia group by de pasos por cofradias
+having sum costaleros>85
+
+Select count(p.Nombre), sum(NumCostaleros)
+from Pasos p left outer join Cofradias c on (p.CodigoCofradia=c.Codigo)
+group by p.CodigoCofradia
+having sum(p.NumCostaleros)<85;
+
+5.Crear vista=Create view
+Codigo de cofradia es uno de los codigos de cofradias cuyos pasos tienen antifaz negro, incluye año fundacion y
+ultima calle por la que pasan antes de realizar su entrada
+Select calle
+where fecha=max(fecha cofradia)
+	and calle!= entrada
+
+Create view CofradiasAntNegro
+as
+Select c.Codigo,c.AnyoFundacion,h.FechaHora
+from Cofradias c,Horarios h
+where c.Codigo=h.CodigoCofradia
+and h.FechaHora in (Select max(FechaHora)
+		    from Horarios)
+and c.Codigo in (Select CodigoCofradia
+		 from Pasos
+		 where ColorAntifaz='Negro')
+and h.Calle!='Entrada';
+
+6.Su entrada es anterior a las once de la noche
+Select codcofradia
+from horarios
+where calle!=rivas -> entonces te salen todas las cofradias
+
+Delete from Cofradias
+where Codigo in(
+Select distinct CodigoCofradia
+from Horarios
+where CodigoCofradia not in (Select CodigoCofradia
+			     from horarios
+			     where Calle!='Rivas')
+and CodigoCofradia in (Select CodigoCofradia
+		       from Horarios
+		       where to_char(FechaHora,'HH24')<'23'));
+
+7.Es lo mismo que lo de arriba
+
+Select Codigo,NombreCorto
+from Cofradias
+where Codigo in (Select CodigoCofradia
+		 from Pasos
+		 where ColorAntifaz!='Blanco'
+		 and ColorCapa!='Blanco');
+

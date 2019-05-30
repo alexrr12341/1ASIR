@@ -1,0 +1,11 @@
+#!/bin/bash
+
+read numero
+
+if [ $numero -gt 0 -a $numero -le 5 ];
+then
+	echo "Esta entre uno y cinco"
+elif [ $numero -lt 0 ];
+then
+	echo "Es negativo."
+fi

@@ -1,0 +1,6 @@
+GamesThings
+Contiene-> Pagina inicial, el tipico bienvenido que tal estamos
+	   Una pagina de estadisticas, que contiene varios juegos(Fortnite,Lol,PUBG y dota2) y eliges el juego y te da la estadistica
+	   Una pagina de Esport que te dice estadisticas de los esports de un juego concreto que pidas.
+	   Una pagina de formulario, que la propia pagina pregunte sobre algun juego y tu le digas tus objetivos en el juego y la pagina detecte cuan cerca estas de ellos. 
+	   Una pagina de guias, donde se conecta al servidor de youtube, y te permite también subir tus propias guias mediante POST a youtube.

@@ -1,0 +1,11 @@
+	<section class="fh5co-social">
+		<div class="site-container">
+			<div class="social">
+				<h5>Sigueme en Twitter!!</h5>
+				<div class="social-icons">
+					<a href="#" target="_blank"><img src="../static/images/social-twitter.png" alt="social icon"></a>
+				</div>
+				<h5>Y compartelo!</h5>
+			</div>
+		</div>
+	</section>

@@ -1,0 +1,80 @@
+Create table Estadios
+(
+Nombre VARCHAR(20),
+Aforo NUMERIC(6) default 0,
+Ciudad VARCHAR(20),
+CONSTRAINT pk_Nombre_Estadio PRIMARY KEY (Nombre)
+);
+
+Create table Equipos
+(
+Codigo VARCHAR(10),
+AñoFundacion TIMESTAMP,
+NombreEstadio VARCHAR(20),
+CONSTRAINT pk_Codigo_Equipos PRIMARY KEY (Codigo),
+CONSTRAINT fk_NombreEstadio FOREIGN KEY (NombreEstadio) REFERENCES Estadios (Nombre)
+);
+
+Create table Presidentes
+(
+DNI VARCHAR(10),
+Nombre VARCHAR(20),
+Apellidos VARCHAR(40),
+FechaEleccion TIMESTAMP,
+FechaNacimiento TIMESTAMP,
+CodigoEquipo VARCHAR(10),
+CONSTRAINT pk_DNI_Presidente PRIMARY KEY (DNI),
+CONSTRAINT fk_CodigoEquipo FOREIGN KEY (CodigoEquipo) REFERENCES Equipos (Codigo)
+);
+
+Create table Jugadores
+(
+Codigo VARCHAR(10),
+CodigoEquipo VARCHAR(10),
+Nombre VARCHAR(20),
+FechaNacimiento TIMESTAMP,
+Posicion VARCHAR(30),
+CONSTRAINT pk_Codigo_Jugador PRIMARY KEY (Codigo),
+CONSTRAINT fk_CodigoEquipo FOREIGN KEY (CodigoEquipo) REFERENCES Equipos(Codigo),
+CONSTRAINT posicion_jugador check((Posicion like 'Portero') or (Posicion like 'Defensa') or (Posicion like 'Centrocampista') or (Posicion like 'Delantero')),
+CONSTRAINT siglo_Nacimiento check(FechaNacimiento=to_date('20','CC') or FechaNacimiento=to_date('21','CC'))
+);
+
+Create table Partidos
+(
+Codigo VARCHAR(10),
+CodigoEquipoLocal VARCHAR(10),
+CodigoEquipoVisitante VARCHAR(10),
+Fecha TIMESTAMP not null,
+CONSTRAINT pk_Codigo_Partidos PRIMARY KEY (Codigo),
+CONSTRAINT fk_CodigoEquipoLocal FOREIGN KEY (CodigoEquipoLocal) REFERENCES Equipos(Codigo),
+CONSTRAINT fk_CodigoEquipoVisitante FOREIGN KEY (CodigoEquipoVisitante) REFERENCES Equipos(Codigo),
+CONSTRAINT fecha_festivos check(Fecha >=to_date('0201','DDMM') and Fecha<=to_date('2006','DDMM') or (Fecha>=to_date('2209','DDMM') and Fecha<=to_date('2412','DDMM')) or Fecha>=to_date('2612','DDMM'))
+);
+
+Create table Goles
+(
+Minuto Numeric(3),
+CodigoJugador VARCHAR(10),
+CodigoPartidos VARCHAR(10),
+Descripcion VARCHAR(100),
+CONSTRAINT fk_CodigoJugador FOREIGN KEY (CodigoJugador) REFERENCES Jugadores(Codigo),
+CONSTRAINT fk_Partidos FOREIGN KEY (CodigoPartidos) REFERENCES Partidos(Codigo),
+CONSTRAINT pk_Goles_Minuto PRIMARY KEY (Minuto,CodigoJugador,CodigoPartidos),
+CONSTRAINT duracion_partido check(Minuto<=100 and Minuto>=0)
+);
+
+----------------------------------------------------------
+
+Alter table Equipos
+add NumTitulos NUMERIC(2);
+
+Alter table Estadios
+drop column Aforo;
+
+Alter table Equipos
+add CONSTRAINT Año_fundacion check(extract(YEAR FROM AñoFundacion)>1888);
+
+
+Alter table Partidos
+add CONSTRAINT comienzo_partidos check(to_char(Fecha,'HH24MISS')>='100000' and to_char(Fecha,'HH24MISS')<='220000');

@@ -1,0 +1,208 @@
+1. Realiza una función que reciba el nombre científico de una planta, un código de vivero y un codigo de
+zona y nos devuelva el último stock registrado de esa planta en esa zona de ese vivero. Debes
+controlar las siguientes excepciones: Vivero Inexistente, Zona Inexistente, Planta Inexistente y Planta
+sin stock en esa zona.
+
+ORACLE
+-----------
+Create or replace procedure ViveroInexistente(p_codvivero Viveros.Codigo%type)
+is
+	v_cuentaviveros number:=0
+;
+begin
+	Select count(Codigo) into v_cuentaviveros
+	from Viveros
+	where Codigo=p_codvivero;
+	if v_cuentaviveros = 0 then
+		raise_application_error(-20001,'Vivero inexistente');
+	end if;
+end;
+/
+
+Create or replace procedure ZonaInexistente(p_codzona Zonas.Codigo%type)
+is
+	v_cuentazonas number:=0;
+begin
+	Select count(Codigo) into v_cuentazonas
+	from Zonas
+	where Codigo=p_codzona;
+	if v_cuentazonas = 0 then
+		raise_application_error(-20002,'Zona inexistente');
+	end if;
+end;
+/
+
+Create or replace procedure PlantaInexistente(p_nombreC Plantas.NombreCientifico%type)
+is
+	v_cuentaplantas number;
+begin
+	Select count(Codigo) into v_cuentaplantas
+	from Plantas
+	where NombreCientifico=p_nombreC;
+	if v_cuentaplantas = 0 then
+		raise_application_error(-20003,'Planta inexistente');
+	end if;
+end;
+/
+
+Create or replace function ConseguirCodPlanta(p_nombreC Plantas.NombreCientifico%type)
+return Plantas.Codigo%type
+is
+	v_codigo varchar2(100);
+begin
+	Select Cod_Producto into v_codigo
+	from Productos_Planta
+	where Cod_Planta in (Select Codigo
+			     from Plantas
+			     where NombreCientifico=p_nombreC);
+	return v_codigo;
+end;
+/
+
+
+Create or replace procedure PlantaSinStock(p_nombreC Plantas.NombreCientifico%type,p_codzona Zonas.Codigo%type)
+is
+	v_codplanta varchar2(100):=ConseguirCodPlanta(p_nombreC);
+	v_cuentastock number:=0;
+begin
+	Select count(stock) into v_cuentastock
+	from StockPorZona
+	where Cod_zona=p_codzona
+	and Cod_Producto=v_codplanta;
+	if v_cuentastock = 0 then
+		raise_application_error(-20006,'No se ha registrado ningun stock');
+	end if;
+end;
+/
+Create or replace procedure GestionExcepcionesPlantas(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+begin
+	ViveroInexistente(p_codvivero);
+	ZonaInexistente(p_codzona);
+	PlantaInexistente(p_nombreC);
+	PlantaSinStock(p_nombreC,p_codzona);
+end;
+/
+
+Create or replace function UltimoStock(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+return StockPorZona.stock%type
+is
+	v_codplanta varchar2(100):=ConseguirCodPlanta(p_nombreC);
+	v_stock StockPorZona.stock%type;
+begin
+	GestionExcepcionesPlantas(p_nombreC,p_codvivero,p_codzona);
+	Select stock into v_stock
+	from StockPorZona
+	where Cod_zona=p_codzona
+	and Cod_Producto=v_codplanta
+	and Cod_Vivero=p_codvivero
+	and Fecha= (Select max(Fecha)
+		    from StockPorZona
+		    where Cod_zona=p_codzona
+		    and Cod_Producto=v_codplanta
+		    and Cod_Vivero=p_codvivero);
+	return v_stock;
+end;
+/
+
+POSTGRES
+------------
+Create function ViveroInexistente(p_codvivero Viveros.Codigo%type) Returns Void as $$
+declare
+	v_cuentavivero numeric:=0;
+begin
+	Select count(Codigo) into v_cuentavivero
+	from Viveros
+	where Codigo=p_codvivero;
+	if v_cuentavivero = 0 then
+		Raise Exception 'Vivero inexistente';
+	end if;
+end;
+$$ language plpgsql;
+
+Create function ZonaInexistente(p_codzona Zonas.Codigo%type) returns void as $$
+declare
+	v_cuentazonas numeric:=0;
+begin
+	Select count(Codigo) into v_cuentazonas
+	from Zonas
+	where Codigo=p_codzona;
+	if v_cuentazonas = 0 then
+		Raise Exception 'Zona inexistente';
+	end if;
+end;
+$$ language plpgsql;
+
+Create function PlantaInexistente(p_nombreC Plantas.NombreCientifico%type) returns void as $$
+declare
+	v_cuentaplantas numeric:=0;
+begin
+	Select count(Codigo) into v_cuentaplantas
+	from Plantas
+	where NombreCientifico=p_nombreC;
+	if v_cuentaplantas = 0 then
+		Raise Exception 'Planta inexistente';
+	end if;
+end;
+$$ language plpgsql;
+
+
+Create or replace function ConseguirCodPlanta(p_nombreC Plantas.NombreCientifico%type) returns Plantas.Codigo%type as $$
+declare
+	v_codigo varchar(100);
+begin
+	Select Cod_Producto into v_codigo
+	from Productos_Planta
+	where Cod_Planta in (Select Codigo
+			     from Plantas
+			     where NombreCientifico=p_nombreC);
+	return v_codigo;
+end;
+$$ language plpgsql;
+
+
+Create function PlantaSinStock (p_nombreC Plantas.NombreCientifico%type,p_codzona Zonas.Codigo%type) returns void as $$
+declare
+	v_codplanta varchar(100):=ConseguirCodPlanta(p_nombreC);
+	v_cuentastock numeric:=0;
+begin
+	Select count(stock) into v_cuentastock
+	from StockPorZona
+	where Cod_zona=p_codzona
+	and Cod_Producto=v_codplanta;
+	if v_cuentastock = 0 then
+		Raise Exception 'No se ha registrado ningun stock';
+	end if;
+end;
+$$ language plpgsql;
+
+Create function GestionExcepcionesPlantas(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type) returns void as $$
+declare
+begin
+	perform ViveroInexistente(p_codvivero);
+	perform ZonaInexistente(p_codzona);
+	perform PlantaInexistente(p_nombreC);
+	perform PlantaSinStock(p_nombreC,p_codzona);
+end;
+$$ language plpgsql;
+
+Create function UltimoStock(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type) returns StockPorZona.stock%type as $$
+declare
+	v_codplanta varchar(100):=ConseguirCodPlanta(p_nombreC);
+	
+	v_stock StockPorZona.stock%type;
+begin
+	perform GestionExcepcionesPlantas(p_nombreC,p_codvivero,p_codzona);
+	Select stock into v_stock
+	from StockPorZona
+	where Cod_zona=p_codzona
+	and Cod_Producto=v_codplanta
+	and Cod_Vivero=p_codvivero
+	and Fecha= (Select max(Fecha)
+		    from StockPorZona
+		    where Cod_zona=p_codzona
+		    and Cod_Producto=v_codplanta
+		    and Cod_Vivero=p_codvivero);
+	return v_stock;
+end;
+$$ language plpgsql;

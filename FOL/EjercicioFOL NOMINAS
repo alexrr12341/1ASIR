@@ -1,0 +1,55 @@
+Ejercicio Nóminas FOL
+10 años de antiguedad
+Grupo cotizacion 7
+Contrato indefinido
+Mes enero
+Salario base->970
+Complemento -> 30€
+Nocturnidad->25€
+Transporte->40€
+Horas extras->NO
+Antiguedad->30€*trienio=90€
+Dos pagas extras->Salario base+Antiguedad Esto es para el PPE
+
+2% IRPF
+
+PPE->2*(970+90)/12=176,67€
+BCCC->970+30+176,67+40+25=1331,67€
+BCCP->1331,67 YA QUE NO TIENE HORAS EXTRAS
+BCAHE->NO TIENE PORQUE NO HAY HORAS EEXTRAS
+IRPF->A(Salario bruto)+ NADA=1155€
+
+
+
+
+Salario base..................................................1350 €
+o Plus convenio..................................................100 € (Complemento)
+o Incentivos.....................................................300 € (Complemento)
+o Dietas por tres días con pernocta en Madrid............160 € ()
+o Percibe dos pagas extraordinarias cuyo importe es equivalente al salario base cada una, pagaderas
+en junio y diciembre.
+o En concepto de IRPF le retienen el 18%
+
+Salario Bruto(A)->1910€
+
+BCC->SalarioBase+Complementos+Exceso de lo no salarial+PPE->1350+400+225=1975
+PPE=2*(SalarioBase/12)=225
+53,34*3=160,02 NO COTIZA
+
+BCHE->SalarioBase+HE=1975
+BIRF->A-Lo que no cotiza=1910-160=1750€
+
+1975*4,7/100=92,82€
+1975*1,55/100=30,61€
+
+315€
+
+1910-440,40=1469,60€
+
+440,40
+
+
+
+
+
+

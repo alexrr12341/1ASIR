@@ -1,0 +1,246 @@
+f=open('fichero','r')
+f.tell->Posicion del puntero
+f.read()->Leer archivo
+f.read(Posicion)
+f.readlines()->Metes todos en una lista
+f.readline()->Vas de linea en linea
+lista.append()->Añadir a la lista
+lista.extend()->Une dos listas
+lista.insert(1,100)->Inserta en la posicion indicada
+lista.remove()->Eliminar algo de la lista
+lista.reverse()->Poner al inverso los elementos de la lista
+lista.sort()->Ordenar los elementos de la lista
+
+Funcion CENTRAR
+def centrar(cad):
+	print(" " * int(40 - (len(cad)/2)),cad)
+	print(" " * int(40 - (len(cad)/2)),"=" * len(cad))
+
+FUNCION MULTIPLO
+def esmultiplo(num1,num2):
+	if num1 % num2 == 0:
+		return True
+	else:
+		return False
+
+FUNCION TEMPERATURA MEDIA
+def calcularTemperaturaMedia(temp1,temp2):
+	return (temp1 + temp2)/2
+
+funcion CONVERTIR ESPACIO
+def ConvertirEspaciado(cad):
+	cad_con_espacio = cad.replace(""," ")
+	cad_con_espacio.strip()
+	return cad_con_espacio
+
+calcular max/min
+import random
+def CalcularMaxMin(lista):
+	return (max(lista),min(lista))
+
+CALCULAR AREA Y PERIMETRO
+import math
+def CalcularAreaPerimetro(radio):
+	area = math.pi * radio ** 2;
+	perimetro = 2 * math.pi * radio;
+	return area,perimetro
+
+funcion de login
+def Login(nombre,password,intentos):
+	intentos += 1
+	if nombre == "usuario1" and password == "asdasd":
+		return(True,intentos)
+	else:
+		return(False,intentos)
+
+
+Funcion factorial
+def CalcularFactorial(num):
+	if num == 1:
+		return 1
+	else:
+		return num*CalcularFactorial(num-1)
+
+ORDENADOS DE MAYOR A MENOR
+def Intercambiar(mayor,menor):
+	if mayor<menor:
+		return menor,mayor
+	else:
+		return mayor,menor
+
+funcion minimo comun multiplo
+def CalcularMCD(num1,num2):
+	# Se divide el número mayor entre el menor.
+	num1, num2 = Intercambiar(num1,num2)
+	resto = num1 % num2
+	if resto == 0: # Si la división es exacta, el divisor es el MCD.
+		return num2
+	else:
+		# Si la división no es exacta, dividimos el divisor entre el resto obtenido y 
+		# se continúa de esta forma hasta obtener una división exacta, siendo el último divisor el MCD.
+		return CalcularMCD(num2,resto)
+
+Funcion convertir a segundos
+def Convertir_A_Segundos(h,m,s):
+	return h * 3600 + m * 60 + s
+
+Funcion convertir a horas,minutos,segundos
+def Convertir_A_HMS(seg):
+	# Horas = Divisíón entera de los segundos entre 3600
+	h = seg//3600
+	# Decremento los segundos que me quedan por convertir
+	seg = seg - h*3600
+	# Minutos = División entera de los segundos entre 60
+	m = seg//60
+	# Decremento los segundos que me quedan por convertir
+	seg = seg - m*60
+	# Lo que me quedan corresponden a los segundos
+	s = seg
+	return h,m,s
+
+Funcion es bisiesto
+
+def EsBisiesto(year):
+	return (year % 4 == 0 and not (year % 100 == 0)) or year % 400 == 0
+
+
+Funcion dia del mes
+def DiasDelMes(month,year):
+	if month in [1,3,5,7,8,10,12]:
+		return 31
+	elif month in [4,6,9,11]:
+		return 30
+	elif month == 2:
+		if EsBisiesto(year):
+			return 29
+		else:
+			return 28
+
+Funcion dia juliano
+def Calcular_Dia_Juliano(day,month,year):
+	diaj = 0
+	for mes in range(1,month):
+		diaj = diaj + DiasDelMes(mes,year)
+	diaj = diaj + day
+	return diaj
+
+
+Funcion leer fecha
+
+def LeerFecha():
+	day = int(input("Día:"))
+	month = int(input("Mes:"))
+	year = int(input("Año:"))
+	return day,month,year
+
+Funcion validar fecha
+ef ValidarFecha(day,month,year):
+	if day<1 or day>DiasDelMes(month,year):
+		return False
+	else:
+		return True
+	
+Funcion Leerfraccion
+
+def LeerFraccion():
+	num = int(input("Numerador:"))
+	den = int(input("Denominador:"))
+	num,den = SimplificarFraccion(num,den)
+	return num,den
+Funcion simplicar fraccion
+def SimplificarFraccion(num,den):
+	mcd = CalcularMCD(num,den)
+	num = num / mcd
+	den = den / mcd
+	return num,den
+
+Funcion escribir fraccion
+def EscribirFraccion(num,den):
+	if den!= 1:
+		print(num)
+		print("---")
+		print(den)
+	else:
+		print("")
+		print(num)
+		print("")
+# Función LongitudPila: Recibe una lista (pila).
+# Devuelve un contador con los elementos de la pila.
+
+def LongitudPila(pila):
+	return len(pila)
+
+# Función EstaVaciaPila: Recibe una lista (pila).
+# Devuelve un valor lógico indicando si la pila está vacía.
+
+def EstaVaciaPila(pila):
+	return len(pila) == 0
+
+#Procedimiento AddPila: Recibe una lista (pila) y un elemento (cadena)
+# Parámetro de entrada:La pila y el elemento.
+# Valor devuelto: La pila
+def AddPila(cad, pila):
+	pila.append(cad)
+
+#Función SacarPila: Recibe una lista (pila) y devuelve 
+# el elemento que se ha introducido en último lugar, si no está vacía.
+# El índice de ese elemento será la longitud de la pila - 1
+# Si está vacía, escribe un mensaje de error.
+# Parámetro de entrada:La pila y el elemento.
+# Dato devuelto: El elemento 
+def SacarDeLaPila(pila):
+	if not EstaVaciaPila(pila):
+		return pila.pop(len(pila)-1)
+	else:
+		print("No se puede sacar elemento. La pila está vacia")
+		return ""
+		
+
+# Función EscribirPila: Recibe una lista (pila).
+# Muestra los elementos de la pila.
+# Parámetros de entrada: La pila
+def EscribirPila(pila):
+	for elem in pila:
+		print(elem,end=" ")
+	print()
+
+# Función LongitudCola: Recibe una lista (cola).
+# Devuelve un contador con los elementos de la cola.
+
+def LongitudCola(cola):
+	return len(cola)
+
+# Función EstaVaciaCola: Recibe una lista (cola).
+# Devuelve un valor lógico indicando si la cola está vacía.
+
+def EstaVaciaCola(cola):
+	return len(cola) == 0
+
+#Procedimiento AddCola: Recibe una lista (cola) y un elemento (cadena)
+# Parámetro de entrada:La cola y el elemento.
+# Valor devuelto: La cola
+def AddCola(cad, cola):
+	cola.append(cad)
+
+#Función SacarCola: Recibe una lista (cola) y devuelve 
+# el elemento que se ha introducido en primer lugar, si no está vacía.
+# Si está vacía, escribe un mensaje de error.
+# Parámetro de entrada:La cola y el elemento.
+# Dato devuelto: El elemento 
+def SacarDeLaCola(cola):
+	if not EstaVaciaCola(cola):
+		return cola.pop(0)
+	else:
+		print("No se puede sacar elemento. La cola está vacia")
+		return ""
+		
+
+# Función EscribirCola: Recibe una lista (cola).
+# Muestra los elementos de la cola.
+# Parámetros de entrada: La cola
+def EscribirCola(cola):
+	for elem in cola:
+		print(elem,end=" ")
+	print()
+		
+

@@ -1,0 +1,193 @@
+
+Starting Nmap 7.40 ( https://nmap.org ) at 2018-11-21 10:05 CET
+Stats: 0:53:22 elapsed; 40930 hosts completed (30 up), 4096 undergoing Ping Scan
+Ping Scan Timing: About 93.95% done; ETC: 10:59 (0:00:47 remaining)
+Stats: 1:10:25 elapsed; 53202 hosts completed (46 up), 4096 undergoing Ping Scan
+Ping Scan Timing: About 20.69% done; ETC: 11:18 (0:02:45 remaining)
+Stats: 1:10:53 elapsed; 53202 hosts completed (46 up), 4096 undergoing Ping Scan
+Ping Scan Timing: About 33.76% done; ETC: 11:18 (0:02:17 remaining)
+Nmap scan report for 172.22.0.93
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.0.93 are filtered
+
+Nmap scan report for 172.22.0.123
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.0.123 are filtered
+
+Nmap scan report for 172.22.0.251
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.0.251 are filtered
+
+Nmap scan report for 172.22.1.48
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.1.48 are filtered
+
+Nmap scan report for 172.22.1.111
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.1.111 are filtered
+
+Nmap scan report for 172.22.1.171
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.1.171 are filtered
+
+Nmap scan report for 172.22.1.184
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.1.184 are filtered
+
+Nmap scan report for 172.22.2.44
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.2.44 are filtered
+
+Nmap scan report for 172.22.2.89
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.2.89 are filtered
+
+Nmap scan report for 172.22.2.141
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.2.141 are filtered
+
+Nmap scan report for 172.22.4.8
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.4.8 are filtered
+
+Nmap scan report for 172.22.4.167
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.4.167 are filtered
+
+Nmap scan report for 172.22.4.180
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.4.180 are filtered
+
+Nmap scan report for 172.22.5.196
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.5.196 are filtered
+
+Nmap scan report for 172.22.6.10
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.6.10 are filtered
+
+Nmap scan report for 172.22.6.105
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.6.105 are filtered
+
+Nmap scan report for 172.22.6.153
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.6.153 are filtered
+
+Nmap scan report for 172.22.6.162
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.6.162 are filtered
+
+Nmap scan report for 172.22.6.173
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.6.173 are filtered
+
+Nmap scan report for 172.22.8.26
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.8.26 are filtered
+
+Nmap scan report for 172.22.8.247
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.8.247 are filtered
+
+Nmap scan report for 172.22.9.43
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.9.43 are filtered
+
+Nmap scan report for 172.22.10.116
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.10.116 are filtered
+
+Nmap scan report for 172.22.10.136
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.10.136 are filtered
+
+Nmap scan report for 172.22.10.222
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.10.222 are filtered
+
+Nmap scan report for 172.22.10.240
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.10.240 are filtered
+
+Nmap scan report for 172.22.100.2
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.100.2 are filtered
+
+Nmap scan report for swdlink2.gonzalonazareno.org (172.22.100.3)
+Host is up (0.0000020s latency).
+All 1000 scanned ports on swdlink2.gonzalonazareno.org (172.22.100.3) are filtered
+
+Nmap scan report for ap2asir.gonzalonazareno.org (172.22.100.21)
+Host is up (0.0000020s latency).
+All 1000 scanned ports on ap2asir.gonzalonazareno.org (172.22.100.21) are filtered
+
+Nmap scan report for 172.22.100.22
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.100.22 are filtered
+
+Nmap scan report for 172.22.200.18
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.18 are filtered
+
+Nmap scan report for 172.22.200.25
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.25 are filtered
+
+Nmap scan report for 172.22.200.27
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.27 are filtered
+
+Nmap scan report for 172.22.200.31
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.31 are filtered
+
+Nmap scan report for 172.22.200.33
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.33 are filtered
+
+Nmap scan report for 172.22.200.34
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.34 are filtered
+
+Nmap scan report for 172.22.200.44
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.44 are filtered
+
+Nmap scan report for 172.22.200.45
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.45 are filtered
+
+Nmap scan report for 172.22.200.53
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.53 are filtered
+
+Nmap scan report for 172.22.200.104
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.104 are filtered
+
+Nmap scan report for 172.22.200.119
+Host is up (0.0000030s latency).
+All 1000 scanned ports on 172.22.200.119 are filtered
+
+Nmap scan report for 172.22.200.132
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.132 are filtered
+
+Nmap scan report for 172.22.200.141
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.141 are filtered
+
+Nmap scan report for 172.22.200.142
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.142 are filtered
+
+Nmap scan report for 172.22.200.159
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.159 are filtered
+
+Nmap scan report for 172.22.200.203
+Host is up (0.0000020s latency).
+All 1000 scanned ports on 172.22.200.203 are filtered
+
+Nmap done: 65536 IP addresses (46 hosts up) scanned in 6201.98 seconds

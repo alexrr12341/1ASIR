@@ -1,0 +1,820 @@
+Ejercicio 1)
+create table modelos
+(
+	codigo VARCHAR2(3),
+	marca VARCHAR2(10),
+	numeroasientos NUMBER(2),
+	potencia NUMBER(3),
+	tipotransmision VARCHAR2(20),
+	constraint pk_modelos primary key(codigo),
+	constraint marcanonula check(marca is not null),
+	constraint numasientosnonulo check(numeroasientos is not null),
+	constraint tipook check(tipotransmision in ('Automatica','Manual'))
+);
+
+create table autobuses
+(
+	matricula VARCHAR2(7),
+	codmodelo VARCHAR2(3),
+	anyofabricacion NUMBER(4),
+	fechaadquisicion DATE,
+	fechaultimarevision DATE,
+	constraint pk_autobuses primary key (matricula),
+	constraint fk_modelos foreign key (codmodelo) references modelos(codigo),
+	constraint anyook check (anyofabricacion>2008),
+	constraint fechaok check (fechaadquisicion>=to_date('2009/01/01','YYYY/MM/DD'))
+);
+
+create table rutas
+(
+	codigo VARCHAR2(3),
+	numkilometros NUMBER(3),
+	origen VARCHAR2(10),
+	destino VARCHAR2(10),
+	preciobillete NUMBER(5,2),
+	costeestimadoviaje NUMBER(6,2),
+	duracionenminutos NUMBER(3),
+	constraint pk_rutas primary key(codigo),
+	constraint numkmnonulo check( numkilometros is not null),
+	constraint origennonulo check(origen is not null),
+	constraint destnonulo check(destino is not null)
+);
+
+create table viajes
+(
+	codruta VARCHAR2(3),
+	matricula VARCHAR2(7),
+	fechahorasalida DATE,
+	numbilletesvendidos NUMBER(2) default 0,
+	andensalida NUMBER(3),
+	andenllegada NUMBER(3),
+	constraint pk_viajes primary key(codruta, fechahorasalida),
+	constraint fk_autobuses foreign key (matricula) references autobuses,
+	constraint horasalidaok check(TO_CHAR(fechahorasalida,'HH24') between '06' and '22')
+);
+
+// Modelos
+
+insert into modelos (codigo, marca, numeroasientos, tipotransmision)
+values('IR7','Irizar',63,'Automatica');
+insert into modelos (codigo, marca, numeroasientos, tipotransmision)
+values('IR5','Irizar',55,'Manual');
+insert into modelos (codigo, marca, numeroasientos, tipotransmision)
+values('MB1','Mercedes',65,'Automatica');
+insert into modelos (codigo, marca, numeroasientos, tipotransmision)
+values('MB9','Mercedes',33,'Manual');
+insert into modelos (codigo, marca, numeroasientos, tipotransmision)
+values('SC2','Scania',60,'Automatica');
+insert into modelos (codigo, marca, numeroasientos, tipotransmision)
+values('SC5','Scania',40,'Manual');
+
+// Autobuses
+
+insert into autobuses (matricula, codmodelo, anyofabricacion, fechaadquisicion, fechaultimarevision)
+values('7889GHG','IR7',2011,to_date('09/08/12','DD/MM/YY'),to_date('09/06/14','DD/MM/YY'));
+insert into autobuses (matricula, codmodelo, anyofabricacion, fechaadquisicion, fechaultimarevision)
+values('7890GHG','IR5',2011,to_date('10/08/12','DD/MM/YY'),to_date('09/03/14','DD/MM/YY'));
+insert into autobuses (matricula, codmodelo, anyofabricacion, fechaadquisicion, fechaultimarevision)
+values('0002GHV','MB1',2010,to_date('11/08/12','DD/MM/YY'),to_date('09/02/14','DD/MM/YY'));
+insert into autobuses (matricula, codmodelo, anyofabricacion, fechaadquisicion, fechaultimarevision)
+values('0003GHV','MB1',2011,to_date('12/08/12','DD/MM/YY'),to_date('09/04/14','DD/MM/YY'));
+insert into autobuses (matricula, codmodelo, anyofabricacion, fechaadquisicion, fechaultimarevision)
+values('0004GHV','MB9',2011,to_date('13/08/12','DD/MM/YY'),to_date('09/01/14','DD/MM/YY'));
+insert into autobuses (matricula, codmodelo, anyofabricacion, fechaadquisicion, fechaultimarevision)
+values('1002HBG','SC2',2012,to_date('14/08/12','DD/MM/YY'),to_date('09/05/14','DD/MM/YY'));
+insert into autobuses (matricula, codmodelo, anyofabricacion, fechaadquisicion, fechaultimarevision)
+values('1003HBG','SC2',2012,to_date('15/08/12','DD/MM/YY'),to_date('09/11/13','DD/MM/YY'));
+insert into autobuses (matricula, codmodelo, anyofabricacion, fechaadquisicion, fechaultimarevision)
+values('1004HBB','SC5',2012,to_date('16/08/12','DD/MM/YY'),to_date('09/12/13','DD/MM/YY'));
+
+// Rutas
+
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('A01',256,'Sevilla','Granada',12.40,190.40,165);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('A02',256,'Granada','Sevilla',12.40,190.40,165);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('A03',325,'Sevilla','Motril',15.50,230.40,210);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('A04',950,'Sevilla','Oviedo',52.40,690.40,630);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('A05',540,'Sevilla','Madrid',32,400,375);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('M01',540,'Madrid','Sevilla',32,400,375);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('M02',420,'Madrid','Valencia',27.20,250.50,315);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('M03',325,'Madrid','Granada',25.50,230.20,240);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('B01',350,'Bilbao','Oviedo',27,395,300);
+insert into rutas (codigo, numkilometros, origen, destino, preciobillete, costeestimadoviaje, duracionenminutos)
+values('B02',986,'Bilbao','Sevilla',45.70,610.50,675);
+
+// Viajes
+
+// Sevilla-Granada
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A01','0002GHV',to_date('17/06/14 09:00','DD/MM/YY HH24:MI'),14,1,3);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A01','1004HBB',to_date('17/06/14 12:00','DD/MM/YY HH24:MI'),11,1,3);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A01','0003GHV',to_date('17/06/14 15:00','DD/MM/YY HH24:MI'),8,1,3);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A01','0004GHV',to_date('17/06/14 18:00','DD/MM/YY HH24:MI'),4,2,2);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A01','1002HBG',to_date('17/06/14 21:00','DD/MM/YY HH24:MI'),2,2,2);
+
+// Granada-Sevilla
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A02','7889GHG',to_date('16/06/14 09:30','DD/MM/YY HH24:MI'),63,1,3);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A02','7890GHG',to_date('16/06/14 12:30','DD/MM/YY HH24:MI'),55,1,3);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A02','0003GHV',to_date('16/06/14 15:30','DD/MM/YY HH24:MI'),65,1,3);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A02','0004GHV',to_date('16/06/14 18:30','DD/MM/YY HH24:MI'),33,2,2);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A02','1003HBG',to_date('16/06/14 21:30','DD/MM/YY HH24:MI'),60,2,2);
+
+// Sevilla-Motril
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A03','7889GHG',to_date('15/06/14 09:30','DD/MM/YY HH24:MI'),63,21,13);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A03','7890GHG',to_date('15/06/14 12:30','DD/MM/YY HH24:MI'),55,23,12);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A03','0003GHV',to_date('15/06/14 15:30','DD/MM/YY HH24:MI'),65,24,14);
+
+// Sevilla-Oviedo
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A04','0002GHV',to_date('17/06/14 09:30','DD/MM/YY HH24:MI'),13,1,2);
+
+// Sevilla-Madrid
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A05','1004HBB',to_date('17/06/14 08:45','DD/MM/YY HH24:MI'),25,23,12);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('A05','0002GHV',to_date('17/06/14 20:45','DD/MM/YY HH24:MI'),45,24,4);
+
+// Madrid-Sevilla
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('M01','1004HBB',to_date('18/06/14 08:45','DD/MM/YY HH24:MI'),11,23,12);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('M01','0002GHV',to_date('18/06/14 20:45','DD/MM/YY HH24:MI'),10,24,4);
+
+// Madrid-Valencia
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('M02','0002GHV',to_date('14/06/14 09:30','DD/MM/YY HH24:MI'),30,21,13);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('M02','0003GHV',to_date('14/06/14 12:30','DD/MM/YY HH24:MI'),35,23,12);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('M02','0003GHV',to_date('14/06/14 15:30','DD/MM/YY HH24:MI'),23,24,14);
+
+// Madrid-Granada
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('M03','0002GHV',to_date('17/06/13 09:30','DD/MM/YY HH24:MI'),3,41,2);
+
+//Bilbao-Oviedo
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('B01','7890GHG',to_date('16/06/14 18:45','DD/MM/YY HH24:MI'),55,3,12);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('B01','7889GHG',to_date('17/06/14 20:45','DD/MM/YY HH24:MI'),50,4,4);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('B01','7889GHG',to_date('18/06/14 20:45','DD/MM/YY HH24:MI'),52,4,4);
+
+
+// Bilbao-Sevilla
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('B02','7889GHG',to_date('17/06/14 08:45','DD/MM/YY HH24:MI'),62,23,12);
+insert into viajes (codruta, matricula, fechahorasalida, numbilletesvendidos, andensalida, andenllegada)
+values('B02','7890GHG',to_date('17/06/14 20:45','DD/MM/YY HH24:MI'),55,24,4);
+
+Ejercicio 2)
+
+Create table equipos
+(
+	CodEquipo Varchar2(4),
+	Nombre Varchar2(30) not null,
+	Nacionalidad Varchar2(20),
+	NombreDirector Varchar2(20),
+	constraint pk_equipos primary key(CodEquipo),
+	constraint director_mayus check (NombreDirector = upper(NombreDirector))	
+);
+
+Create table ciclistas
+(
+	Dorsal Number(3),
+	Nombre Varchar2(30) not null,
+	Nacionalidad Varchar2(30),
+	CodEquipo Varchar2(4),
+	FechaNacimiento DATE,
+	constraint pk_ciclistas primary key(Dorsal),
+	constraint fk_codequipo foreign key(CodEquipo) REFERENCES equipos(CodEquipo),
+	constraint dorsal_ok check (Dorsal between 1 and 189)
+);
+
+Create table etapas
+(
+	NumEtapa Number(2),
+	NumKms Number(3),
+	Tipo Varchar2(30),
+	Fecha DATE,
+	constraint pk_etapas primary key (NumEtapa),
+	constraint fecha_ok check (to_char(Fecha,'YYYY/MM/DD') between '2014/07/27' and '2014/08/19')
+);
+
+Create table Clasificacionesetapas
+(
+	NumEtapa Number(2) not null,
+	Dorsal Number(3) not null,
+	Posicion Varchar2(8),
+	DistanciaAlGanador Varchar2(8),
+	constraint fk_clasificacion_etapa foreign key (NumEtapa) references etapas(NumEtapa),
+	constraint fk_clasificacion_dorsal foreign key (Dorsal) references ciclistas(Dorsal),
+	constraint pk_clasificaciones primary key(NumEtapa,Dorsal),
+	constraint posicion_ok check((Posicion='Abandono') or (Posicion between 1 and 189))
+);
+
+insert into equipos (codequipo, nombre, nacionalidad, nombredirector)
+values('0001', 'Reynolds', 'Española', 'JESUS MORENO');
+insert into equipos (codequipo, nombre, nacionalidad, nombredirector)
+values('0002', 'KAS', 'Española', 'ALBERTO MOLINA');
+insert into equipos (codequipo, nombre, nacionalidad, nombredirector)
+values('0003', 'Faema', 'Española', 'JUAN TAGUA');
+insert into equipos (codequipo, nombre, nacionalidad, nombredirector)
+values('0004', 'US Postal', 'Estadounidense', 'JOSEPH SUNDAY');
+insert into equipos (codequipo, nombre, nacionalidad, nombredirector)
+values('0005', 'FDJ', 'Francesa', 'MARIE GRAGERA');
+insert into equipos (codequipo, nombre, nacionalidad, nombredirector)
+values('0006', 'Cafe de Colombia', 'Colombiana', 'MAURI CARDONA');
+
+// Ciclistas
+
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (1, 'Lopez', 'Española', '0001',to_date('21/02/81','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (2, 'Gomez', 'Española', '0001',to_date('11/04/85','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (3, 'Garcia', 'Española', '0001',to_date('23/06/91','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (4, 'Jankauskas', 'Lituana', '0002',to_date('21/02/85','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (5, 'Indurain', 'Española', '0002',to_date('02/02/74','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (6, 'Olano', 'Española', '0002',to_date('27/04/77','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (7, 'Laguia', 'Española', '0003',to_date('26/05/67','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (8, 'Arroyo', 'Española', '0003',to_date('29/04/66','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (9, 'Pino', 'Española', '0003',to_date('11/02/69','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (10, 'Caritoux', 'Francesa', '0004',to_date('14/12/72','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (11, 'Fignon', 'Francesa', '0004',to_date('13/04/71','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (12, 'Brochard', 'Francesa', '0004',to_date('11/08/79','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (13, 'Lemond', 'Estadounidense', '0005',to_date('23/07/80','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (14, 'Armstrong', 'Estadounidense', '0005',to_date('27/05/71','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (15, 'Landis', 'Estadounidense', '0005',to_date('23/04/87','DD/MM/YY'));
+insert into ciclistas (dorsal, nombre, nacionalidad,codequipo,fechanacimiento)
+values (16, 'Leipheimer', 'Estadounidense', '0005',to_date('21/11/81','DD/MM/YY'));
+
+// Etapas
+
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (1, 9, 'Contrarreloj',to_date('27/07/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (2, 185, 'Llana',to_date('28/07/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (3, 198, 'Llana',to_date('29/07/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (4, 139, 'Alta Montaña',to_date('30/07/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (5, 229, 'Alta Montaña',to_date('31/07/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (6, 49, 'Contrarreloj',to_date('02/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (7, 203, 'Media Montaña',to_date('03/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (8, 144, 'Llana',to_date('04/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (9, 175, 'Alta Montaña',to_date('05/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (10, 239, 'Llana',to_date('06/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (11, 189, 'Llana',to_date('07/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (12, 34, 'Contrarreloj',to_date('08/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (13, 174, 'Llana',to_date('09/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (14, 148, 'Llana',to_date('10/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (15, 119, 'Alta Montaña',to_date('11/08/14','DD/MM/YY'));
+insert into etapas (numetapa, numkms, tipo, fecha)
+values (16, 200, 'Llana',to_date('12/08/14','DD/MM/YY'));
+
+// Clasificaciones de las Etapas
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(1, 1, '1','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(1, 2, 'Abandono');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(1, 4, '2','00:00:04');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(1, 5, '3','00:00:05');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(1, 7,'Abandono');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(1, 8, '4','00:00:10');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(1, 10, '5','00:00:22');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(1, 11, '6','00:00:24');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(1, 12, '7','00:00:27');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(1, 13, 'Abandono');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(1, 14, 'Abandono');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(2, 1, '1','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(2, 4, '2','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(2, 5, '3','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(2, 8, '4','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(2, 10, 'Abandono');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(2, 11, '5','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(2, 12, '6','00:00:00');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(3, 1, '6','00:01:10');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(3, 4, '5','00:00:57');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(3, 5, '4','00:00:45');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(3, 8, '3','00:00:23');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(3, 11, '2','00:00:12');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(3, 12, '1','00:00:00');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(4, 1, '2','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(4, 4, '1','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(4, 5, '4','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(4, 8, '3','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(4, 11, '5','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(4, 12, 'Abandono');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(5, 1, '4','00:35:20');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(5, 4, '3','00:16:30');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(5, 5, '2','00:02:20');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(5, 8, '1','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(5, 11, 'Abandono');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(6, 1, '1','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(6, 4, '2','00:12:12');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(6, 5, '3','00:20:10');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(6, 8, 'Abandono');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(7, 1, '1','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(7, 4, '3','00:14:30');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(7, 5, '2','00:04:34');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(8, 1, '1','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(8, 4, '3','01:01:20');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(8, 5, '2','00:20:00');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(9, 1, '1','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(9, 4, '2','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion)
+values(9, 5, 'Abandono');
+
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(10, 1, '2','00:00:00');
+insert into Clasificacionesetapas(numetapa, dorsal, posicion, distanciaalganador)
+values(10, 4, '1','00:00:00');
+
+Ejercicio 3)
+CREATE TABLE COFRADIAS
+(
+	codigo VARCHAR2(2),
+	nombrecorto VARCHAR2(40),
+	nombrereal VARCHAR2(150),
+	sedesocial VARCHAR2(25) unique,
+	sedecanonica VARCHAR2(40),
+	anyofundacion NUMBER(4),
+	diaprocesion VARCHAR2(20) not null,
+	numhermanos NUMBER(4),
+	hermanomayor VARCHAR2(25),
+	CONSTRAINT pk_cofradias PRIMARY KEY(codigo),
+	CONSTRAINT nomb_corto_init CHECK(nombrecorto=INITCAP(nombrecorto)),
+	CONSTRAINT nomb_real_mays CHECK(nombrereal=UPPER(nombrereal)),
+	CONSTRAINT sede_cano_ok CHECK(sedecanonica LIKE '%Capilla%' OR sedecanonica LIKE '%Parroquia%'),
+	CONSTRAINT don_hermano_myr CHECK(SUBSTR(hermanomayor,1,2)='D.')
+);
+
+CREATE TABLE PASOS
+(
+	nombre VARCHAR2(35),
+	tipo VARCHAR2(10),
+	numcostaleros NUMBER(3),
+	numnazarenos NUMBER(4),
+	colorcapa VARCHAR2(10),
+	colorantifaz VARCHAR2(10),
+	codigocofradia VARCHAR2(2),
+	CONSTRAINT pk_pasos PRIMARY KEY(nombre),
+	CONSTRAINT tipo_ok CHECK(tipo='Misterio' OR tipo='Palio'),
+	CONSTRAINT numcost_ok CHECK(numcostaleros BETWEEN 1 AND 150),
+	CONSTRAINT numnaza_ok CHECK(numnazarenos < 1000),
+	CONSTRAINT colorcapa_ok CHECK(colorcapa IN ('Blanco','Negro','Morado')),
+	CONSTRAINT colorantifaz_ok CHECK(colorantifaz NOT IN ('Rosa','Amarillo')),
+	CONSTRAINT fk_cofradia FOREIGN KEY (codigocofradia) REFERENCES cofradias(codigo)
+);
+
+CREATE TABLE HORARIOS
+(
+	codigocofradia VARCHAR2(2),
+	fechahora DATE,
+	calle VARCHAR2(25),
+	CONSTRAINT pk_horarios PRIMARY KEY(codigocofradia, fechahora),
+	CONSTRAINT fk_cofr2 FOREIGN KEY (codigocofradia) REFERENCES cofradias,
+	CONSTRAINT fecha_ok_horarios CHECK(TO_CHAR(fechahora, 'MM/YYYY')='03/2013')
+);
+// Insertamos cofradias
+
+alter table cofradias modify hermanomayor varchar2(50);
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'01',
+       	'La Borriquita',
+       	'REAL HERMANDAD DE NUESTRO PADRE JESUS EN SU SAGRADA ENTRADA EN JERUSALEM Y MARIA STMA. DE LA ESTRELLA',
+       	'c/ Melliza, 12',
+	'Parroquia Santa María Magdalena',
+	1953,
+	'Domingo de Ramos',
+	1050,
+	'D. Alejandro Jurado Mejías');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'02',
+       	'El Cautivo',
+       	'REAL HERMANDAD DEL SANTISIMO SACRAMENTO, NUESTRO PADRE JESUS CAUTIVO Y MARIA SANTISIMA DE LA ESPERANZA',
+       	'c/ Hispalis, 7',
+	'Parroquia Ntra. Sra. del Rocío',
+	1939,
+	'Domingo de Ramos',
+	1370,
+	'D. Miguel Angel Jiménez Barbero');
+
+alter table cofradias modify nombrereal VARCHAR2(190);
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'03',
+       	'Amor Y Sacrificio',
+       	'HERMANDAD DE LA SANTA CRUZ DE NUESTRO SEÑOR JESUCRISTO Y COFRADIA DE NAZARENOS DE NUESTRO PADRE JESUS EN LA PRESENTACION AL PUEBLO, NUESTRA SEÑORA DEL AMOR Y SACRIFICIO Y SAN JOSE',
+       	'c/ Gustavo Bacarisas, 10',
+	'Capilla de la Santa Cruz',
+	1980,
+	'Lunes Santo',
+	1385,
+	'D. Juan José Rodriguez Rubio');
+
+alter table cofradias modify sedesocial VARCHAR2(50);
+alter table cofradias modify sedecanonica VARCHAR2(50);
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'04',
+       	'Pasion',
+       	'REAL E ILUSTRE HERMANDAD Y COFRADIA DE NAZARENOS DE NTRO. PADRE JESUS DE LA PASION Y NTRA. MADRE Y SEÑORA DEL AMPARO',
+       	'Plaza de las Carmelitas, s/n',
+	'Parroquia Ntro. Padre Jesús de la Pasión',
+	1980,
+	'Martes Santo',
+	984,
+	'D. Jose Manuel Zamora Ruiz');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'05',
+       	'Oracion En El Huerto',
+       	'ANTIGUA HERMANDAD DE MARIA STMA. DEL ROSARIO Y COFRADIA DE NAZARENOS DE LA SAGRADA ORACION DE NTRO. SEÑOR JESUCRISTO EN EL HUERTO Y NTRA. MADRE Y SRA. DE LOS DOLORES',
+       	'c/ Anibal González, 12',
+	'Parroquia Santa María Magdalena',
+	1575,
+	'Miércoles Santo',
+	1255,
+	'D. Francisco José Doval Olmedo');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'06',
+       	'Sagrada Cena',
+       	'HERMANDAD SACRAMENTAL DE LA SAGRADA CENA, JESUS HUMILLADO Y NTRA. SRA. DEL AMPARO Y ESPERANZA',
+       	'c/ La Hacendita, 36',
+	'Parroquia Ntra. Sra. del Amparo',
+	1988,
+	'JuevesSanto',
+	375,
+	'D. Francisco Moreno Aldea');
+
+alter table cofradias modify nombrereal VARCHAR2(200);
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'07',
+       	'Vera Cruz',
+       	'ANTIGUA Y REAL HERMANDAD SACRAMENTAL Y COFRADIA DE NAZARENOS DEL SANTO CRISTO DE LA VERA CRUZ, MARIA SANTISIMA EN SUS MISTERIOS DEL MAYOR DOLOR Y ASUNCION A LOS CIELOS Y SAN SEBASTIAN MARTIR',
+       	'c/ Tarancón, 25',
+	'Parroquia Ave María y San Luis',
+	1544,
+	'Jueves Santo',
+	1087,
+	'D. Jose Cardona Jiménez');
+
+alter table cofradias modify diaprocesion VARCHAR2(25);
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'08',
+       	'Gran Poder',
+       	'FERVOROSA HERMANDAD Y COFRADIA DE NAZARENOS DE NUESTRO PADRE JESUS DEL GRAN PODER, MARIA SANTISIMA DEL MAYOR DOLOR Y TRASPASO Y SAN JUAN EVANGELISTA',
+       	'c/ Real Utrera, 31',
+	'Parroquia Santa María Magdalena',
+	1899,
+	'Viernes Santo (Madrugada)',
+	1435,
+	'D. Mariano Sánchez Moreno');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, anyofundacion, diaprocesion, numhermanos, hermanomayor)
+values(	'09',
+       	'Amargura',
+       	'FERVOROSA E ILUSTRE HERMANDAD Y COFRADIA DE NAZARENOS DE NUESTRO PADRE JESUS DESCENDIDO DE LA CRUZ Y NUESTRA MADRE Y SEÑORA DE LA AMARGURA Y SANTA ANGELA DE LA CRUZ',
+       	'c/ Torremolinos, 18',
+	'Parroquia del Divino Salvador',
+	1952,
+	'Viernes Santo',
+	1100,
+	'D. Antonio Díaz Moreno');
+
+insert into cofradias(codigo, nombrecorto, nombrereal, sedesocial, sedecanonica, diaprocesion, numhermanos, hermanomayor)
+values(	'10',
+       	'Santo Entierro',
+       	'ANTIGUA Y FERVOROSA HERMANDAD Y COFRADIA DEL TRIUNFO DE LA SANTA CRUZ SOBRE LA MUERTE, SANTO ENTIERRO Y RESURRECCION DE NUESTRO SEÑOR JESUCRISTO Y NUESTRA SEÑORA DE LA SOLEDAD',
+       	'c/ Ntra. Sra. de Valme, 17',
+	'Parroquia Santa María Magdalena',
+	'Sabado Santo',
+	685,
+	'D. Guillermo López Rodríguez');
+
+
+// Insertamos pasos
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Entrada en Jerusalen', 'Misterio', 90, 210, 'Blanco', 'Blanco', '01');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. de la Estrella', 'Palio', 60, 200, 'Blanco', 'Rojo', '01');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntro. Padre Jesús Cautivo', 'Misterio', 60, 240, 'Blanco', 'Burdeos', '02');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Maria Santísima de la Esperanza', 'Palio', 60, 210, 'Blanco', 'Verde', '02');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Presentación al Pueblo', 'Misterio', 130, 200, 'Blanco', 'Azul', '03');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. del Amor y Sacrificio', 'Palio', 80, 250, 'Blanco', 'Azul', '03');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntro. Padre Jesús de la Pasión', 'Misterio', 80, 130, 'Blanco', 'Negro', '04');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. del Amparo', 'Palio', 70, 100, 'Blanco', 'Negro', '04');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Sagrada Oración en el Huerto', 'Misterio', 40, 210, 'Blanco', 'Morado', '05');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntra. Sra. de los Dolores', 'Palio', 35, 240, 'Blanco', 'Morado', '05');
+
+alter table pasos drop constraint colorcapa_ok;
+alter table pasos add constraint colorcapa_ok CHECK(colorcapa IN ('Blanco','Negro','Morado','Marfil'));
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Sagrada Cena', 'Misterio', 54, 130, 'Marfil', 'Burdeos', '06');
+insert into pasos(nombre, tipo, numcostaleros, colorcapa, colorantifaz, codigocofradia)
+values('Jesús Humillado', 'Misterio', 30, 'Marfil', 'Burdeos', '06');
+insert into pasos(nombre, tipo, numcostaleros, colorcapa, colorantifaz, codigocofradia)
+values('Virgen del Amparo y Esperanza', 'Palio', 30, 'Marfil', 'Burdeos', '06');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Cristo de la Vera Cruz', 'Misterio', 29, 210, 'Negro', 'Morado', '07');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Virgen del Mayor Dolor', 'Palio', 30, 100, 'Negro', 'Morado', '07');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Ntro. Padre Jesús del Gran Poder', 'Misterio', 35, 175, 'Morado', 'Morado', '08');
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('María Santísima del Mayor Dolor', 'Palio', 30, 100, 'Morado', 'Morado', '08');
+
+insert into pasos(nombre, tipo, numcostaleros, numnazarenos, colorcapa, colorantifaz, codigocofradia)
+values('Jesús Descendido de la Cruz', 'Misterio', 110, 430, 'Blanco', 'Negro', '09');
+
+
+// Insertamos horarios
+
+// Borriquita
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 16:45','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 17:00','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 18:00','DD/MM/YY HH24:MI'),'Rivas');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 19:00','DD/MM/YY HH24:MI'),'Antonia Díaz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 19:30','DD/MM/YY HH24:MI'),'Plaza Emigrante');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 20:00','DD/MM/YY HH24:MI'),'Real Utrera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 20:30','DD/MM/YY HH24:MI'),'San Sebastián');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 21:00','DD/MM/YY HH24:MI'),'Canónigo');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 21:30','DD/MM/YY HH24:MI'),'Santa Maria Magdalena');
+insert into horarios(codigocofradia, fechahora, calle)
+values('01',TO_DATE('24/03/13 22:00','DD/MM/YY HH24:MI'),'Entrada');
+
+// Cautivo
+alter table horarios modify calle VARCHAR2(35);
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 17:30','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 18:00','DD/MM/YY HH24:MI'),'Virgen de los Desamparados');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 19:00','DD/MM/YY HH24:MI'),'Los Pirralos');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 19:30','DD/MM/YY HH24:MI'),'Santa Cruz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 20:00','DD/MM/YY HH24:MI'),'Santa María Magdalena');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 20:30','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 21:00','DD/MM/YY HH24:MI'),'La Mina');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 21:30','DD/MM/YY HH24:MI'),'Plaza del Emigrante');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 22:00','DD/MM/YY HH24:MI'),'Romera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 23:00','DD/MM/YY HH24:MI'),'Reyes Católicos');
+insert into horarios(codigocofradia, fechahora, calle)
+values('02',TO_DATE('24/03/13 00:00','DD/MM/YY HH24:MI'),'Entrada');
+
+// Amor y Sacrificio
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 17:00','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 18:00','DD/MM/YY HH24:MI'),'Esperanza');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 19:00','DD/MM/YY HH24:MI'),'Parque de la Alquería');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 19:30','DD/MM/YY HH24:MI'),'Pasarela');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 20:00','DD/MM/YY HH24:MI'),'Huerta Palacios');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 20:30','DD/MM/YY HH24:MI'),'Botica');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 21:00','DD/MM/YY HH24:MI'),'Santa María Magdalena');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 21:30','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 22:00','DD/MM/YY HH24:MI'),'Ntra. Sra. del Carmen');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('25/03/13 23:00','DD/MM/YY HH24:MI'),'Pasarela');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('26/03/13 00:00','DD/MM/YY HH24:MI'),'28 de Febrero');
+insert into horarios(codigocofradia, fechahora, calle)
+values('03',TO_DATE('26/03/13 01:00','DD/MM/YY HH24:MI'),'Entrada');
+
+// Pasión
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 16:00','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 17:00','DD/MM/YY HH24:MI'),'Avda. Triunfo');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 18:00','DD/MM/YY HH24:MI'),'Autovía');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 19:00','DD/MM/YY HH24:MI'),'Los Pirralos');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 19:30','DD/MM/YY HH24:MI'),'Carlos I');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 20:00','DD/MM/YY HH24:MI'),'Santa Cruz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 20:30','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 21:00','DD/MM/YY HH24:MI'),'Antonia Díaz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 21:30','DD/MM/YY HH24:MI'),'Manuel de Falla');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 22:00','DD/MM/YY HH24:MI'),'Romera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('26/03/13 23:00','DD/MM/YY HH24:MI'),'Reyes Católicos');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('27/03/13 00:00','DD/MM/YY HH24:MI'),'Virgen del Rocío');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('27/03/13 01:00','DD/MM/YY HH24:MI'),'Avenida del Triunfo');
+insert into horarios(codigocofradia, fechahora, calle)
+values('04',TO_DATE('27/03/13 02:00','DD/MM/YY HH24:MI'),'Entrada');
+
+// Oración en el Huerto
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('27/03/13 19:00','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('27/03/13 19:30','DD/MM/YY HH24:MI'),'Francesa');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('27/03/13 20:00','DD/MM/YY HH24:MI'),'Calderón de la Barca');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('27/03/13 20:30','DD/MM/YY HH24:MI'),'Manuel de Falla');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('27/03/13 21:00','DD/MM/YY HH24:MI'),'Churruca');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('27/03/13 21:30','DD/MM/YY HH24:MI'),'Real de Utrera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('27/03/13 22:30','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('27/03/13 23:00','DD/MM/YY HH24:MI'),'Melliza');
+insert into horarios(codigocofradia, fechahora, calle)
+values('05',TO_DATE('28/03/13 00:15','DD/MM/YY HH24:MI'),'Entrada');
+
+// Sagrada Cena
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 16:30','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 17:00','DD/MM/YY HH24:MI'),'Los Molares');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 18:00','DD/MM/YY HH24:MI'),'Lope de Vega');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 19:00','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 19:30','DD/MM/YY HH24:MI'),'San Francisco');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 20:00','DD/MM/YY HH24:MI'),'Antonia Díaz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 20:30','DD/MM/YY HH24:MI'),'Anibal González');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 21:00','DD/MM/YY HH24:MI'),'Rivas');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 21:30','DD/MM/YY HH24:MI'),'San José');
+insert into horarios(codigocofradia, fechahora, calle)
+values('06',TO_DATE('28/03/13 22:30','DD/MM/YY HH24:MI'),'Entrada');
+
+// Vera Cruz
+
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_DATE('28/03/13 20:00','DD/MM/YY HH24:MI'),'Salida');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_DATE('28/03/13 20:30','DD/MM/YY HH24:MI'),'El Ejido');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_DATE('28/03/13 21:00','DD/MM/YY HH24:MI'),'Manuel de Falla');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_DATE('28/03/13 21:30','DD/MM/YY HH24:MI'),'Santa María Magdalena');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_DATE('28/03/13 22:15','DD/MM/YY HH24:MI'),'Carrera Oficial');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_DATE('28/03/13 23:00','DD/MM/YY HH24:MI'),'Real de Utrera');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_DATE('29/03/13 00:00','DD/MM/YY HH24:MI'),'Cristo de la Vera Cruz');
+insert into horarios(codigocofradia, fechahora, calle)
+values('07',TO_DATE('29/03/13 00:30','DD/MM/YY HH24:MI'),'Entrada');

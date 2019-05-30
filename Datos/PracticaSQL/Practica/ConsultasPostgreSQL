@@ -1,0 +1,78 @@
+2.
+
+Update Horarios
+Set Calle =(Select Calle
+            from Horarios
+            where CodigoCofradia  in (Select CodigoCofradia
+				      from Pasos
+				      where ColorAntifaz='Blanco'
+				      and Tipo='Misterio'
+				      and CodigoCofradia in (Select CodigoCofradia
+							     from Horarios
+							     where to_char(FechaHora,'DDHHMI') in (Select min(to_char(FechaHora,'DDHHMI'))
+											           from Horarios)))
+    	   and to_char(FechaHora,'HH24:MI') = '18:00')
+where CodigoCofradia = (Select CodigoCofradia
+		        from Pasos
+			where ColorAntifaz='Blanco'
+			and Tipo='Misterio'
+		        and CodigoCofradia in (Select CodigoCofradia
+					       from Horarios
+					       where to_char(FechaHora,'DDHHMI') in (Select min(to_char(FechaHora,'DDHHMI'))
+										     from Horarios)))
+and Calle='Canónigo';
+
+3.
+
+Select Nombre
+from Pasos
+where CodigoCofradia not in (Select CodigoCofradia
+			     from Horarios
+		       	     where to_char(FechaHora,'HH24MI') not between '1500' and '2300')
+and CodigoCofradia in (Select CodigoCofradia
+		       from Pasos
+		       group by CodigoCofradia
+		       having sum(NumNazarenos)>350);
+
+4.
+
+Select count(p.Nombre), sum(NumCostaleros)
+from Pasos p left outer join Cofradias c on (p.CodigoCofradia=c.Codigo)
+group by p.CodigoCofradia
+having sum(p.NumCostaleros)<85;
+
+5.
+
+Create view CofradiasAntNegro
+as
+Select c.Codigo,c.AnyoFundacion,h.FechaHora
+from Cofradias c,Horarios h
+where c.Codigo=h.CodigoCofradia
+and h.FechaHora in (Select max(FechaHora)
+		    from Horarios)
+and c.Codigo in (Select CodigoCofradia
+		 from Pasos
+		 where ColorAntifaz='Negro')
+and h.Calle!='Entrada';
+
+6.
+
+Delete from Cofradias
+where Codigo in(
+Select distinct CodigoCofradia
+from Horarios
+where CodigoCofradia not in (Select CodigoCofradia
+			     from horarios
+			     where Calle!='Rivas')
+and CodigoCofradia in (Select CodigoCofradia
+		       from Horarios
+		       where to_char(FechaHora,'HH24')<'23'));
+
+7.
+
+Select Codigo,NombreCorto
+from Cofradias
+where Codigo in (Select CodigoCofradia
+		 from Pasos
+		 where ColorAntifaz!='Blanco'
+		 and ColorCapa!='Blanco');

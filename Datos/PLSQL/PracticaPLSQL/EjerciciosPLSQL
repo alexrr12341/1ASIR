@@ -1,0 +1,1252 @@
+Ejercicio 1)
+#Excepcion que manda error si las tablas estan vacias
+Create or replace procedure TablasVaciasBuses
+is
+	v_rutas number;
+	v_viajes number;
+begin
+	Select count(*) into v_rutas
+	from rutas;
+	Select count(*) into v_viajes
+	from viajes;
+	if v_rutas = 0 and v_viajes = 0 then
+		raise_application_error(-20001,'Tablas vacias');
+	end if;
+end;
+/
+#Excepcion que manda un error si no existen rutas de la ciudad de destino o origen
+Create or replace procedure NoRutas(p_ciudad rutas.origen%type)
+is
+	v_rutasV number;
+begin
+	Select count(*) into v_rutasV
+	from rutas
+	where (Origen=p_ciudad) or (Destino=p_ciudad);
+	if v_rutasV = 0 then
+		raise_application_error(-20002,'No se encontraron rutas');
+	end if;
+end;
+/
+
+#Excepcion que manda un error si no existe la ciudad destino o origen
+Create or replace procedure NoCiudad(p_ciudad rutas.origen%type)
+is
+	v_ciudad number;
+begin
+	Select count(*) into v_ciudad
+	from rutas
+	where Origen=p_ciudad or Destino=p_ciudad;
+	if v_ciudad = 0 then
+		raise_application_error(-20004,'No existe la ciudad');
+	end if;
+end;
+/
+#Excepcion que manda un error si no hay llegadas a esa ciudad
+Create or replace procedure NoLlegadas(p_ciudad rutas.origen%type)
+is
+	v_llegadas number;
+begin
+	Select count(AndenLlegada) into v_llegadas
+	from viajes
+	where CodRuta in (Select Codigo
+			  from Rutas
+			  where (Origen=p_ciudad) or (Destino=p_ciudad));
+	if v_llegadas = 0 then
+		raise_application_error(-20003,'No hay ninguna llegada');
+	end if;
+end;
+/
+#Comprobacion de excepciones
+Create or replace procedure ComprobarExcepcionesBuses(p_ciudad rutas.origen%type)
+is
+begin
+	TablasVaciasBuses;
+	NoRutas(p_ciudad);
+	NoLlegadas(p_ciudad);
+	NoCiudad(p_ciudad);
+end;
+/
+#Funcion que coge las horas y minutos del viaje
+Create or replace function MostrarHoras(p_horas viajes.FechaHoraSalida%type)
+return varchar2
+is
+	v_horas varchar2(100);
+begin
+	Select to_char(p_horas,'HH24:MM') into v_horas
+	from dual;
+	return v_horas;
+end;
+/
+#Funcion que pasa la duracion a minutos
+Create or replace function PasarMinAMinutos(p_duracion rutas.DuracionenMinutos%type)
+return number
+is
+	v_minutos number;
+begin
+	Select mod(p_duracion,60) into v_minutos
+	from dual;
+	return v_minutos;
+end;
+/
+#Funcion que pasa la duracion a horas.
+Create or replace function PasarMinAHoras(p_duracion rutas.DuracionenMinutos%type)
+return number
+is
+	v_horas number;
+begin
+	Select trunc(p_duracion/60,0) into v_horas
+	from dual;
+	return v_horas;
+end;
+/
+#Funcion que recoge las horas
+Create or replace function CogerHoras(p_horas viajes.FechaHoraSalida%type)
+return number
+is
+	v_horas number;
+begin
+	Select to_number(to_char(p_horas,'HH24')) into v_horas
+	from dual;
+	return v_horas;
+end;
+/
+#Funcion que recoge los minutos
+Create or replace function CogerMinutos(p_horas viajes.FechaHoraSalida%type)
+return number
+is
+	v_minutos number;
+begin
+	Select to_number(to_char(p_horas,'MI')) into v_minutos
+	from dual;
+	return v_minutos;
+end;
+/
+#Funcion que recoge las horas y minutos para que esten correctamente
+Create or replace function HacerMinutosTotales(v_horasT number,v_minutosT number)
+return number
+is
+	v_horasTo number;
+	v_minutosTo number;
+begin
+	if v_minutosT > 59 then
+		v_horasTo:=v_horasT+1;
+		v_minutosTo:=v_minutosT-60;
+		if v_horasT > 23 then
+			v_horasTo:=v_horasT-24;
+		end if;
+	else
+		if v_horasT > 23 then
+			v_horasTo:=v_horasT-24;
+		end if;
+	end if;
+	return v_minutosTo;
+end;
+/
+#Funcion que recoge las horas y los minutos para que esten correctamente
+Create or replace function HacerHorasTotales(v_horasT number,v_minutosT number)
+return number
+is
+	v_horasTo number;
+	v_minutosTo number;
+begin
+	if v_minutosT > 59 then
+		v_horasTo:=v_horasT+1;
+		v_minutosTo:=v_minutosT-60;
+		if v_horasT > 23 then
+			v_horasTo:=v_horasT-24;
+		end if;
+	else
+		if v_horasT > 23 then
+			v_horasTo:=v_horasT-24;
+		end if;
+	end if;
+	return v_horasTo;
+end;
+/
+#Funcion que muestra las horas en formato 'hh24:mi'
+Create or replace function MostrarHorasBonitas(v_horaTotal number,v_minutoTotal number)
+return varchar2
+is
+begin
+	if v_horaTotal < 10 and v_minutoTotal < 10 then
+		return '0'||v_horaTotal||':'||'0'||v_minutoTotal;
+	elsif v_horaTotal < 10 then
+		return '0'||v_horaTotal||':'||v_minutoTotal;
+	elsif v_minutoTotal < 10 then
+		return v_horaTotal||':'||'0'||v_minutoTotal;
+	else 
+		return v_horaTotal||':'||v_minutoTotal;
+	end if;
+end;
+/
+
+#Funcion que muestra la hora estimada del viaje.
+Create or replace function MostrarHoraEst(p_duracion rutas.DuracionenMinutos%type,p_horas viajes.FechaHoraSalida%type)
+return varchar2
+is
+	v_minutosD number:=PasarMinAMinutos(p_duracion);
+	v_horasD number:=PasarMinAHoras(p_duracion);
+	v_minutosF number:=CogerMinutos(p_horas);
+	v_horasF number:=CogerHoras(p_horas);
+	v_horaT number;
+	v_minutoT number;
+	v_horaTotal number;
+	v_minutoTotal number;
+	v_cadena varchar2(100);
+begin
+	v_horaT:=v_horasD+v_horasF;
+	v_minutoT:=v_minutosD+v_minutosF;
+	v_horaTotal:=HacerHorasTotales(v_horaT,v_minutoT);
+	v_minutoTotal:=HacerMinutosTotales(v_horaT,v_minutoT);
+	v_cadena:=MostrarHorasBonitas(v_horaTotal,v_minutoTotal);
+	return v_cadena;
+end;
+/
+#Cabecera de las salidas
+Create or replace procedure MostrarInfoSalidas(p_anden viajes.AndenSalida%type,p_destino rutas.Destino%type,p_horas viajes.FechaHoraSalida%type,p_matriculas viajes.matricula%type,p_duracion rutas.DuracionenMinutos%type)
+is
+begin
+	dbms_output.put_line(chr(9)||'Anden'||chr(9)||'Destino'||chr(9)||'HoraSal'||chr(9)||'HoraEst'||chr(9)||'Matricula');
+	dbms_output.put_line(chr(9)||p_anden||chr(9)||p_destino||chr(9)||MostrarHoras(p_horas)||chr(9)||MostrarHoraEst(p_duracion,p_horas)||chr(9)||p_matriculas);
+end;
+/
+
+#Cabecera de las llegadas
+Create or replace procedure MostrarInfoLlegadas(p_anden viajes.AndenSalida%type,p_origen rutas.Origen%type,p_horas viajes.FechaHoraSalida%type,p_matriculas viajes.matricula%type,p_duracion rutas.DuracionenMinutos%type)
+is
+begin
+	dbms_output.put_line(chr(9)||'Anden'||chr(9)||'Destino'||chr(9)||'HoraEst'||chr(9)||'Matricula');
+	dbms_output.put_line(chr(9)||p_anden||chr(9)||p_origen||chr(9)||MostrarHoraEst(p_duracion,p_horas)||chr(9)||p_matriculas);
+end;
+/
+
+#Procedimiento que muestra las salidas de una ciudad dada
+Create or replace procedure MostrarSalidas(p_ciudad rutas.origen%type)
+is
+	cursor c_rutas
+	is
+	Select v.AndenSalida as andensalida,r.Destino as destino,v.FechaHoraSalida as hora,v.Matricula as matricula,r.DuracionenMinutos as duracion
+	from rutas r,viajes v
+	where v.CodRuta=r.Codigo
+	and (r.Origen=p_ciudad) or (r.Destino=p_ciudad)
+	order by v.fechahorasalida desc;
+	v_info c_rutas%rowtype;
+begin
+	open c_rutas;
+	fetch c_rutas into v_info;
+	while c_rutas%FOUND and c_rutas%ROWCOUNT<=4 loop
+		MostrarInfoSalidas(v_info.andensalida,v_info.destino,v_info.hora,v_info.matricula,v_info.duracion);
+		fetch c_rutas into v_info;
+	end loop;
+	close c_rutas;
+end;
+/
+
+#Procedimiento que muestra las llegadas de una ciudad dada
+Create or replace procedure MostrarLlegadas(p_ciudad rutas.origen%type)
+is
+	cursor c_rutas
+	is
+	Select v.AndenLlegada as andenllegada,r.Origen as origen,v.FechaHoraSalida as hora,v.Matricula as matricula,r.DuracionenMinutos as duracion
+	from rutas r,viajes v
+	where v.CodRuta=r.Codigo
+	and (r.Origen=p_ciudad) or (r.Destino=p_ciudad)
+	order by v.fechahorasalida desc;
+	v_info c_rutas%rowtype;
+begin
+	open c_rutas;
+	fetch c_rutas into v_info;
+	while c_rutas%FOUND and c_rutas%ROWCOUNT<=4 loop
+		MostrarInfoLlegadas(v_info.andenllegada,v_info.origen,v_info.hora,v_info.matricula,v_info.duracion);
+		fetch c_rutas into v_info;
+	end loop;
+	close c_rutas;
+end;
+/
+
+#Procedimiento que muestra las salidas y las llegadas de una ciudad dada.
+Create or replace procedure MostrarInfoBuses(p_ciudad rutas.origen%type)
+is
+begin
+	ComprobarExcepcionesBuses(p_ciudad);
+	dbms_output.put_line('Salidas');
+	MostrarSalidas(p_ciudad);
+	dbms_output.put_line('Llegadas');
+	MostrarLlegadas(p_ciudad);
+end;
+/
+
+Ejercicio 2)
+
+#Excepcion que detecta si existe la ciudad de origen,sino manda un error.
+Create or replace procedure CiudadOrigen(p_origen rutas.origen%type)
+is
+	v_cuenta number;
+begin
+	Select count(*) into v_cuenta
+	from rutas;
+	if v_cuenta = 0 then
+		raise_application_error(-20001,'No existe ese origen');
+	end if;
+end;
+/
+#Excepcion que detecta si existe la ciudad de destino,sino manda un error.
+Create or replace procedure CiudadDestino(p_destino rutas.destino%type)
+is
+	v_cuenta number;
+begin
+	Select count(*) into v_cuenta
+	from rutas;
+	if v_cuenta = 0 then
+		raise_application_error(-20002,'No existe ese destino');
+	end if;
+end;
+/
+#Excepcion que manda un error si no está operativa la ruta dada.
+Create or replace procedure RutaNoOperada(p_origen rutas.origen%type,p_destino rutas.origen%type,p_dia viajes.fechahorasalida%type)
+is
+	v_cuenta number;
+begin
+	Select count(*) into v_cuenta
+	from viajes v,rutas r
+	where r.Codigo=v.CodRuta
+	and r.Origen=p_origen
+	and r.Destino=p_destino;
+	if v_cuenta = 0 then
+		raise_application_error(-20003,'La ruta no está operativa');
+	end if;
+end;
+/
+#Excepcion que detecta que todos los billetes esten
+Create or replace procedure BilletesVendidos(p_origen rutas.origen%type,p_destino rutas.destino%type,p_dia viajes.fechahorasalida%type)
+is
+	cursor c_billetes is
+	Select m.NumeroAsientos as asientos,v.NumBilletesVendidos as vendidos,r.Codigo as codigoruta
+	from modelos m , viajes v, autobuses a,rutas r
+	where v.Matricula=a.matricula
+	and a.CodModelo=m.Codigo
+	and v.CodRuta=r.Codigo
+	and r.Origen=p_origen
+	and r.Destino=p_destino
+	and v.FechaHoraSalida=p_dia;
+	v_total number;
+begin
+	for v_billetes in c_billetes loop
+		v_total:=v_billetes.asientos-v_billetes.vendidos;
+		if v_total <= 0 then
+				dbms_output.put_line('No se pueden vender mas billetes en la ruta'||v_billetes.codigoruta);
+		end if;
+	end loop;
+end;
+/
+
+#Comprobacion de excepciones
+Create or replace procedure ComprobarExcepcionesOperarias(p_origen rutas.origen%type,p_destino rutas.destino%type,p_dia viajes.fechahorasalida%type)
+is
+begin
+	CiudadOrigen(p_origen);
+	CiudadDestino(p_destino);
+	RutaNoOperada(p_origen,p_destino,p_dia);
+	BilletesVendidos(p_origen,p_destino,p_dia);
+end;
+/
+#Cabecera que muestra las informaciones de salidas
+Create or replace procedure MostrarInfoSalidasOperarias(p_anden viajes.AndenSalida%type,p_destino rutas.Destino%type,p_horas viajes.FechaHoraSalida%type,p_matriculas viajes.matricula%type,p_duracion rutas.DuracionenMinutos%type,p_precio rutas.PrecioBillete%type)
+is
+begin
+	dbms_output.put_line(chr(9)||'Anden'||chr(9)||'Destino'||chr(9)||'HoraSal'||chr(9)||'HoraEst'||chr(9)||'Matricula'||chr(9)||'Precio');
+	dbms_output.put_line(chr(9)||p_anden||chr(9)||p_destino||chr(9)||MostrarHoras(p_horas)||chr(9)||MostrarHoraEst(p_duracion,p_horas)||chr(9)||p_matriculas||chr(9)||p_precio);
+end;
+/
+#Procedimiento que recoge las informaciones de salida
+Create or replace procedure MostrarSalidasOperarias(p_origen rutas.origen%type,p_destino rutas.destino%type,p_dia viajes.fechahorasalida%type)
+is
+	cursor c_rutas
+	is
+	Select v.AndenSalida as andensalida,r.Destino as destino,v.FechaHoraSalida as hora,v.Matricula as matricula,r.DuracionenMinutos as duracion,r.PrecioBillete as precio
+	from rutas r,viajes v
+	where v.CodRuta=r.Codigo
+	and r.Origen=p_origen
+	and r.Destino=p_destino
+	and v.FechaHoraSalida=p_dia
+	order by v.fechahorasalida desc;
+begin
+	for v_info in c_rutas loop
+		MostrarInfoSalidasOperarias(v_info.andensalida,v_info.destino,v_info.hora,v_info.matricula,v_info.duracion,v_info.precio);
+	end loop;
+end;
+/
+#Programa principal que muestra todas los procedimientos anteriores
+Create or replace procedure MostrarBilletes(p_origen rutas.origen%type,p_destino rutas.destino%type,p_dia viajes.fechahorasalida%type)
+is
+begin
+	ComprobarExcepcionesOperarias(p_origen,p_destino,p_dia);
+	MostrarSalidasOperarias(p_origen,p_destino,p_dia);
+end;
+/
+
+Ejercicio 3)
+
+#Excepcion que detecta que no existe un ciclista dado.
+Create or replace procedure NoExisteCorredor(p_dorsal ciclistas.dorsal%type)
+is
+	v_cuenta number;
+begin
+	Select count(*) into v_cuenta
+	from ciclistas
+	where dorsal=p_dorsal;
+	if v_cuenta = 0 then
+		raise_application_error(-20001,'No existe ese ciclista');
+	end if;
+end;
+/
+#Excepcion que detecta que no existe una etapa dada.
+Create or replace procedure NoExisteEtapa(p_etapa etapas.Tipo%type)
+is
+	v_cuenta number;
+begin
+	Select count(*) into v_cuenta
+	from etapas
+	where tipo=p_etapa;
+	if v_cuenta = 0 then
+		raise_application_error(-20002,'No existe esa etapa');
+	end if;
+end;
+/
+#Exepcion que detecta si el ciclista no disputo esa etapa.
+Create or replace procedure NoDisputaEtapa(p_etapa etapas.Tipo%type)
+is
+	v_cuenta number;
+begin
+	Select count(*) into v_cuenta
+	from clasificacionesetapas
+	where numetapa in (Select numetapa
+			   from etapas
+			   where tipo=p_etapa);
+	if v_cuenta = 0 then
+		raise_application_error(-20003,'Esa etapa no se ha disputado');
+	end if;
+end;
+/
+
+#Esta funcion coge la etapa donde ha abandonado el ciclista
+Create or replace function CogerEtapaAbandono(v_etapa clasificacionesetapas.numetapa%type,p_dorsal ciclistas.dorsal%type)
+return clasificacionesetapas.numetapa%type
+is
+	v_etapaabandonada clasificacionesetapas.numetapa%type;
+begin
+	Select numetapa into v_etapaabandonada
+	from clasificacionesetapas
+	where dorsal=p_dorsal
+	and Posicion='Abandono';
+	return v_etapaabandonada;	
+end;
+/
+
+#Esta excepcion detecta que si es una etapa posterior a abandono, está mal introducido los datos y salta un error.
+Create or replace procedure EtapaPosteriorAbandono(p_dorsal ciclistas.dorsal%type,p_etapa etapas.Tipo%type)
+is
+	cursor c_etapas is
+	Select numetapa
+	from clasificacionesetapas
+	where dorsal=p_dorsal
+	and numetapa = (Select min(numetapa)
+			 from etapas
+			 where tipo=p_etapa);
+begin
+	for v_etapas in c_etapas loop
+		if v_etapas.numetapa > CogerEtapaAbandono(v_etapas.numetapa,p_dorsal) then
+			raise_application_error(-20004,'Etapa posterior a abandono');
+		end if;
+	end loop;
+end;
+/
+
+#Comprobacion de exepciones
+Create or replace procedure ComprobarExcepcionesCiclistas(p_dorsal ciclistas.dorsal%type,p_etapa etapas.Tipo%type)
+is
+begin
+	NoExisteCorredor(p_dorsal);
+	NoExisteEtapa(p_etapa);
+	NoDisputaEtapa(p_etapa);
+	EtapaPosteriorAbandono(p_dorsal,p_etapa);
+end;
+/
+
+#Esta funcion devuelve el mejor puesto de un ciclista dado, junto a la etapa cursada
+Create or replace function DevolverMejorPuesto(p_dorsal ciclistas.dorsal%type,p_etapa etapas.Tipo%type)
+return varchar2
+is
+	cursor c_mejor is
+	Select min(Posicion)
+	from clasificacionesetapas
+	where Dorsal=p_dorsal
+	and numetapa in (Select numetapa
+		 	 from etapas
+			 where Tipo=p_etapa);
+	v_posicion c_mejor%rowtype;
+begin
+	ComprobarExcepcionesCiclistas(p_dorsal,p_etapa);
+	open c_mejor;
+	fetch c_mejor into v_posicion;
+	close c_mejor;
+	return v_posicion.Posicion;
+end;
+/
+	
+Ejercicio 4)
+
+Recibe distancia al ganador en horas minutos y segundos, PASALO TODO A SEGUNDOS Y DE SEGUNDOS A HH:MM:SS
+#Esta funcion pasa las horas de la cadena hh:mm:ss a segundos
+Create or replace function PasarHorasASegundos(p_distancia clasificacionesetapas.distanciaalganador%type)
+return number
+is
+	v_horas number;
+	v_segundos number;
+begin
+	Select regexp_substr(p_distancia,'[^:]*',1) into v_horas
+	from dual;
+	if v_horas < 0 or v_horas >99 then
+		raise_application_error(-20001,'Formato Incorrecto');
+	else
+		v_segundos:=v_horas*3600;
+		return v_segundos;
+	end if;
+end;
+/
+#Esta funcion pasa los minutos de la cadena hh:mm:ss a segundos
+Create or replace function PasarMinutosASegundos(p_distancia clasificacionesetapas.distanciaalganador%type)
+return number
+is
+	v_minutos number;
+	v_segundos number;
+begin
+	Select regexp_substr(p_distancia,'[^:]*',4) into v_minutos
+	from dual;
+	if v_minutos < 0 or v_minutos >59 then
+		raise_application_error(-20002,'Formato Incorrecto');
+	else
+		v_segundos:=v_minutos*60;
+		return v_segundos;
+	end if;
+end;
+/
+#Esta funcion recibe la cadena hh:mm:ss y lo pasa a segundos
+Create or replace function PasarSegundosASegundos(p_distancia clasificacionesetapas.distanciaalganador%type)
+return number
+is
+	v_segundos number;
+begin
+	Select regexp_substr(p_distancia,'[^:]*',7) into v_segundos
+	from dual;
+	if v_segundos < 0 or v_segundos >59 then
+		raise_application_error(-20003,'Formato Incorrecto');
+	else
+		return v_segundos;
+	end if;
+end;
+/
+Create or replace function PasarASegundos(p_distancia clasificacionesetapas.distanciaalganador%type)
+return number
+is
+	v_segundos number:=PasarSegundosASegundos(p_distancia);
+	v_minutos number:=PasarMinutosASegundos(p_distancia);
+	v_horas number:=PasarHorasASegundos(p_distancia);
+	v_segundosT number;
+begin
+	v_segundosT:=v_horas+v_minutos+v_segundos;
+	return v_segundosT;
+end;
+/
+#Esta funcion pasa los segundos a horas dividiendolo entre 3600
+Create or replace function PasarSegundosHoras(p_distancia number)
+return number
+is
+	v_horas number;
+begin
+	Select trunc(p_distancia/3600,0) into v_horas
+	from dual;
+	return v_horas;
+end;
+/
+#Esta funcion pasa los segundos a minutos usando el modulo de los segundos y dividiendolo por 60.
+Create or replace function PasarSegundosMinutos(p_distancia number)
+return number
+is
+	v_minutos number;
+begin
+	Select trunc(mod(p_distancia,3600)/60,0) into v_minutos
+	from dual;
+	return v_minutos;
+
+end;
+/
+#Esta funcion pasa los segundos usando el modulo de la hora y los minutos.
+Create or replace function PasarSegundosSegundos(p_distancia number)
+return number
+is
+	v_segundos number;
+begin
+	Select mod(mod(p_distancia,3600),60) into v_segundos
+	from dual;
+	return v_segundos;
+end;
+/
+#Comprueba las excepciones de que pueda ocurrir algun error del programa.
+Create or replace procedure ComprobarExcepcionesHHMMSS(v_hora number,v_minutos number,v_segundos number)
+is
+begin
+	if v_hora < 0 or v_hora > 99 then
+		raise_application_error(-20006,'Error de formato');
+	elsif v_minutos < 0 or v_minutos > 59 then
+		raise_application_error(-20007,'Error de formato');
+	elsif v_segundos < 0 or v_segundos > 59 then
+		raise_application_error(-20008,'Error de formato');
+	end if;
+end;
+/
+#Función que pasa a cadena las horas minutos y segundos, se ha tratado la excepcion de que los numeros sean menor que 10 para que quede el formato hh:mm:ss
+Create or replace function PasarCadena(v_hora number,v_minutos number,v_segundos number)
+return varchar2
+is
+begin
+	case
+		when v_hora < 10 and v_minutos < 10 and v_segundos < 10 then
+			return '0'||v_hora||':'||'0'||v_minutos||':'||'0'||v_segundos;
+		when v_hora < 10 and v_minutos < 10 then
+			return '0'||v_hora||':'||'0'||v_minutos||':'||v_segundos;
+		when v_hora < 10 and v_segundos < 10 then
+			return '0'||v_hora||':'||v_minutos||':'||'0'||v_segundos;
+		when v_minutos <10 and v_segundos <10 then
+			return v_hora||':'||'0'||v_minutos||':'||'0'||v_segundos;
+		when v_hora < 10 then
+			return '0'||v_hora||':'||v_minutos||':'||v_segundos;
+		when v_minutos < 10 then
+			return v_hora||':'||'0'||v_minutos||':'||'0'||v_segundos;
+		when v_segundos < 10 then
+			return v_hora||':'||v_minutos||':'||'0'||v_segundos;
+		else
+			return v_hora||':'||v_minutos||':'||v_segundos;
+	end case;
+end;
+/
+#Función que pasa a 'hh:mm:ss' los segundos dados
+Create or replace function PasarAHHMMSS(p_distancia number)
+return varchar2
+is
+	v_horas number:=PasarSegundosHoras(p_distancia);
+	v_minutos number:=PasarSegundosMinutos(p_distancia);
+	v_segundos number:=PasarSegundosSegundos(p_distancia);
+	v_total varchar2(100);
+begin
+	while v_segundos > 59 loop
+		v_minutos:=v_minutos+1;
+		v_segundos:=v_segundos-60;
+	end loop;
+	while v_minutos > 59 loop
+		v_horas:=v_horas+1;
+		v_minutos:=v_minutos-60;
+	end loop;
+	ComprobarExcepcionesHHMMSS(v_horas,v_minutos,v_segundos);
+	v_total:=PasarCadena(v_horas,v_minutos,v_segundos);
+	return v_total;
+end;
+/
+
+Ejercicio 5)
+
+Recibe un dorsal y numero de etapa y te devuelve la suma de distancia de todas las estapas al ganador y te devuelve el lider de quien tenga menor distancia al ganador
+(el que su suma tenga menos tiempo).
+Si el corredor abandona no se calcula nada.
+#Función que coge la distancia del ganador de la tabla clasificaciones
+Create or replace function CogerDistancia(p_dorsal ciclistas.dorsal%type,p_netapa etapas.numetapa%type)
+return varchar2
+is
+	v_distancia varchar2(100);
+begin
+	Select DistanciaAlganador into v_distancia
+	from ClasificacionesEtapas
+	where Dorsal=p_dorsal
+	and NumEtapa=p_netapa;
+	return v_distancia;
+end;
+/
+#Funcion que recibe la posicion, si es abandono el resultado será null, sino se enviará la información.
+Create or replace function ExcepcionAbandono(p_dorsal ciclistas.dorsal%type,p_netapa etapas.numetapa%type)
+return number
+is
+	v_contador number:=0;
+	v_posicion varchar2(100);
+	v_distancia varchar2(100):=CogerDistancia(p_dorsal,p_netapa);
+begin
+	Select Posicion into v_posicion
+	from clasificacionesetapas
+	where dorsal=p_dorsal
+	and numetapa=p_netapa;
+	if v_posicion = 'Abandono' then
+		v_contador:=NULL;
+	else
+		v_contador:=v_contador+PasarASegundos(v_distancia);
+	end if;
+	return v_contador;
+end;
+/
+
+#Funcion que devuelve la suma de las distancias en 'hh:mm:ss'
+Create or replace function DevolverSumaDistancias(p_dorsal ciclistas.dorsal%type,p_netapa etapas.numetapa%type)
+return varchar2
+is
+	v_contador number:=0;
+	v_segundos number;
+	v_hhmmss varchar2(100);
+begin
+	for v_etapas in 1 .. p_netapa loop
+		v_contador:=v_contador+ExcepcionAbandono(p_dorsal,v_etapas);
+	end loop;
+	v_hhmmss:=PasarAHHMMSS(v_contador);
+	return v_hhmmss;
+exception
+	when no_data_found then
+		dbms_output.put_line('No hay suficientes datos');
+		raise;
+end;
+/
+Ejercicio 6)
+
+#Tabla auxiliar
+
+Create table TablaAuxiliarClasificacion
+(
+NombreCorredor varchar2(30),
+CodEquipo varchar2(4),
+DistanciaTotal NUMBER(7)
+);
+
+#Funcion que recorre todas las etapas y devuelve su suma de distancias
+Create or replace function DevolverSumaDistanciasSegundos(p_dorsal ciclistas.dorsal%type,p_netapa etapas.numetapa%type)
+return number
+is
+	v_contador number:=0;
+begin
+	for v_etapas in 1 .. p_netapa loop
+		v_contador:=v_contador+ExcepcionAbandono(p_dorsal,v_etapas);
+	end loop;
+	return v_contador;
+exception
+	when no_data_found then
+		dbms_output.put_line('No hay suficientes datos');
+		raise;
+end;
+/
+
+#Procedimiento que envia toda la informacion de las distancias a la tabla auxiliar
+Create or replace procedure EnviarATabla(p_netapa etapas.numetapa%type)
+is
+	cursor c_info is
+	Select cl.Nombre as nombre,cl.CodEquipo as codequipo,c.Dorsal as dorsal
+	from clasificacionesetapas c,ciclistas cl
+	where c.Dorsal=cl.Dorsal
+	and c.numetapa=p_netapa;
+	v_total number;
+begin
+	delete from TablaAuxiliarClasificacion;
+	for v_info in c_info loop
+		v_total:=DevolverSumaDistanciasSegundos(v_info.dorsal,p_netapa);
+		insert into TablaAuxiliarClasificacion
+		values(v_info.nombre,v_info.codequipo,v_total);
+	end loop;
+end;
+/
+#Muestra la clasificación general,coge el mínimo de distancia y les resta la distancia a los demas(Se usa una tabla auxiliar para ordenarlas).
+Create or replace procedure MostrarClasificacionGeneral(p_netapa etapas.numetapa%type)
+is
+	cursor c_auxiliar is
+	Select *
+	from TablaAuxiliarClasificacion
+	where DistanciaTotal is not NULL
+	order by DistanciaTotal asc;
+	v_contador number:=1;
+	v_minimo number;
+	v_auxiliar c_auxiliar%rowtype;
+	v_total number;
+	v_totalhhmmss varchar2(100);
+begin
+	EnviarATabla(p_netapa);
+	open c_auxiliar;
+	fetch c_auxiliar into v_auxiliar;
+	v_minimo:=v_auxiliar.DistanciaTotal;
+	while c_auxiliar%FOUND loop
+		v_total:=v_auxiliar.DistanciaTotal-v_minimo;
+		v_totalhhmmss:=PasarAHHMMSS(v_total);
+		dbms_output.put_line(v_contador||'.'||'  '||v_auxiliar.NombreCorredor||' '||v_auxiliar.CodEquipo||' '||v_totalhhmmss);
+		v_contador:=v_contador+1;
+		fetch c_auxiliar into v_auxiliar;
+	end loop;
+	close c_auxiliar;
+end;
+/
+	
+
+
+Ejercicio 7)
+#Excepcion que detecta si las tablas están vacias.
+Create or replace procedure TablasVaciasCofradias
+is
+	v_cuenta number;
+begin
+	Select count(*) into v_cuenta
+	from cofradias;
+	if v_cuenta = 0 then
+		raise_application_error(-20001,'Tabla cofradia vacia');
+	end if;
+end;
+/
+#Excepcion que detecta que ese nombrecorto es inexistente.
+Create or replace procedure NombreCortoNoExiste(p_nomcorto cofradias.nombrecorto%type)
+is
+	v_nombre number;
+begin
+	Select count(*) into v_nombre
+	from cofradias
+	where NombreCorto=p_nomcorto;
+	if v_nombre = 0 then
+		raise_application_error(-20002,'El nombre de cofradia no existe');
+	end if;
+end;
+/
+#Excepciones de la funcion.
+Create or replace procedure ComprobarExcepcionesCofradias(p_nomcorto cofradias.nombrecorto%type)
+is
+begin
+	TablasVaciasCofradias;
+	NombreCortoNoExiste(p_nomcorto);
+end;
+/
+#Funcion que devuelve el codigo de la cofradia mediante su nombre corto
+Create or replace function DevolverCodigoCofradia(p_nomcorto cofradias.nombrecorto%type)
+return varchar2
+is
+	v_codigo varchar2(100);
+begin
+	ComprobarExcepcionesCofradias(p_nomcorto);
+	Select Codigo into v_codigo
+	from Cofradias
+	where NombreCorto=p_nomcorto;
+	return v_codigo;
+end;
+/
+
+Ejercicio 8)
+#Funcion que devuelve el día como cadena de la fecha dada.
+Create or replace function Comprobardiahoy(p_fecha horarios.FechaHora%type)
+return varchar2
+is
+	v_dia varchar2(100);
+begin
+	Select to_char(p_fecha,'YYYY/MM/DD') into v_dia
+	from dual;
+	return v_dia;
+end;
+/
+#Excepcion de que la cofradia no salga hoy
+Create or replace procedure CofradiaNoSaleHoy(p_fecha horarios.FechaHora%type,p_codigo cofradias.Codigo%type)
+is
+	v_cuenta number;
+	v_fechahoy varchar2(100):=Comprobardiahoy(p_fecha);
+begin
+	
+	Select count(*) into v_cuenta
+	from horarios
+	where CodigoCofradia=p_codigo
+	and to_char(FechaHora,'YYYY/MM/DD')=v_fechahoy;
+	if v_cuenta = 0 then
+		raise_application_error(-20004,'Hoy no sale esa cofradia');
+	end if;
+end;
+/
+#Funcion que transforma la fecha pedida como cadena.
+Create or replace function CogerHoraPedida(p_fecha horarios.FechaHora%type)
+return varchar2
+is
+	v_horas varchar2(100);
+begin
+	Select to_char(p_fecha,'YYYYMMDDHH24MISS') into v_horas
+	from dual;
+	return v_horas;
+end;
+/
+#Funcion que consigue la fecha de salida
+Create or replace function ConseguirFechaHoraCofradiaSal(p_fecha horarios.FechaHora%type,p_codigo cofradias.Codigo%type)
+return varchar2
+is
+	v_fecha varchar2(100);
+begin
+	Select to_char(FechaHora,'YYYYMMDDHH24MISS') into v_fecha
+	from horarios
+	where CodigoCofradia=p_codigo
+	and Calle='Salida';
+	return v_fecha;
+end;
+/
+#Funcion que consigue la fecha de entrada
+Create or replace function ConseguirFechaHoraCofradiaEnt(p_fecha horarios.FechaHora%type,p_codigo cofradias.Codigo%type)
+return varchar2
+is
+	v_fecha varchar2(100);
+begin
+	Select to_char(FechaHora,'YYYYMMDDHH24MISS') into v_fecha
+	from horarios
+	where CodigoCofradia=p_codigo
+	and Calle='Entrada';
+	return v_fecha;
+end;
+/
+#Procedimiento que detecta si la cofradia ya se fue mediante la hora
+Create or replace procedure CofradiaYaSeFue(p_fecha horarios.FechaHora%type,p_codigo cofradias.Codigo%type)
+is
+	v_hora varchar2(100):=CogerHoraPedida(p_fecha);
+	v_horaentrada varchar2(100):=ConseguirFechaHoraCofradiaEnt(p_fecha,p_codigo);
+begin
+	if v_hora > v_horaentrada then
+		raise_application_error(-20005,'La cofradia ya se ha ido');
+	end if;
+end;
+/
+
+#Procedimiento que detecta si la cofradia no salio aun mediante la hora
+Create or replace procedure CofradiaAunNoSalio(p_fecha horarios.FechaHora%type,p_codigo cofradias.Codigo%type)
+is
+	v_hora varchar2(100):=CogerHoraPedida(p_fecha);
+	v_horasalida varchar2(100):=ConseguirFechaHoraCofradiaSal(p_fecha,p_codigo);
+begin
+	if v_hora < v_horasalida then
+		raise_application_error(-20005,'La cofradia aun no ha salido');
+	end if;
+end;
+/
+
+#Excepciones
+Create or replace procedure ComprobarExcepcionesCofradiasD(p_fecha horarios.FechaHora%type,p_codigo cofradias.Codigo%type,p_nomcorto cofradias.nombrecorto%type)
+is
+	v_codigo varchar2(100):=DevolverCodigoCofradia(p_nomcorto);
+begin
+	CofradiaNoSaleHoy(p_fecha,p_codigo);
+	ComprobarExcepcionesCofradias(p_nomcorto);
+	CofradiaAunNoSalio(p_fecha,v_codigo);
+	CofradiaYaSeFue(p_fecha,v_codigo);
+end;
+/
+	
+	
+
+#Procedimiento que coge las horas
+
+Create or replace function CogerSoloHorasCofra(p_fecha horarios.FechaHora%type)
+return varchar2
+is
+	v_horas varchar2(100);
+begin
+	Select to_char(p_fecha,'HH24') into v_horas
+	from dual;
+	return v_horas;
+end;
+/
+#Procedimiento que devuelve la calle mediante la hora en la que esté
+Create or replace procedure DevolverCalleFinal(p_calles horarios.Calle%type,p_fecha horarios.FechaHora%type,p_horas varchar2,v_callefinal in out varchar2)
+is
+	v_horas2 varchar2(100):=CogerHoraPedida(p_fecha);
+begin
+	if p_horas >= v_horas2 then
+		v_callefinal:=p_calles;
+	end if;
+end;
+/
+
+#Procedimiento que encuentra la calle donde está la cofradia, debemos introducir la hora y el nombre corto.
+Create or replace procedure EncontrarCofradia(p_fecha horarios.FechaHora%type,p_nomcorto cofradias.nombrecorto%type)
+is
+	v_calle varchar2(100);
+	v_codigo varchar2(100):=DevolverCodigoCofradia(p_nomcorto);
+	v_horas varchar2(100):=CogerSoloHorasCofra(p_fecha);
+	v_fechaTotal varchar2(100):=CogerHoraPedida(p_fecha);
+	v_callecorrecta varchar2(100);
+	cursor c_calles is
+	Select Calle,FechaHora
+	from horarios
+	where to_char(FechaHora,'HH24')=v_horas
+	and CodigoCofradia = v_codigo;
+begin
+	ComprobarExcepcionesCofradiasD(p_fecha,v_codigo,p_nomcorto);
+	for v_callesCofr in c_calles loop
+		DevolverCalleFinal(v_callesCofr.Calle,v_callesCofr.FechaHora,v_fechaTotal,v_callecorrecta);
+	end loop;
+	dbms_output.put_line(v_callecorrecta);
+end;
+/
+
+Ejercicio 9)
+
+Procedimiento que identifizca nazareno.
+Recibe el color de la capa y el color del antifaz y te devuelva el nombre corto de la cofradia
+Excepcion:No podemos afirmar de que cofradia es ese.(too many rows)
+
+#Procedimiento que coge nombrecorto de cofradia mediante su codigo.
+
+Create or replace procedure CogerNombreCorto(p_codigo pasos.CodigoCofradia%type, v_nombrecorto in out varchar2)
+is
+begin
+	Select NombreCorto into v_nombrecorto
+	from Cofradias
+	where Codigo = p_codigo;
+end;
+/
+
+#Cabecera del procedimiento principal.
+Create or replace procedure CabeceraIdentificar(v_tipo pasos.tipo%type,v_colorcapa pasos.colorcapa%type,v_colorantifaz pasos.colorantifaz%type,v_nombrecorto varchar2)
+is
+begin
+	dbms_output.put_line('Tipo'||chr(9)||'ColorCapa'||chr(9)||'ColorAntifaz'||chr(9)||'NombreCorto');
+	dbms_output.put_line('--------------------------------------------------------------');
+	dbms_output.put_line(v_tipo||chr(9)||v_colorcapa||chr(9)||v_colorantifaz||chr(9)||v_nombrecorto);
+end;
+/
+#Procedimiento que identifica al nazareno mediante el color de capa y el color del antifaz.
+Create or replace procedure IdentificarNazareno(p_colorcapa pasos.ColorCapa%type,p_colorantifaz pasos.ColorAntifaz%type)
+is
+	cursor c_info is
+	Select Tipo,ColorCapa,ColorAntifaz,CodigoCofradia
+	from Pasos
+	where ColorCapa=p_colorcapa
+	and ColorAntifaz=p_colorantifaz;
+	v_info c_info%rowtype;
+	v_nombrecorto varchar2(100);
+begin
+	open c_info;
+	fetch c_info into v_info;
+	if c_info%found and c_info%rowcount = 1 then
+		CogerNombreCorto(v_info.CodigoCofradia,v_nombrecorto);
+		CabeceraIdentificar(v_info.Tipo,v_info.ColorCapa,v_info.ColorAntifaz,v_nombrecorto);
+	else
+		raise_application_error(-20001,'No se puede afirmar con seguridad');
+	end if;
+	close c_info;
+end;
+/
+	
+
+Ejercicio 10)
+
+#Procedimiento para mostrar nombrelargo
+Create or replace function MostrarNombreLargo(p_info cofradias.nombrecorto%type)
+return cofradias.NombreReal%type
+is
+	v_nomlargo cofradias.NombreReal%type;
+begin
+	Select NombreReal into v_nomlargo
+	from cofradias
+	where NombreCorto=p_info;
+	return v_nomlargo;
+end;
+/
+#Procedimiento que muestra las lineas del tipo 1, las fechas se muestran como 'Fecha1-Fecha2' y sus calles
+Create or replace procedure MostrarLineasT1(v_fecha varchar2,v_codigo cofradias.Codigo%type)
+is
+	cursor c_lineas is
+	Select to_char(FechaHora,'HH24:MI') as horas,Calle
+	from Horarios
+	where to_char(FechaHora,'YYYY/MM/DD')=v_fecha
+	and CodigoCofradia=v_codigo;
+	v_hora1 c_lineas%rowtype;
+	v_hora2 c_lineas%rowtype;
+	v_contadorfilas number;
+begin
+	dbms_output.put_line('Dia de procesión '||v_fecha);
+	open c_lineas;
+	v_contadorfilas:=mod(c_lineas%rowcount,2);
+	fetch c_lineas into v_hora1;
+	fetch c_lineas into v_hora2;
+	while c_lineas%FOUND loop
+		dbms_output.put_line(chr(9)||v_hora1.horas||'-'||v_hora2.horas||chr(9)||v_hora1.Calle);
+		fetch c_lineas into v_hora1;
+		dbms_output.put_line(chr(9)||v_hora2.horas||'-'||v_hora1.horas||chr(9)||v_hora2.Calle);
+		fetch c_lineas into v_hora2;
+	end loop;
+	close c_lineas;
+end;
+/
+#Procedimiento que genera el informe de tipo 1
+Create or replace procedure GenerarInformeT1(p_info varchar2)
+is
+	v_nomlargo cofradias.NombreReal%type:=MostrarNombreLargo(p_info);
+	v_codigo cofradias.Codigo%type:=DevolverCodigoCofradia(p_info);
+	cursor c_horarios is
+	Select distinct to_char(FechaHora,'YYYY/MM/DD') as dia
+	from horarios
+	where CodigoCofradia=v_codigo
+	order by dia asc;
+	v_horas varchar2(100);
+begin
+	ComprobarExcepcionesCofradias(p_info);
+	dbms_output.put_line('Horario de la cofradia: '||v_nomlargo);
+	for v_horarios in c_horarios loop
+		MostrarLineasT1(v_horarios.dia,v_codigo);
+	end loop;	
+end;
+/
+
+#Excepciones posibles.
+Create or replace procedure MostrarExcepcionDiaDado(p_info varchar2)
+is
+	v_cuenta number;
+begin
+	Select distinct count(DiaProcesion) into v_cuenta
+	from horarios h, cofradias c
+	where c.Codigo=h.CodigoCofradia
+	and DiaProcesion=p_info;
+	if v_cuenta = 0 then
+		raise_application_error(-20003,'No disponemos de esa informacion');
+	end if;
+end;
+/
+
+#Procedimiento para nombrelargo de cofradia
+Create or replace function MostrarNombreLargoCod(p_codigo cofradias.Codigo%type)
+return cofradias.nombrereal%type
+is
+	v_nomlargo cofradias.nombrereal%type;
+begin
+	Select NombreReal into v_nomlargo
+	from Cofradias
+	where Codigo=p_codigo;
+	return v_nomlargo;
+end;
+/
+
+#Muestra todas las lineas del dia de la semana santa mediante un while, fechas mostradas como 'Fecha1-Fecha2' y sus calles respectivas
+Create or replace procedure MostrarLineasT2(v_fecha varchar2,v_codigo cofradias.Codigo%type)
+is
+	cursor c_lineas is
+	Select to_char(FechaHora,'HH24:MI') as horas,Calle
+	from Horarios
+	where to_char(FechaHora,'YYYY/MM/DD')=v_fecha
+	and CodigoCofradia=v_codigo;
+	v_nomlargo cofradias.NombreReal%type:=MostrarNombreLargoCod(v_codigo);
+	v_hora1 c_lineas%rowtype;
+	v_hora2 c_lineas%rowtype;
+begin
+	dbms_output.put_line('Horario de la Cofradia '||v_nomlargo);
+	dbms_output.put_line('Dia de procesión '||v_fecha);
+	open c_lineas;
+	fetch c_lineas into v_hora1;
+	fetch c_lineas into v_hora2;
+	while c_lineas%FOUND loop
+		dbms_output.put_line(chr(9)||v_hora1.horas||'-'||v_hora2.horas||chr(9)||v_hora1.Calle);
+		fetch c_lineas into v_hora1;
+		dbms_output.put_line(chr(9)||v_hora2.horas||'-'||v_hora1.horas||chr(9)||v_hora2.Calle);
+		fetch c_lineas into v_hora2;
+	end loop;
+	close c_lineas;
+end;
+/
+
+#Procedimiento Informe2(Llama al procedimiento que muestra las lineas)
+Create or replace procedure GenerarInformeT2(p_info varchar2)
+is
+	cursor c_dias is
+	Select distinct to_char(FechaHora,'YYYY/MM/DD') as dias,CodigoCofradia as codigo
+	from horarios h, cofradias c
+	where c.Codigo=h.CodigoCofradia
+	and DiaProcesion=p_info
+	order by dias;
+begin
+	MostrarExcepcionDiaDado(p_info);
+	for v_dias in c_dias loop
+		MostrarLineasT2(v_dias.dias,v_dias.codigo);
+	end loop;
+end;
+/
+Create or replace function MandarNumNazarenos(v_dias Cofradias.DiaProcesion%type,v_codigo Cofradias.Codigo%type,v_fecha varchar2)
+return number
+is
+	v_contador number;
+begin
+	Select sum(NumNazarenos) into v_contador
+	from Pasos p,horarios h, cofradias c
+	where h.CodigoCofradia=c.Codigo
+	and p.CodigoCofradia=c.Codigo
+	and to_char(FechaHora,'YYYY/MM/DD')=v_fecha
+	and c.DiaProcesion=v_dias
+	and h.CodigoCofradia=v_codigo;
+	return v_contador;
+end;
+/
+
+#Muestra todas las lineas de la semana santa mediante un while, fechas mostradas como 'Fecha1-Fecha2' y sus calles respectivas
+Create or replace procedure MostrarLineasT3(v_dias Cofradias.DiaProcesion%type,v_codigo Cofradias.Codigo%type,v_fecha varchar2)
+is
+	cursor c_fecha is
+	Select to_char(h.FechaHora,'HH24:MI') as horas,h.Calle
+	from horarios h, cofradias c
+	where c.Codigo=h.CodigoCofradia
+	and c.DiaProcesion=v_dias
+	and to_char(FechaHora,'YYYY/MM/DD')=v_fecha
+	and h.CodigoCofradia=v_codigo;
+	v_contador number;
+	v_nomlargo cofradias.NombreReal%type:=MostrarNombreLargoCod(v_codigo);
+	v_hora1 c_fecha%rowtype;
+	v_hora2 c_fecha%rowtype;
+begin
+	dbms_output.put_line('Horario de la Cofradia '||v_nomlargo);
+	dbms_output.put_line('Dia de procesión '||v_fecha);
+	open c_fecha;
+	fetch c_fecha into v_hora1;
+	fetch c_fecha into v_hora2;
+	v_contador:=v_contador+MandarNumNazarenos(v_dias,v_codigo,v_fecha);
+	while c_fecha%FOUND loop
+		dbms_output.put_line(chr(9)||v_hora1.horas||'-'||v_hora2.horas||chr(9)||v_hora1.Calle);
+		fetch c_fecha into v_hora1;
+		dbms_output.put_line(chr(9)||v_hora2.horas||'-'||v_hora1.horas||chr(9)||v_hora2.Calle);
+		fetch c_fecha into v_hora2;
+	end loop;
+	dbms_output.put_line('Total Nazarenos '||upper(v_dias)||': '||v_contador);
+	close c_fecha;
+end;
+/
+
+	
+#Procedimiento Informe3(Llama al procedimiento que muestra las lineas)
+Create or replace procedure GenerarInformeT3
+iss
+	cursor c_dias is
+	Select distinct DiaProcesion,CodigoCofradia,to_char(FechaHora,'YYYY/MM/DD') as fecha
+	from horarios h, cofradias C
+	where c.Codigo=h.CodigoCofradia
+	order by fecha;
+	
+begin
+	dbms_output.put_line('SEMANA SANTA DE DOS HERMANAS');
+	for v_dias in c_dias loop
+		MostrarLineasT3(v_dias.DiaProcesion,v_dias.CodigoCofradia,v_dias.fecha);
+	end loop;
+	
+end;
+/
+
+#Procedimiento principal(Llama a otros tres procedimientos)
+
+Create or replace procedure GenerarInformes(p_tipo number,p_info varchar2)
+is
+begin
+	case
+		when p_tipo = 1 then
+			GenerarInformeT1(p_info);
+		when p_tipo = 2 then
+			GenerarInformeT2(p_info);
+		when p_tipo = 3 then
+			GenerarInformeT3;
+		else
+			dbms_output.put_line('Tipo Incorrecto');
+	end case;
+end;
+/
+

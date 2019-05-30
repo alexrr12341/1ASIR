@@ -1,0 +1,67 @@
+Paso 1)
+Create or replace package PkgZonasRiegos
+as
+	TYPE tZonRiegos is RECORD
+	(
+		CodZona Zonas.Codigo%type,
+		HorasRiego number
+	);
+	TYPE tRiegosZonas is table of tZonRiegos
+	index by binary_integer;
+	vTabRiegos tRiegosZonas;
+end;
+/
+
+--Creamos un trigger que recoja en un cursor la información que necesitamos.
+
+Create or replace trigger RellenarHorasZonas
+before insert on RiegosPorZona
+declare
+	cursor c_horas is
+	Select Cod_Zona,min(trunc(sysdate-FechaMasHora)*24) as horas
+	from RiegosPorZona
+	group by Cod_Zona;
+	i number:=0;
+begin
+	for v_horas in c_horas loop
+		PkgZonasRiegos.vTabRiegos(i).CodZona:=v_horas.Cod_Zona;
+		PkgZonasRiegos.vTabRiegos(i).HorasRiego:=v_horas.horas;
+		i:=i+1;
+	end loop;
+end;
+/
+
+Create or replace function SacarHorasPorRiego(p_codzona RiegosPorZona.Cod_Zona%type)
+return number
+is
+begin
+	for i in PkgZonasRiegos.vTabRiegos.FIRST..PkgZonasRiegos.vTabRiegos.LAST loop
+		if PkgZonasRiegos.vTabRiegos(i).CodZona=p_codzona then
+			return PkgZonasRiegos.vTabRiegos(i).HorasRiego;
+		end if;
+	end loop;
+end;
+/
+
+Create or replace procedure ActualizarPaqueteriaHoras(p_codzona RiegosPorZona.Cod_Zona%type,p_horas number)
+is
+begin
+	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST+1).CodZona:=p_codzona;
+	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST).HorasRiego:=p_horas;
+end;
+/
+
+Create or replace trigger ControlHorasZonas
+before insert on RiegosPorZona
+for each row
+declare
+	v_horasporriego number:=0;
+begin
+	v_horasporriego:=SacarHorasPorRiego(:new.Cod_Zona);
+	if v_horasporriego>8 then
+		raise_application_error(-20001,'Riego realizado en menos de 8 horas');
+	else
+		ActualizarPaqueteriaHoras(:new.Cod_Zona,v_horasporriego);
+	end if;
+end;
+/

@@ -1,0 +1,368 @@
+###1 Averigua el DNI de todos los clientes.
+Select DNI,nombre
+from clientes;
+
+
+###2 Consulta todos los datos de todos los programas.
+Select *
+from programas;
+
+###3 Obtén un listado con los nombres de todos los programas.
+Select nombre
+from programas;
+
+
+###4 Genera una lista con todos los comercios.
+Select *
+from comercios;
+
+###5 Genera una lista de las ciudades con establecimientos donde se venden programas, sin que aparezcan valores duplicados (utiliza DISTINCT).
+Select distinct ciudad
+from comercios,distribuye
+where comercios.cif= distribuye.cif_empresa;
+
+
+###6 Obtén una lista con los nombres de programas, sin que aparezcan valores duplicados (utiliza DISTINCT).
+Select distinct nombre
+from programas;
+
+###7 Obtén el DNI más 4 de todos los clientes.
+Select DNI+4
+from clientes;
+
+###8 Haz un listado con los códigos de los programas multiplicados por 7.
+Select cod_programa * 7
+from programas;
+
+###9 ¿Cuáles son los programas cuyo código es inferior o igual a 10?
+Select *
+from programas
+where cod_programa<='10';
+
+
+###10 ¿Cuál es el programa cuyo código es 11?
+Select distinct *
+from programas
+where cod_programa='11';
+
+
+###11 ¿Qué fabricantes son de Estados Unidos?
+Select *
+from fabricantes
+where pais='Estados Unidos';
+
+
+###12 ¿Cuáles son los fabricantes no españoles? Utilizar el operador IN.
+Select *
+from fabricantes
+where pais not in ('España');
+
+
+###13 Obtén un listado con los códigos de las distintas versiones de Windows.
+Select cod_programa
+from programas
+where nombre like 'Windows';
+
+
+###14 ¿En qué ciudades comercializa programas El Corte Inglés?
+Select ciudad
+from comercios
+where nombre='El Corte Ingles';
+
+
+###15 ¿Qué otros comercios hay, además de El Corte Inglés? Utilizar el operador IN.
+Select *
+from comercios
+where nombre not in ('El Corte Ingles');
+
+
+
+###16 Genera una lista con los códigos de las distintas versiones de Windows y Access. Utilizar el operador IN.
+Select cod_programa
+from programas
+where nombre in ('Windows','Access');
+
+###17 Obtén un listado que incluya los nombres de los clientes de edades comprendidas entre 10 y 25 y de los mayores de 50 años. Da una solución con BETWEEN y otra sin BETWEEN.
+Select nombre
+from clientes
+where (edad between 10 and 25)
+or edad>=50;
+
+Select nombre
+from clientes
+where (edad>=10 and edad<=25) or edad>=50;
+
+
+###18 Saca un listado con los comercios de Sevilla y Madrid. No se admiten valores duplicados.
+Select distinct *
+from comercios
+where ciudad='Sevilla' or ciudad='Madrid';
+
+
+###19 ¿Qué clientes terminan su nombre en la letra “o”?
+Select *
+from clientes
+where nombre like '%o';
+
+
+###20 ¿Qué clientes terminan su nombre en la letra “o” y, además, son mayores de 30 años?
+Select *
+from clientes
+where nombre like '%o'
+and edad>=30;
+
+
+###21 Obtén un listado en el que aparezcan los programas cuya versión finalice por una letra i, o cuyo nombre comience por una A o por una W.
+Select *
+from programas
+where nombre like 'A%' or nombre like 'W%'
+or version='%i';
+
+
+###22 Obtén un listado en el que aparezcan los programas cuya versión finalice por una letra i, o cuyo nombre comience por una A y termine por una S.
+Select *
+from programas
+where version like '%i'
+and (nombre like 'A%S');
+
+
+###23 Obtén un listado en el que aparezcan los programas cuya versión finalice por una letra i, y cuyo nombre no comience por una A.
+Select *
+from programas
+where version like '%i'
+and nombre not like 'A%';
+
+###24 Obtén una lista de empresas por orden alfabético ascendente.
+Select *
+from comercios 
+where cif in (Select cif_empresa
+from distribuye 
+where codigo_prog in (Select cod_prog
+from desarrolla 
+where cod_fabricante in (Select cod_fab
+from fabricantes ))); 
+
+Select distinct c.nombre,f.nombre
+from comercios c,distribuye d,desarrolla de,fabricantes f
+where c.cif = d.cif_empresa
+and d.codigo_prog=de.cod_prog
+and de.cod_fabricante=f.cod_fab ;
+
+Select distinct c.nombre from comercios c
+UNION Select distinct f.nombre from fabricantes f
+order by nombre asc;
+
+
+
+###25 Genera un listado de empresas por orden alfabético descendente.
+Select *
+from comercios
+where cif in (select cif_empresa
+from desarrolla)
+
+Select distinct c.nombre from comercios c
+UNION Select distinct f.nombre from fabricantes f
+order by nombre desc;
+
+###26 Obtén un listado de programas por orden de versión
+Select *
+from programas
+order by version;
+
+
+###27 Genera un listado de los programas que desarrolla Oracle.
+Select *
+from programas
+where cod_programa in (Select cod_prog
+from desarrolla
+where cod_fabricante in
+(select cod_fab
+from fabricantes
+where nombre='Oracle' ));
+###28 ¿Qué comercios distribuyen Windows?
+Select *
+from comercios
+where cif in (select cif_empresa
+from distribuye
+where codigo_prog in (Select
+cod_programa
+from programas
+where nombre='Windows'));
+
+###29 Genera un listado de los programas y cantidades que se han distribuido a El Corte Inglés de Madrid.
+Select distinct codigo_prog,cantidad
+from distribuye
+where cif_empresa in (Select cif
+from comercios
+where nombre='El Corte Ingles'
+and ciudad='Madrid');
+
+###30 ¿Qué fabricante ha desarrollado Freddy Hardest?
+Select cod_fabricante
+from desarrolla
+where cod_prog in (Select cod_programa
+from programas
+where nombre='Freddy Hardest')
+
+###31 Selecciona el nombre de los programas que se registran por Internet.
+Select distinct nombre
+from programas
+where cod_programa in (Select codigo_programa
+from registra
+where medio='Internet');
+###32 Selecciona el nombre de las personas que se registran por Internet.
+Select nombre
+from clientes
+where dni in (Select dni_cliente
+from registra
+where medio='Internet');
+###33 ¿Qué medios ha utilizado para registrarse Pepe Pérez?
+Select distinct c.nombre,r.medio
+from registra r,clientes c
+and c.nombre='Pepe Perez';
+###34 ¿Qué usuarios han optado por Internet como medio de registro?
+Select distinct nombre
+from clientes
+where dni in (Select dni_cliente
+from registra
+where medio='Internet');
+###35 ¿Qué programas han recibido registros por tarjeta postal?
+Select distinct codigo_programa
+from registra
+where medio='Tarjeta postal';
+
+###36 ¿En qué localidades se han vendido productos que se han registrado por Internet?
+Select ciudad
+from comercios
+where cif in (Select cif_emp
+from registra
+where medio='INTERNET');
+###37 Obtén un listado de los nombres de las personas que se han registrado por Internet, junto al nombre de los programas para los que ha efectuado el registro.
+Select c.nombre,p.nombre
+from clientes c,programas p 
+where c.dni in (Select dni_cliente
+from registra
+where codigo_programa in (Select p.cod_programa
+from programas));
+
+MAL
+
+BIEN
+
+Select c.nombre,p.nombre
+from clientes c,programas p
+where (c.dni,p.cod_programa) in (Select r.dni_cliente,r.codigo_programa
+from registra r
+where medio= 'Internet');
+###38 Genera un listado en el que aparezca cada cliente junto al programa que ha registrado, el medio con el que lo ha hecho y el comercio en el que lo ha adquirido.
+Select c.dni,p.nombre,r.medio,cr.nombre
+from clientes c,programas p,registra r,comercios cr
+where c.dni=r.dni_cliente
+and p.cod_programa=r.codigo_programa
+and cr.cif=r.cif_emp;
+###39 Genera un listado con las ciudades en las que se pueden obtener los productos de Oracle.
+Select ciudad
+from comercios
+where cif in (Select cif_empresa
+from distribuye
+where codigo_prog in (Select cod_prog
+from desarrolla
+where cod_fabricante in (Select cod_fab
+from fabricantes
+where nombre='Oracle')));
+###40 Obtén el nombre de los usuarios que han registrado Access XP.
+Select nombre
+from clientes
+where dni in (Select dni_cliente
+from registra
+where codigo_programa in (Select cod_programa
+from programas
+where nombre='ACCESS'
+and version='XP'));
+###41 Nombre de aquellos fabricantes cuyo país es el mismo que ʻOracleʼ. (Subconsulta).
+Select nombre
+from fabricantes
+where pais in (Select pais
+from fabricantes
+where nombre='Oracle');
+###42 Nombre de aquellos clientes que tienen la misma edad que Pepe Pérez. (Subconsulta).
+Select nombre
+from clientes
+where edad in (Select edad
+from clientes
+where nombre='Pepe Perez');
+###43 Genera un listado con los comercios que tienen su sede en la misma ciudad que tiene el comercio ʻFNACʼ. (Subconsulta).
+Select *
+from comercios
+where ciudad in (Select ciudad
+from comercios
+where nombre='FNAC');
+###44 Nombre de aquellos clientes que han registrado un producto de la misma forma que el cliente ʻPepe Pérezʼ. (Subconsulta).
+Select nombre
+from clientes
+where dni in (Select dni_cliente
+from registra)
+and nombre in (Select nombre
+from clientes
+where nombre='Pepe Perez');
+
+Select nombre
+from clientes
+where dni in (Select dni_cliente
+from registra
+where medio in(Select medio
+from registra
+where dni_cliente in (Select dni
+from clientes
+where nombre='Pepe Perez')));
+###45 Obtener el número de programas que hay en la tabla programas.
+Select count(cod_programa)
+from programas;
+###46 Calcula el número de clientes cuya edad es mayor de 40 años.
+Select count(dni)
+from clientes
+where edad>40;
+###47 Calcula el número de productos que ha vendido el establecimiento cuyo CIF es 1.
+Select sum(cantidad)
+from distribuye
+where cif_empresa='1';
+###48 Calcula la media de programas que se venden cuyo código es 7.
+Select avg(cantidad)
+from distribuye
+where codigo_prog='7';
+###49 Calcula la mínima cantidad de programas de código 7 que se ha vendido
+Select min(cantidad)
+from distribuye
+where codigo_prog='7';
+###50 Calcula la máxima cantidad de programas de código 7 que se ha vendido.
+Select max(cantidad)
+from distribuye
+where codigo_prog='7';
+###51 ¿En cuántos establecimientos se vende el programa cuyo código es 7?
+Select count(cif_empresa)
+from distribuye
+where codigo_prog='7';
+###52 Calcular el número de registros que se han realizado por Internet.
+Select count(medio)
+from registra
+where medio='Internet';
+###53 Obtener el número total de programas que se han vendido en ʻSevillaʼ.
+Select sum(cantidad)
+from distribuye
+where cif_empresa in (Select cif
+from comercios
+where ciudad='Sevilla');
+###54 Calcular el número total de programas que han desarrollado los fabricantes cuyo país es ʻEstados Unidosʼ.
+Select count(*)
+from progranas
+where cod_programa in (Select cod_prog
+		       from desarrolla
+		       where cod_fabricante in (Select cod_fab
+						from fabricantes
+						where pais='Estados Unidos'));
+###55 Visualiza el nombre de todos los clientes en mayúscula. En el resultado de la consulta debe aparecer también la longitud de la cadena nombre.
+Select concat(upper(nombre),' ',length(nombre) -1)
+from clientes;
+###56 Con una consulta concatena los campos nombre y versión de la tabla PROGRAMA.
+Select concat(nombre,'',version)
+from programas;

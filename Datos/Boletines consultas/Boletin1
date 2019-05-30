@@ -1,0 +1,120 @@
+
+Ejercicio 1,3,4,5,7,8,9,10,11,12,13,14,15)
+
+1)
+select ename,sal
+from emp
+where sal>(select sal
+	   from emp
+	   where ename='SMITH');
+2)
+select ename,dname
+from emp,dept
+where emp.deptno=dept.deptno;
+
+3)
+Select ename,hiredate
+From emp
+Where deptno = 10 and extract(YEAR from hiredate)<1998;
+3*)
+Select ename,hiredate
+From emp
+Where deptno = 10 and to_char(hiredate,YYYY)<'1998';
+
+3**)
+Select ename,hiredate
+From emp
+Where deptno = 10 and to_number(to_char(hiredate,YYYY))<1998;
+
+4) IMPORTANTE EL WHERE QUE NO SABIA COMO HACERLO, NVL transforma los nulos en 0
+Select ename,sal
+From emp
+Where Job='CLERK' and sal+nvl(comm,0)<2000;
+
+5)
+Select ename,comm
+From emp
+Where deptno=10 and (COMM is NULL or comm=0);
+
+6)
+select ename,deptno
+from emp
+where deptno in (select deptno
+		 from emp
+		 where ename='ALLEN');
+
+7)
+Select ename
+From emp
+Where regexp_like(ename,'^A.*');
+
+8)
+select ename,deptno
+from emp
+where deptno in (select deptno
+		 from dept
+		 where loc='DALLAS');
+
+9)
+select ename,sal
+from emp
+where deptno = (select deptno
+		from dept
+		where dname='ACCOUNTING');
+
+10)
+Select ename,comm
+From emp
+Where Job='SALESMAN';
+
+11)
+Select ename,hiredate,job
+From emp
+Where Job <>'SALESMAN' and Job<>'CLERK';
+
+11*)
+Select ename,hiredate,job
+From emp
+Where job not in ('CLERK','SALESMAN');
+
+12)
+
+select ename,sal,comm,deptno
+from emp
+where deptno in (select deptno
+	      from emp
+	      where ename='JONES');
+
+13)
+
+select dname
+from dept
+where deptno in (select distinct deptno
+		 from emp
+		 where sal < (select sal
+			      from emp
+			      where ename='ALLEN'));
+
+14)
+
+select empno,ename
+from emp
+where sal < (select sal
+	     from emp
+	     where ename='ALLEN')
+and sal > (select sal
+	   from emp
+	   where ename='SMITH')
+and deptno in (select deptno
+		from dept
+		  where loc='DALLAS');
+
+
+15)
+
+select ename
+from emp
+where empno in (select mgr
+		from emp
+		where deptno=10);
+

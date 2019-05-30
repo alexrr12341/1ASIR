@@ -1,0 +1,19 @@
+
+<personas>
+<persona id='1' fecha="14/01/13">
+<nombre>Pepe</nombre>
+<apellidos>Ramirez</nombre>
+<direccion altitud="" longitud="">
+	<calle> ....</calle>
+	<numero>...</numero>
+	<ciudad>----</ciudad>
+</direccion>
+</persona>
+<persona>
+...
+...
+..
+.
+..
+</persona>
+</personas>

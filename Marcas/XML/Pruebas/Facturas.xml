@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura fecha='1999-10-12 22:00:00 GMT'>
+    <codigo>1234-A</codigo>
+    <cliente>
+        <dni>53241243D</dni>
+        <nombre>Alfonso Gutierrez de la Vera</nombre>
+        <Direccion>Calle Pepito nº1</Direccion>
+        <CP>12343</CP>
+        <Poblacion>La pepa</Poblacion>
+    </cliente>
+    <productos codigo='6'>
+    <Denominacion>Mesa para Portatil</Denominacion>
+    <Precio>31,43€</Precio>
+    <IVA>21%</IVA>
+    <cantidad>2</cantidad>
+    </productos>
+    <descuento>2%</descuento>
+</factura>

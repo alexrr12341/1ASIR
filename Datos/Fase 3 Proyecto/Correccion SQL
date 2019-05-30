@@ -1,0 +1,33 @@
+1: 0.25/1 Para ver qué empleado ha sido más tiempo responsable de algún vivero habrá que sumar todos los periodos de responsabilidad de cada uno de ellos. En la consulta del CodVivero hay un nivel de subconsulta innecesario. VISTO
+
+
+2: 0/1 Sobra un distinct en la segunda vista.VISTO
+En la tercera vista hay un nivel de subconsultas innecesario. VISTO
+Para ver el riego más largo hay un atributo duración. VISTO Y CAMBIADO.
+Que el riego sea del último año no está bien calculado. VISTO
+Da error porque ProductoPedido devuelve varias filas. VISTO
+Cuando haces varias vistas, es buena práctica añadir comentarios con lo que devuelve cada una de ellas.
+
+
+3: 0/1 No cuentas el número de zonas que han recibido riegos sino el número de riegos. Count no funciona como tu crees; cuando haces count de una columna te devuelve el número de filas en las que esa columna está rellena. VISTO
+
+
+4: 0/1 El enunciado pide el valor total de los artículos de decoración que tiene en stock cada vivero que cumpla la condición impuesta. Hay que calcular el valor total de los artículos de ese tipo almacenados en cada uno de esos viveros.VISTO
+
+
+5: 0/1 Tienen que haberlas tenido en todos y cada uno de esos años no en alguno de ellos. VISTO
+
+
+6: 0/1 Si un empleado ha tenido dos turnos lo cuentas dos veces. El último mes no se calcula así. VISTO 
+
+
+7: 0.5/1 No calculas el número de días consecutivos sin riego sino el número de días entre el primer y el último riego. De todos modos, como es la más difícil te doy medio punto por el intento. NO INTENTAR
+
+
+8: 0/1 No calculas el que ha trabajado más días en cada vivero, sino el que ha tenido el turno más largo, que no es lo mismo. Además, no correlacionas correctamente el vivero y el empleado.
+
+
+9: 1/1
+
+
+10: 0/1 Una unión no puede funcionar si no tiene el mismo número de columnas en ambas partes. No está bien calculada la planta más abundante en el vivero ni el empleado que ha sido responsable del vivero más tiempo y, sobre todo, esos datos no están correlacionados con el vivero correspondiente.

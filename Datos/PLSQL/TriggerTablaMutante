@@ -1,0 +1,168 @@
+Haz un trigger que no deje que un departamento tenga mas de cuatro empleados.
+
+Create or replace trigger NoMasCuatro
+before insert on emp
+for each row
+declare
+	v_numemp number;
+begin
+	
+	Select count(*) into v_numemp
+	from emp
+	where deptno=:new.deptno;
+	if v_numemp >= 4 then
+		raise_application_error(-20001,'Ya hay mucha gente ahi');
+	end if;
+end;
+/
+
+^
+|
+|
+|
+ESTO NO FUNCIONA WEY
+
+
+Create or replace package Cuentadepts
+is
+	TYPE dTablacontadores is table of number
+	index by binary_integer;
+	
+	vTabla dTablaContadores;
+end;
+/ 
+Create or replace trigger PorSentencias
+before insert on emp
+declare
+	cursor c_cont is
+	select deptno,count(*) as numemp
+	from emp
+	group by deptno;
+begin
+	for v_cont in c_cont loop
+		vTabla(v_cont.deptno):=v_cont.numpemp;
+	end loop;
+end;
+/
+
+Create or replace trigger PorFilas
+before insert on emp
+for each row
+	if vTabla(:new.deptno) >= 4 then
+		raise_application_error(-20001,'Hay demasiada gente');
+	else
+		vTabla(:new.deptno):=vTabla(:new.deptno)+1;
+	end if;
+end;
+/
+
+
+
+2)
+
+
+Create or replace package PkgSueldo
+as
+	v_sueldopresi number;
+end;
+/
+
+Create or replace trigger PorSentencia
+before insert on emp
+begin
+	Select sal into PkgSueldo.v_sueldopresi
+	from emp
+	where job='PRESIDENT';
+end;
+/
+
+Create or replace trigger PorFila
+before insert on emp
+for each row
+begin
+	if :new.sal > PkgSueldo.v_sueldopresi then
+		raise_application_error(-20001,'No puedes meter un sueldo mayor que el presidente');
+	end if;
+end;
+/
+
+Haz un trigger que impida que haya mas de cuatro empleados.
+
+Create or replace package PkgContadores
+is
+	TYPE tRegContadores IS record of
+	(
+		coddept dept.deptno%type,
+		numemp number
+	);
+	Type tTablaContadores is table of tRegContadores
+	INDEX OF BINARY_INTEGER;
+	
+	vTabla tTablaContadores;
+end;
+/
+	
+Create or replace trigger PorSentencias
+before insert on emp
+declare
+	cursor c_emp is
+	select deptno,count(e.empno) as num
+	from emp e,dept d
+	where e.deptno(+)=d.deptno
+	group by deptno;
+	i number:=0;
+begin
+	for v_emp in c_emp loop
+		PkgCotadores.vTabla(i).coddept:=v_emp.deptno;
+		PkgContadores.vTabla(i).numemp:=v_emp.num;
+		i:=i+1;
+	end loop;
+end;
+/
+
+Create or replace function DevolverNumEmpleados(p_deptno dept.deptno%type)
+return number
+is
+	v_numemp number;
+begin
+	for i in PkgContadores.vTabla.FIRST..PkgContadores.vTabla.LAST loop
+		if PkgContadores.vTabla(i).coddept=p_deptno then
+			v_numemp:=PkgContadores.vTabla(i).numemp;
+	end loop;
+	return v_numemp;
+end;
+/
+
+Create or replace procedure IncrementarNumEmpleados(p_deptno dept.deptno%type)
+is
+begin
+	for i in PkgContadores.vTabla.FIRST..PkgContadores.vTabla.LAST loop
+		if PkgContadores.vTabla(i).coddept=p_deptno then
+			PkgContadores.vTabla(i).numemp:=PkgContadores.vTabla(i).numemp+1;
+	end loop;
+end;
+/
+
+Create or replace CrearDepartamentoNuevo(p_deptno dept.deptno%type)
+is
+begin
+	PkgContadores.vTabla(PkgContadores.vTabla.LAST+1).coddept=p_detpno;
+	PkgContadores.vTabla(PkgContadores.vTabla.LAST).coddept=1;
+end;
+/
+
+Create or replace trigger PorFilas
+before insert on emp
+for each rowmber;
+begin
+	v_numempleadosactual:=DevolverNumEmpleados(:new.deptno);
+	if v_numempactual:=-1 then
+		CrearDepartamentoNuevo(:new.deptno)
+	end if;
+	if v_numempleadosactual>=4 then
+		raise_application_error(-20001,'Departamento lleno');
+	else
+		IncrementarNumEmpleados(:new.deptno)
+	end if;
+end;
+/	

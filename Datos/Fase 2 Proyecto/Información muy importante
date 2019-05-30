@@ -1,0 +1,359 @@
+Viveros
+-------
+4 Viveros
+Dos Hermanas->Eden Garden(12345) D.Ctra. Dos Hermanas Utrera km, 3, 41702 Sevilla (Dos Hermanas) T.954720244, Nazagarden S.L(12114) D.Carretera Montequinto a Dos Hermanas, Km 2.5, 41089 Sevilla (Dos Hermanas) T.854537288
+Gelves->Viveros aspanri(11567) D.Calle Mar Báltico, 3, 41927 Mairena del Aljarafe, Sevilla(Gelves) T.955600977
+Alcalá->Surdeplant(64443) D.Viveros Molina, Autovia A—376 Km, 10,5 Frente a, 41500, Sevilla(Alcala) T.615033716
+
+insert into Viveros(Codigo,Direccion,Telefono)
+values('12345','Ctra. Dos Hermanas Utrera km, 3, 41702 Sevilla (Dos Hermanas)','954720244');
+insert into Viveros(Codigo,Direccion,Telefono)
+values('12114','Carretera Montequinto a Dos Hermanas, Km 2.5, 41089 Sevilla (Dos Hermanas)','854537288');
+insert into Viveros(Codigo,Direccion,Telefono)
+values('11567','Calle Mar Báltico, 3, 41927 Mairena del Aljarafe, Sevilla(Gelves)','955600977');
+insert into Viveros(Codigo,Direccion,Telefono)
+values('64443','Viveros Molina, Autovia A—376 Km, 10,5 Frente a, 41500, Sevilla(Alcala)','615033716');
+
+Empleados
+-----------------
+6 Empleados
+Dos Hermanas->Manuel Perez Fernandez(49123425W),Felipe Gutierrez Rodríguez(45321357H),
+Gelves->Luis Vázquez Schrodinger(23531234A), Benito Adanez Alves(43213567V)
+Alcalá->Francisco Ansúrez Álvarez(94523421E), Jose Dominguez Ferris(32953215B)
+
+insert into Empleados(DNI,Nombre,Apellido,Direccion,eMail)
+values('49123425W','Manuel','Perez Fernandez','C/Alarcon Nº1,Dos Hermanas','manuelpf@gmail.com');
+insert into Empleados(DNI,Nombre,Apellido,Direccion,eMail)
+values('45321357H','Felipe','Gutierrez Rodríguez','C/San Juan Nº3,Dos Hermanas','felipeguti@gmail.es');
+insert into Empleados(DNI,Nombre,Apellido,Direccion,eMail)
+values('23531234A','Luis','Vázquez Schrodinger','C/Ceuta Nº10,Gelves','luisaostuff@gmail.org');
+insert into Empleados(DNI,Nombre,Apellido,Direccion,eMail)
+values('43213567V','Benito','Adanez Alves','C/Bolivia Nº22,Gelves','benitoaa@gmail.es');
+insert into Empleados(DNI,Nombre,Apellido,Direccion,eMail)
+values('94523421E','Francisco','Ansúrez Álvarez','C/Gravina Nº22,Alcala','faa232@gmail.es');
+insert into Empleados(DNI,Nombre,Apellido,Direccion,eMail)
+values('32953215B','Jose','Dominguez Ferris','C/Grecia Nº32,Alcala','josedomferris@gmail.es');
+
+Responsables
+-----------------
+8 Responsables
+Dos Hermanas->Manuel Perez Fernandez Empieza el dia 2015-02-04 y termina el 2015-02-05 (YYYY-MM-DD)
+	      Felipe Gutierrez Rodríguez Empieza el dia 2015-02-06 y empieza el dia 2015-02-07 (YYYY-MM-DD)
+
+Gelves->Luis Vázquez Schrodinger Empieza el dia 2018-04-05 y termina el dia 2019-04-05 (YYYY-MM-DD)
+	 Benito Adanez Alves Empieza el dia 2014-10-12 y termina el dia 2016-10-12 (YYYY-MM-DD)
+	 Benito Adanez Alves Empieza el dia 2012-05-10 y termina el dia 2012-06-11 (YYYY-MM-DD)
+
+Alcalá->Francisco Ansúrez Álvarez Empieza el dia 2016-12-12 y termina el dia 2017-10-01 (YYYY-MM-DD)
+	Francisco Ansúrez Álvarez Empieza el dia 2017-05-04 y termina el dia 2018-06-04 (YYYY-MM-DD)
+	Jose Dominguez Ferris Empieza el dia 2018-07-04 y termina el dia 2018-08-06 (YYYY-MM-DD)
+
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('12345','2015-02-04','49123425W','2015-02-05');
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('12114','2015-02-06','45321357H','2015-02-07');
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('11567','2018-04-05','23531234A','2019-04-05');
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('11567','2014-10-12','43213567V','2016-10-12');
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('11567','2012-05-10','43213567V','2012-06-11');
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('64443','2016-12-12','94523421E','2017-10-01');
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('64443','2017-05-04','94523421E','2018-06-04');
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('64443','2018-07-04','32953215B','2018-08-06');
+
+C¡
+Zonas
+-----------------
+10 Zonas
+
+Tipos->
+
+Siembra-> DH(12345) -> Codigo(44212),Nombre(Sembrado),Descripción(En esta zona se sembrarán las semillas traidas por los proveedores),Tipo(Siembra)
+	  GE(11567) -> Codigo(54321),Nombre(Sembrado Marino),Descripción(En esta zona sembraremos las plantas marinas),Tipo(Siembra)
+	  AL(64443) -> Codigo(45311),Nombre(Sembrado Plantas),Descripción(En esta zona se sembrarán las plantas),Tipo(Siembra)
+Producción-> DH(12114) -> Codigo(56532),Nombre(MultiProd),Descripción(En esta zona produciremos masivamente las plantas),Tipo(Producción)
+	     GE(11567) -> Codigo(65321),Nombre(ProduccionCarnivora),Descripción(En esta zona produciremos plantas carnivoras),Tipo(Producción)
+	     GE(11567) -> Codigo(57777),Nombre(ProduccionNormal),Descripción(En esta zona produciremos plantas normales),Tipo(Producción)
+	     AL(64443) -> Codigo(67431),Nombre(Productivo),Descripción(En esta zona produciremos las plantas),Tipo(Producción)
+Aclimatación-> DH(12114) -> Codigo(87644),Nombre(Aclimativo),Descripción(En esta zona aclimataremos las plantas),Tipo(Aclimatacion)
+	       DH(12345) -> Codigo(59314),Nombre(Aclimatación),Descripción(En esta zona aclimataremos las plantas),Tipo(Aclimatacion)
+	       GE(11567) -> Codigo(99999),Nombre(Aclimataciónes),Descripción(En esta zona aclimataremos las plantas),Tipo(Producción)
+
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('44212','12345','Sembrado','En esta zona se sembrarán las semillas traidas por los proveedores','Siembra');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('54321','11567','Sembrado Marino','En esta zona sembraremos las plantas marinas','Siembra');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('45311','64443','Sembrado Plantas','En esta zona se sembrarán las plantas','Siembra');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('56532','12114','MultiProd','En esta zona produciremos masivamente las plantas','Producción');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('65321','11567','ProduccionCarnivora','En esta zona produciremos plantas carnivoras','Producción');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('57777','11567','ProduccionNormal','n esta zona produciremos las plantas','Producción');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('67431','64443','Productivo','En esta zona se sembrarán las plantas','Producción');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('87644','12114','Aclimativo','En esta zona aclimataremos las plantas','Aclimatacion');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('59314','12345','Aclimatacion','En esta zona aclimataremos las plantas','Aclimatacion');
+insert into Zonas(Codigo,Cod_Vivero,Nombre,Descripcion,Tipo)
+values('99999','11567','Aclimataciones','En esta zona aclimataremos las plantas','Aclimatacion');
+
+
+Turnos por Zona
+-----------------
+Vivero->DH(12345)->Zona(44212),Empieza el dia 2015-02-04,acaba 2015-02-05,Empleado(49123425W)
+		   Zona(56532),Empieza el dia 2015-04-20,acaba 2015-04-30,Empleado(45321357H)
+		   Zona(59314),Empieza el dia 2016-10-12,acaba 2017-02-01,Empleado(49123425W)
+	DH(12114)->Zona(56532),Empieza el dia 2015-03-05 y acaba 2015-04-05,Empleado(45321357H)
+		   Zona(56532),Empieza el dia 2016-04-05 y acaba 2016-08-10, Empleado(45321357H)
+		   Zona(87644),Empieza el dia 2014-04-07 y acaba 2014-06-07, Empleado(45321357H)
+	GE(11567)->Zona(65321),Empieza el dia 2016-04-05 y acaba 2016-05-30,Empleado(23531234A)
+		 ->ZONA(57777),Empieza el dia 2018-04-05 y acaba 2019-02-03,Empleado(43213567V)
+		 ->Zona(57777),Empieza el dia 2014-05-06 y acaba 2015-05-06,Empleado(43213567V)
+	AL(64443)->Zona(67431),Empieza el dia 2018-05-03 y acaba 2018-06-03,Empleado(32953215B)
+		 ->Zona(64443),Empieza el dia 2010-05-01 y acaba 2012-05-01,Empleado(94523421E)
+		 ->Zona(45311),Empieza el dia 2011-05-01 y acaba 2012-12-01,Empleado(32953215B)
+
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('12345','44212','2015-02-04','49123425W','2015-02-05');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('12345','59314','2015-04-20','45321357H','2015-04-30');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('12114','56532','2015-03-05','45321357H','2015-04-05');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('11567','65321','2016-04-05','23531234A','2016-05-30');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('64443','67431','2018-05-03','32953215B','2018-06-03');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('12114','56532','2016-04-05','45321357H','2016-08-10');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('64443','64443','2018-04-05','32953215B','2019-02-03');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('64443','45311','2010-05-01','94523421E','2012-05-01');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('12114','87644','2014-04-07','45321357H','2014-06-07');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('11567','57777','2014-05-06','43213567V','2015-05-06');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('11567','45311','2011-05-01','32953215B','2012-12-01');
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('11567','59314','2016-10-12','49123425W','2017-02-01');
+
+Riegos
+------------
+
+insert into Riegos(Codigo,Tipo)
+values('12345','Aspersion');
+insert into Riegos(Codigo,Tipo)
+values('10000','Goteo');
+insert into Riegos(Codigo,Tipo)
+values('10001','Difusion');
+
+
+RiegosPorZona
+--------------
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2015-12-12 18:00:00','11567','12345','65321',2,20);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2016-10-10 08:00:00','11567','10001','59314',3,30);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2017-05-10 09:00:00','12114','12345','56532',5,15);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2018-01-11 18:00:00','64443','10000','67431',2,10);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2017-02-10 19:00:00','12345','10001','59314',5,15);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2014-05-10 19:00:00','11567','12345','57777',5,10);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2017-02-10 19:30:00','11567','10001','59314',1,5);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2018-01-10 19:59:00','64443','10001','67431',1,1);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2014-01-12 08:50:00','11567','12345','57777',5,15);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2016-05-12 19:00:00','11567','10000','45311',3,15);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2016-05-05 19:00:00','11567','10000','45311',4,15);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2017-04-03 19:20:00','11567','12345','45311',10,15);
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2015-06-05 19:25:00','11567','12345','45311',10,15);
+
+Plantas
+-------------
+insert into Plantas(Codigo,NombreComercial,NombreCientifico)
+values('10000','Rosales','Tromotriche Revoluta');
+insert into Plantas(Codigo,NombreComercial,NombreCientifico)
+values('10001','Lavanda','Lavandula Angustifolia');
+insert into Plantas(Codigo,NombreComercial,NombreCientifico)
+values('10002','Romero','Rosmarinus Officinalis');
+insert into Plantas(Codigo,NombreComercial,NombreCientifico)
+values('10003','Geranio','Geranium Geraniaceae');
+insert into Plantas(Codigo,NombreComercial,NombreCientifico)
+values('10004','Gitanilla','Pelargonium Peltatum');
+insert into Plantas(Codigo,NombreComercial,NombreCientifico)
+values('10005','Citricos','Citrus Citroidae');
+
+Productos_Planta
+-----------------
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1100400','10000',1);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1100200','10001',3);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('10002','10002',4);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1101100','10003',2);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1100700','10004',3);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1100600','10005',5);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1100300','10001',6);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1101000','10002',8);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1101200','10003',9);
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1100800','10004',10);
+
+Productos
+----------------
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100000','Fertilizantes',3);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100100','Brezo',30.2);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100200','Lavanda',1.49);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100300','Lavanda adulta',1.6);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100400','Rosales mini',3.9);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100500','Rosales tallo',25.5);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100600','Bonsai',0.7);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100700','Gitanilla',3.5);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100800','Gitanilla adulta',4);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1100900','Romero',5);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1101000','Romero Adulto',5.5);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1101100','Geranio',3.5);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1101200','Geranio adulto',4.0);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1101300','Maceta',0.83);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1101400','Velas Aromaticas',1.99);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1101500','Arbol artificial banbu',31.99);
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1101600','Arbol de caucho artificial',19.99);
+
+ArticulosDecoracion
+--------------------
+insert into ArticulosDecoracion(Cod_Producto,Color,Descripcion)
+values('D-1100100','Marron','Cubierta para zonas de plantacion');
+insert into ArticulosDecoracion(Cod_Producto,Color,Descripcion)
+values('D-1101300','Marron','Macetas para plantas pequeñas.');
+insert into ArticulosDecoracion(Cod_Producto,Color,Descripcion)
+values('D-1101400','Verde','Vela aromatica,olor para plantas.');
+insert into ArticulosDecoracion(Cod_Producto,Color,Descripcion)
+values('D-1101500','Verde','Arbol de banbu artificial, articulo decorativo.');
+insert into ArticulosDecoracion(Cod_Producto,Color,Descripcion)
+values('D-1101600','Verde','Arbol de caucho artificial, articulo decorativo.');
+
+StockPorZona
+--------------
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','44212','2015-12-12','D-1100600',2);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','56532','2014-10-22','D-1100800',3);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','59314','2015-10-05','D-1100600',5);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','44212','2016-04-03','D-1100200',7);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12114','56532','2017-03-04','D-1100200',10);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12114','56532','2018-04-05','D-1101200',10);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12114','87644','2013-02-01','D-1100300',2);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12114','56532','2018-05-04','D-1100500',5);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12114','87644','2015-12-25','D-1101100',15);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2015-10-25','D-1101100',15);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','57777','2015-05-25','D-1101100',14);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2016-12-01','D-1101000',13);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','57777','2017-10-30','D-1100600',12);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','57777','2013-02-28','D-1101100',20);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2010-01-22','D-1100400',21);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2015-02-12','D-1100200',32);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','67431','2012-04-12','D-1100600',32);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','67431','2015-05-10','D-1101000',12);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','45311','2018-01-05','D-1101300',14);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','67431','2014-05-12','D-1100700',15);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','45311','2015-08-10','D-1100200',50);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','67431','2010-01-12','D-1100300',45);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','45311','2015-02-22','D-1101100',101);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','45311','2016-04-28','D-1100300',102);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','45311','2015-06-13','D-1101100',46);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2013-07-12','D-1100200',30);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2015-02-15','D-1100300',40);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2018-04-13','D-1100800',10);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','57777','2019-01-13','D-1101100',5);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','57777','2018-03-11','D-1100800',10);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','57777','2016-04-13','D-1100900',11);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','44212','2017-01-05','D-1101000',14);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','44212','2018-05-08','D-1101100',50);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','44212','2011-04-13','D-1100300',98);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','44212','2015-06-22','D-1101100',70);
+
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','45311','2017-11-14','D-1100300',72);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','57777','2017-01-18','D-1100800',54);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','57777','2016-06-20','D-1101100',32);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','45311','2011-01-22','D-1100200',44);
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','45311','2015-07-12','D-1100900',54);
+

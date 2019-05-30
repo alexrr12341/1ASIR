@@ -1,0 +1,128 @@
+1)Muestra el nombre de los empleados que ganan más de 1400 por orden descendiente de salario.
+emp(empno,ename,job,sal,comm,hiredate,mgr,deptno)
+dept(deptno,dname,loc)
+Select ename,sal
+from emp
+where sal+nvl(comm,0)>1400
+order by sal desc;
+
+2)Muestra el salario medio de los conserjes (job='CLERK').
+Select avg(sal)
+from emp
+where job='CLERK';
+
+3)Muestra el empleado que gana más junto con su salario dando el formato siguiente:'El nombre del empleado que más gana es xxxx, y gana nnnnn'
+Antes vamos a hacer otra
+Select ename,sal
+from emp
+where sal = (Select max(sal)
+	     from emp);
+
+Select 'El nombre del empleado que más gana es '||ename||',y gana '||sal
+from emp
+where sal=(select max(sal)
+	   from emp);
+
+4)Muestra los nombres de los conserjes ordenados por salario.
+Select ename,sal
+from emp
+order by sal;
+
+5) Muestra el gasto de personal total de la empresa, sumando salarios y comisiones.
+
+Select sum(sal+nvl(comm,0))
+from emp;
+
+6)Muestra un informe con los nombres de los empleados y su salario con el siguiente formato:
+nombre1......... salario1
+nombren.........salarion
+
+Select rpad(ename,10,'.')||sal
+from emp;
+
+7)Muestra el número de trienios completos de cada empleado.
+
+Select ename,floor(months_between(sysdate,hiredate)/36) as trienios
+from emp;
+
+8)Muestra el total de dinero ganado por el empleado desde que se incorporó a la empresa
+suponiendo que el salario no ha cambiado en todo ese tiempo.
+
+Select ename,sal * floor(months_between(sysdate,hiredate)) as salariototal
+from emp;
+
+9)Muestra con dos decimales el salario diario de cada trabajador suponiendo que los meses
+tienen 30 días.
+Select ename,round((sal+nvl(nvl(comm,0))/30,2)
+from emp;
+
+10)Muestra los empleados que tengan en su nombre al menos dos vocales.
+
+Select ename
+from emp
+where regexp_like(ename,'.*[AEIOU].*[AEIOU]');
+
+11)Muestra los empleados cuyo nombre empieza por una vocal.
+Select ename
+from emp
+where upper(substr(ename,1,1)) in ('A','E','I','O','U');
+
+12)Muestra los departamentos que tienen algún empleado cuyo nombre tiene más de cinco letras.
+Select dname
+from dept
+where deptno in (select distinct deptno
+		 from emp
+		 where length(ename)>5);
+
+13)Muestra en minúsculas los nombres de los departamentos que tienen algún empleado.
+Select lower(dname)
+from dept
+where deptno in (Select distinct deptno
+		 from emp);
+
+Select distinct lower(dname)
+from emp e,dept d
+where e.deptno=d.deptno;
+
+14)Muestra un mensaje de saludo a cada empleado con el formato 'Hola nombreempleado'.
+Select 'Hola '||ename
+from emp;
+
+EJEMPLO DE SELECT QUE GENERA UN SCRIPT:
+
+Ejecuta una sentencia que genere un script creando un usuario de la base de datos para cada empleado de la tabla EMP. La password será el mismo nombre del empleado
+
+Select 'CREATE USER '||ename||' IDENTIFIED BY '||ename||';'
+from emp;
+
+Select 'GRANT CONNECT TO '|ename|';'
+from emp;
+
+15)Muestra el nombre de cada empleado junto con el nombre del mes en el que entró en la empresa.
+Select ename,to_char(hiredate,'month')
+from emp;
+
+16)Muestra la hora del sistema con el formato siguiente: 'Hoy es nn del mes de nombremes del año n.nnn y son las hh y nn minutos.'
+Select 'Hoy es '||to_char(sysdate,'DD')||' del mes de '
+		||to_char(sysdate,'month')||
+		' del año '||to_number(to_char(sysdate,'YYYY'),'9G999')||
+		' y son las '||to_char(sysdate,'HH24')||
+		' y '||to_char(sysdate,'MI')||' minutos.'
+from dual;
+
+17)Muestra el nombre del primer empleado por orden alfabético.
+Select min(ename)
+from emp;
+
+18)Muestra el número de jefes que hay en la empresa.
+Select count(distinct mgr)
+from emp;
+
+19)Muestra los empleados que fueron dados de alta entre el 01/03/1988 y el 31/06/1989.
+Select ename
+from emp
+where to_char(hiredate,'YYYYMMDD') between '19980301' and '19890631';
+
+Select ename
+from emp
+where hiredate between to_date('01/03/1998','DD/MM/YYYY') and to_date('31/06/1989','DD/MM/YYYY');

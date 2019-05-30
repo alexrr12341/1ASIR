@@ -1,0 +1,21 @@
+1. Realiza un procedimiento mostrar_defts que reciba un nombre de usuario y muestre el nombre de su tablespace por defecto.
+
+	Dicha información se encuentra en el diccionario
+	de datos, en la vista DBA_USERS.
+		 Campos: USERNAME
+			 DEFAULT_TABLESPACE			
+	Pertenece al usuario SYS
+	Tenéis que conectaros desde línea de comandos
+	con el comando
+		sqlplus / as sysdba
+
+create or replace procedure Mostrar_defaultable(p_user dba_users.username%type)
+is
+	v_tspordefecto dba_users.default_tablespace%type;
+begin
+	select default_tablespace into v_tspordefecto
+	from dba_users
+	where username=p_user;
+	dbms_output.put_line(v_tspordefecto);
+end;
+/

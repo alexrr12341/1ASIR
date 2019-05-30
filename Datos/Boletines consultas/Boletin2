@@ -1,0 +1,202 @@
+1)
+Select apellidos,oficio,dept_no
+from emple;
+
+2)
+Select dept_no,dnombre,loc
+from depart;
+
+3)
+Select *
+from emple,depart
+where emple.dept_no=depart.dept_no;
+
+4)
+Select *
+from emple
+order by apellidos;
+
+5)
+Select *
+from emple
+order by dept_no desc;
+
+6)
+Select dept_no,apellidos
+from emple
+order by apellidos,dept_no desc;
+
+8)
+Select emp_no,apellidos,oficio,salario
+from emple
+where salario>2000000
+
+9)
+Select apellidos,emp_no,salario
+from emple
+where oficio='ANALISTA';
+
+10)
+Select apellidos,oficio
+from emple
+where dept_no='20';
+
+11)
+Select emp_no,apellidos,oficio,dir,fecha_alt,salario,comision,dept_no
+from emple
+order by apellidos;
+
+12)
+Select apellidos,salario
+from emple
+where oficio='VENDEDOR'
+order by apellidos;
+
+13)
+Select apellidos,salario,oficio
+from emple
+where dept_no='10'
+and oficio='ANALISTA'
+order by apellidos;
+
+14)
+Select emp_no,salario,dept_no
+from emple
+where salario>200000
+or dept_no='20';
+
+15)
+Select oficio,apellidos
+from emple
+order by oficio,apellidos
+
+16)
+Select *
+from emple
+where apellidos like 'A%';
+
+17)
+Select *
+from emple
+where apellidos LIKE '%Z';
+
+18)
+Select apellidos,oficio
+from emple
+where apellidos like 'A%'
+and (oficio like '%E%' or oficio like 'E%' or oficio like '%E');
+
+19)
+Select apellidos,salario
+from emple
+where salario between 100000 and 200000;
+
+20)
+Select apellidos,comision
+from emple
+where oficio='VENDEDOR'
+and comision>100000;
+
+21)
+Select apellidos,dept_no
+from emple
+order by apellidos,dept_no;
+
+22)
+Select emp_no,apellidos
+from emple
+where apellidos like '%Z'
+and salario>300000;
+
+23)
+Select *
+from depart
+where loc like 'B%';
+
+24)
+Select *
+from emple
+where oficio='EMPLEADO'
+and salario>100000
+and dept_no='10';
+
+25)
+Select apellidos,comision
+from emple
+where comision is null or comision=0;
+
+26)
+Select apellidos
+from emple
+where apellidos like 'J%'
+and (comision is null or comision=0);
+
+27)
+Select apellidos
+from emple
+where oficio='ANALISTA' or oficio='VENDEDOR' or oficio='EMPLEADO';
+
+28)
+Select apellidos
+from emple
+where (oficio<>'ANALISTA' and oficio<>'EMPLEADO')
+and salario>200000;
+
+29)
+Select *
+from emple
+where salario between 2000000 and 3000000;
+
+30)
+Select apellidos,salario,dept_no
+from emple
+where salario>200000
+and (dept_no='10' or dept_no='30');
+
+31)
+Select apellidos,emp_no
+from emple
+where salario not between 100000 and 200000;
+
+32)
+Select lower(apellidos)
+from emple;
+
+33)
+Select CONCAT(apellidos,' ',oficio)
+from emple;
+
+34)
+Select apellidos,length(apellidos)
+from emple
+order by length(apellidos) desc;
+
+35)
+Select YEAR(fecha_alt)
+from emple;
+
+36)
+Select *
+from emple
+where YEAR(fecha_alt)=1992;
+
+37)
+Select *
+from emple
+where MONTHNAME(fecha_alt)='February';
+
+38)
+Select apellidos,greatest(salario,nvl(comision,0))
+from emple;
+
+39)
+Select *
+from emple
+where apellidos='A%'
+and YEAR(fecha_alt)=1990;
+
+40)
+Select *
+from emple
+where dept_no='10'
+and (comision is null or comision=0);

@@ -1,0 +1,145 @@
+16.
+Alter table Resultados
+add Constraint distanciacorrecta check (regexp_like(DistanciaGanador,'\+0[0-9]:[0-9]{2}\.[0-9]{2}') or DistanciaGanador='Abandono' or DistanciaGanador is null);
+
+Alter table Carreras
+add Constraint horacorrecta check (to_char(FechaHoraInicio,'HH24:MI') between '13:00' and '21:30');
+
+Alter table Pilotos
+add Constraint nombreoblig check (Nombre is not null);
+
+Alter table Circuitos
+add Constraint paisunico unique (Pais);
+
+Alter table Circuitos
+add Constraint tipocorrecto check (Tipo='Urbano' or Tipo is null);
+
+Alter table Escuderias
+disable constraint contienepais;
+
+#Si queremos activarla
+
+Alter table Escuderias
+enable constraint contienepais;
+
+17.
+Insert into Pilotos (Codigo,Nombre,Nacionalidad,FechaNacimiento,CarreraDebut,NombreEscuderia) 
+Values
+('7','Jenson Button',
+(Select Nacionalidad
+ from Pilotos
+ where NombreEscuderia in  (Select NombreEscuderia
+		 	    from Pilotos
+		 	    where Codigo in (Select CodPiloto
+				  	     from Resultados
+				  	     where CodPiloto in (Select CodPiloto
+						      	         from Resultados
+						      		 where Puesto='1'
+						      		 group by CodPiloto
+						      		 having count(Puesto) in (Select max(count(Puesto))
+									       		  from Resultados
+									       		  where Puesto='1'
+											  and Anyo='2010'
+									       		  group by CodPiloto)))))
+ and FechaNacimiento in (Select max(FechaNacimiento)
+			 from Pilotos
+			 where NombreEscuderia in (Select Nombre
+			                      	   from Escuderias
+			  		           where Nombre in (Select NombreEscuderia
+		 			   			    from Pilotos
+			 			 		    where Codigo in (Select CodPiloto
+					  			                     from Resultados
+					  			   		     where CodPiloto in (Select CodPiloto
+							      						 from Resultados
+							      						 where Puesto='1'
+							      						 group by CodPiloto
+							      				       	         having count(Puesto) in (Select max(count(Puesto))
+										       					          from Resultados
+										       				 		  where Puesto='1'
+																  and Anyo='2010'
+										       				 		  group by CodPiloto))))))),
+to_date('1980/01/19','YYYY/MM/DD')
+,
+(Select concat(c.Nombre,substr(p.CarreraDebut,instr(p.CarreraDebut,' '),length(p.CarreraDebut)))
+ from Pilotos p,Circuitos c
+ where c.Longitud = (Select min(Longitud)
+		     from Circuitos)
+ and p.Nombre='Fernando Alonso'
+ and p.Codigo in (Select CodPiloto
+		  from Resultados
+		  where NombreGP in (Select NombreGP
+				     from Carreras
+				     where NombreCircuito=c.Nombre)))
+,
+(Select Nombre
+from Escuderias
+ where Nombre in (Select NombreEscuderia
+		  from Pilotos
+		  where Codigo in (Select CodPiloto
+				   from Resultados
+				   where CodPiloto in (Select CodPiloto
+						       from Resultados
+						       where Puesto='1'
+						       and Anyo='2010'
+						       group by CodPiloto
+						       having count(Puesto) in (Select max(count(Puesto))
+									        from Resultados
+									        where Puesto='1'
+									        and Anyo='2010'
+									        group by CodPiloto)))))
+);
+
+18.
+Create view maxdistancia
+as
+(Select c.NumVueltas*cr.Longitud as distancia
+ from Carreras c, Circuitos cr
+ where c.NombreCircuito=cr.Nombre);
+
+Select Nombre
+from Pilotos
+where Codigo in (Select r.CodPiloto
+		 from Resultados r , Circuitos cr , Carreras c
+		 where r.NombreGP=c.NombreGP
+		 and c.NombreCircuito=cr.Nombre
+		 and c.NumVueltas*cr.Longitud in (Select max(distancia)
+						  from maxdistancia)
+		 and r.DistanciaGanador < '+01:00.00'
+		 and r.Anyo='2011');
+
+19.
+Select p.Nombre
+from Pilotos p, Resultados r
+where p.Codigo=r.CodPiloto
+and CodPiloto in (Select CodPiloto
+		 from Resultados
+		 where Puesto in ('1','2','3')
+		 and CodPiloto in (Select Codigo
+				   from Pilotos
+		 		   where p.CarreraDebut = (Select min(CarreraDebut)
+		      		       			   from Pilotos))
+		group by CodPiloto)
+and r.Anyo='2011'
+group by p.Nombre;
+
+20.
+Select Nombre
+from Pilotos p
+where exists (Select NombreGP
+	      from Resultados r
+	      where r.CodPiloto = p.Codigo
+	      and CodPiloto = (Select Codigo
+			       from Pilotos
+			       where FechaNacimiento = (Select max(FechaNacimiento)
+						        from Pilotos))
+			       and Codigo in (Select CodPiloto
+					      from Resultados
+					      where Puesto='1')
+					      and NombreGP in (Select NombreGP
+							       from Carreras
+			 				       where NombreCircuito in (Select Nombre
+										        from Circuitos)))
+and Codigo != (Select Codigo
+	       from Pilotos
+	       where FechaNacimiento = (Select max(FechaNacimiento)
+				        from Pilotos));

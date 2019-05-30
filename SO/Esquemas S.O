@@ -1,0 +1,29 @@
+Proyecto
+	sistemas (Lectura y escritura)  root:sistemas
+		fichsistemas
+	desarrollo (Lectura y escritura) root:desarrollo
+		fichdesarrollo
+	explotacion                      root:explotacion
+		fichexplotacion
+
+Sistemas en desarrollo y explotacion
+Desarrolo en explotacion
+
+Metemos a los de desarrollo al grupo de explotacion
+Metemos a los de sistema al grupo de desarrollo y explotacion
+
+gpasswd
+newgrp
+su Cambio Usuario
+sg Cambio Grupo
+
+
+Grupos
+------
+
+Sistemas
+	Sistema1...
+Desarrollo
+	Desarrollo1...
+Explotacion
+	Explotacion1...

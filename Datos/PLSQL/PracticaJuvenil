@@ -1,0 +1,639 @@
+Ejercicio 1
+
+CREATE TABLE socios
+(
+	Dni              VARCHAR2(10) CONSTRAINT s_dni_no_nulo NOT NULL,
+	Nombre           VARCHAR2(20) CONSTRAINT s_nom_no_nulo NOT NULL,
+	Direccion        VARCHAR2(20),
+	Penalizaciones   NUMBER(2) DEFAULT 0,
+	CONSTRAINT socios_pk PRIMARY KEY (Dni)
+);
+CREATE TABLE libros
+(
+	RefLibro         VARCHAR2(10) CONSTRAINT l_ref_no_nula NOT NULL,
+	Nombre           VARCHAR2(30) CONSTRAINT l_nom_no_nulo NOT NULL,
+	Autor            VARCHAR2(20) CONSTRAINT l_aut_no_nulo NOT NULL,
+	Genero           VARCHAR2(10),
+	AñoPublicacion   NUMBER, 
+	Editorial        VARCHAR2(10),
+	CONSTRAINT libros_pk PRIMARY KEY (RefLibro)
+);
+CREATE TABLE prestamos
+(
+	Dni                  VARCHAR2(10) CONSTRAINT p_dni_no_nulo NOT NULL,
+	RefLibro             VARCHAR2(10) CONSTRAINT p_lib_no_nulo NOT NULL,
+	FechaPrestamo        DATE         CONSTRAINT p_fec_no_nula NOT NULL,
+	Duracion             NUMBER(2)    DEFAULT(24),
+	CONSTRAINT Dni_Ref_fech_pk  PRIMARY KEY(Dni, RefLibro, FechaPrestamo),
+	CONSTRAINT Dni_fk 	    FOREIGN KEY (Dni) references socios,
+	CONSTRAINT Ref_fk 	    FOREIGN KEY (RefLibro) references libros
+);
+
+
+
+
+
+INSERT INTO socios VALUES ('111-A', 'David',   'Sevilla Este', 2);
+INSERT INTO socios VALUES ('222-B', 'Mariano', 'Los Remedios', 3);
+
+INSERT INTO socios (DNI, Nombre, Direccion)
+VALUES ('333-C', 'Raul',    'Triana'      );
+
+INSERT INTO socios (DNI, Nombre, Direccion)
+VALUES ('444-D', 'Rocio',   'La Oliva'    );
+
+INSERT INTO socios VALUES ('555-E', 'Marilo',  'Triana',       2);
+INSERT INTO socios VALUES ('666-F', 'Benjamin','Montequinto',  5);
+
+INSERT INTO socios (DNI, Nombre, Direccion)
+VALUES ('777-G', 'Carlos',  'Los Remedios');
+
+INSERT INTO socios VALUES ('888-H', 'Manolo',  'Montequinto',  2);
+
+
+INSERT INTO libros
+VALUES('E-1', 'El valor de educar', 'Savater',    'Ensayo', 1994, 'Alfaguara');
+INSERT INTO libros
+VALUES('N-1', 'El Quijote',         'Cervantes',  'Novela', 1602, 'Anagrama');
+INSERT INTO libros
+VALUES('E-2', 'La Republica',       'Platón',     'Ensayo', -230, 'Anagrama');
+INSERT INTO libros
+VALUES('N-2', 'Tombuctu',           'Auster',     'Novela', 1998, 'Planeta');
+INSERT INTO libros
+VALUES('N-3', 'Todos los nombres',  'Saramago',   'Novela', 1995, 'Planeta');
+INSERT INTO libros
+VALUES('E-3', 'Etica para Amador',  'Savater',    'Ensayo', 1991, 'Alfaguara');
+INSERT INTO libros
+VALUES('P-1', 'Rimas y Leyendas',   'Becquer',    'Poesia', 1837, 'Anagrama');
+INSERT INTO libros
+VALUES('P-2', 'Las flores del mal', 'Baudelaire', 'Poesia', 1853, 'Anagrama');
+INSERT INTO libros
+VALUES('P-3', 'El fulgor',          'Valente',    'Poesia', 1998, 'Alfaguara');
+INSERT INTO libros
+VALUES('N-4', 'Lolita',             'Nabokov',    'Novela', 1965, 'Planeta');
+INSERT INTO libros
+VALUES('C-1', 'En salvaje compañia','Rivas',      'Cuento', 2001, 'Alfaguara');
+
+
+INSERT INTO prestamos VALUES('111-A','E-1', '17/12/00',24);
+INSERT INTO prestamos VALUES('333-C','C-1', '15/12/01',48);
+INSERT INTO prestamos VALUES('111-A','N-1', '17/12/01',24);
+INSERT INTO prestamos VALUES('444-D','E-1', '17/12/01',48);
+INSERT INTO prestamos VALUES('111-A','C-2', '17/12/01',72);
+
+INSERT INTO prestamos (DNI, RefLibro, FechaPrestamo) 
+VALUES('777-G','N-1', '07/12/01');
+
+INSERT INTO prestamos VALUES('111-A','N-1', '16/12/01',48);
+
+Realiza un procedimiento llamado listadocuatromasprestados que nos muestre por pantalla un listado de los cuatro libros más prestados y los socios a los que han sido prestados con el siguiente formato:
+
+NombreLibro1	NumPrestamosLibro1 	GeneroLibro1
+	DNISocio1	FechaPrestamoalSocio1
+	...
+	DNISocion	FechaPrestamoalSocion
+
+NombreLibro2	NumPrestamosLibro2		GeneroLibro2
+	DNISocio1	FechaPrestamoalSocio1
+	...
+	DNISocion	FechaPrestamoalSocion
+
+NombreLibro3	NumPrestamosLibro3		GeneroLibro3
+	DNISocio1	FechaPrestamoalSocio1
+	...
+	DNISocion	FechaPrestamoalSocion
+
+NombreLibro4	NumPrestamosLibro4		GeneroLibro4
+	DNISocio1	FechaPrestamoalSocio1
+	...
+	DNISocion	FechaPrestamoalSocion
+
+El procedimiento debe gestionar adecuadamente las siguientes excepciones:
+
+a) La tabla Libros está vacía.
+b) La tabla Socios está vacía.
+c) Hay menos de cuatro libros que hayan sido prestados. 
+
+Create or replace procedure TablasVacias
+is
+	v_cuenta_libros number;
+	v_cuenta_socios number;
+begin
+	Select count(*) into v_cuenta_libros
+	from libros;
+	Select count(*) into v_cuenta_socios
+	from socios;
+	if v_cuenta_libros <=0 then
+		raise_application_error(-20001,'La tabla libros esta vacia.');
+	end if;
+	if v_cuenta_socios <= 0 then
+		raise_application_error(-20002,'La tabla socios esta vacia.');
+	end if;
+end;
+/
+Create or replace procedure LibrosPrestados
+is
+	v_cuenta_prestamos number;
+begin
+	Select count(distinct reflibro) into v_cuenta_prestamos
+	from prestamos;
+	if v_cuenta_prestamos < 4 then
+		raise_application_error(-20003,'No hay mas de 4 libros prestados.');
+	end if;
+end;
+/
+Create or replace procedure ComprobarExcepciones1
+is
+begin
+	TablasVacias;
+	LibrosPrestados;
+end;
+/
+Create or replace procedure ProcesarInfo(p_reflibro libros.reflibro%type,p_nombre libros.nombre%type,p_genero libros.genero%type,p_numero number)
+is
+	cursor c_infos is
+	Select dni,fechaprestamo
+	from prestamos
+	where reflibro=p_reflibro;
+begin
+	dbms_output.put_line(p_nombre||chr(9)||p_genero||chr(9)||p_numero);
+	for v_infos in c_infos loop
+		dbms_output.put_line(chr(9)||v_infos.dni||chr(9)||v_infos.fechaprestamo);
+	end loop;
+end;
+/
+end ProcesarLibro;
+Create or replace procedure listadocuatromasprestados
+is
+	cursor c_libros is
+	Select p.reflibro as libro,nombre,genero,count(*) as numero
+	from prestamos p,libros l
+	where p.reflibro=l.reflibro
+	group by p.reflibro,nombre,genero
+	order by numero desc;
+	v_info c_libros%rowtype;
+begin
+	ComprobarExcepciones1;
+	open c_libros;
+	fetch c_libros into v_info;
+	while c_libros%found and c_libros%rowcount<=4 loop
+		ProcesarInfo(v_info.libro,v_info.nombre,v_info.genero,v_info.numero);
+		fetch c_libros into v_info;
+	end loop;
+	close c_libros;
+end;
+/
+
+
+Ejercicio 2
+
+Partiendo del siguiente script, crea la BD correspondiente a los alumnos matriculados en algunos de los módulos de 1º y 2º curso del CFS y sus correspondientes notas:
+
+REM ******** TABLAS ALUMNOS, ASIGNATURAS, NOTAS: ***********
+
+DROP TABLE ALUMNOS cascade constraints;
+
+CREATE TABLE ALUMNOS
+(
+  DNI VARCHAR2(10) NOT NULL,
+  APENOM VARCHAR2(30),
+  DIREC VARCHAR2(30),
+  POBLA  VARCHAR2(15),
+  TELEF  VARCHAR2(10)  
+);
+
+DROP TABLE ASIGNATURAS cascade constraints;
+
+CREATE TABLE ASIGNATURAS
+(
+  COD NUMBER(2) NOT NULL,
+  NOMBRE VARCHAR2(25)
+);
+
+DROP TABLE NOTAS cascade constraints;
+
+CREATE TABLE NOTAS
+(
+  DNI VARCHAR2(10) NOT NULL,
+  COD NUMBER(2) NOT NULL,
+  NOTA NUMBER(2)
+);
+
+INSERT INTO ASIGNATURAS VALUES (1,'Prog. Leng. Estr.');
+INSERT INTO ASIGNATURAS VALUES (2,'Sist. Informáticos');
+INSERT INTO ASIGNATURAS VALUES (3,'Análisis');
+INSERT INTO ASIGNATURAS VALUES (4,'FOL');
+INSERT INTO ASIGNATURAS VALUES (5,'RET');
+INSERT INTO ASIGNATURAS VALUES (6,'Entornos Gráficos');
+INSERT INTO ASIGNATURAS VALUES (7,'Aplic. Entornos 4ªGen');
+
+INSERT INTO ALUMNOS VALUES
+('12344345','Alcalde García, Elena', 'C/Las Matas, 24','Madrid','917766545');
+
+INSERT INTO ALUMNOS VALUES
+('4448242','Cerrato Vela, Luis', 'C/Mina 28 - 3A', 'Madrid','916566545');
+
+INSERT INTO ALUMNOS VALUES
+('56882942','Díaz Fernández, María', 'C/Luis Vives 25', 'Móstoles','915577545');
+
+INSERT INTO NOTAS VALUES('12344345', 1,6);
+INSERT INTO NOTAS VALUES('12344345', 2,5);
+INSERT INTO NOTAS VALUES('12344345', 3,6);
+
+INSERT INTO NOTAS VALUES('4448242', 4,6);
+INSERT INTO NOTAS VALUES('4448242', 5,8);
+INSERT INTO NOTAS VALUES('4448242', 6,4);
+INSERT INTO NOTAS VALUES('4448242', 7,5);
+
+INSERT INTO NOTAS VALUES('56882942', 5,7);
+INSERT INTO NOTAS VALUES('56882942', 6,8);
+INSERT INTO NOTAS VALUES('56882942', 7,9);
+
+COMMIT;
+
+Diseña un procedimiento al que pasemos como parámetro de entrada el nombre de uno de los módulos existentes en la BD y visualice el nombre de los alumnos que lo han cursado junto a su nota.
+Al final del listado debe aparecer el nº de suspensos, aprobados, notables y sobresalientes.
+Asimismo, deben aparecer al final los nombres y notas de los alumnos que tengan la nota más alta y la más baja.
+Debes comprobar que las tablas tengan almacenada información y que exista el módulo cuyo nombre pasamos como parámetro al procedimiento.
+
+
+ProgramaPrincipal PROCEDIMIENTO(NOMBRE MODULO) -> is
+						  Cursor de todas las notas de los alumnos
+						  Contadores=0
+						  NotaMasBaja:= -1
+						  NotaMasAlta:= -1
+						  begin
+						  Comprobar Excepciones -> Comprobar TABLAS y Comprobar Asignaturas(NOMBREASIGNATURAS)
+						  Mostrar Cabecera(Nombre Asignatura)
+						  Para cada alumno
+							MostrarAlumnos;
+							Contar TiposNota(NOTA,contadores); Devuelve los contadores.
+							Comprobar NotaMasAltaBaja -> NotaMax,NotaMin,MejorAlumno,PeorAlumno
+						  Fin Para
+
+Programa Excepciones:
+			Todas las tablas no vacias.
+			Modulo existe.
+
+Programa DevolverNota -> Select del nombre y las notas.
+
+Programa NºSuspensos,etc -> ProgramaDevolverNota(numero)
+
+Programa NotaMasBaja y NotaMasAlta-> Cursor que recorre DevolverNota y te coje la nota de abajo y arriba del todo.
+
+
+
+				PROGRAMA PRINCIPAL <- ComprobarExcepciones
+						   <- ProgramaDevolverNota <- Programa NºSuspenso Programa NotaMasBajaYAlta
+						   <- Programa NºSuspenso
+						   <- Programa NotaMasBaja y NotaMasAlta
+
+Create or replace procedure TablasNoVacias
+is
+	v_asignaturas Number;
+	v_alumnos number;
+	v_notas number;
+begin
+	Select count(*) into v_asignaturas
+	from asignaturas;
+	Select count(*) into v_alumnos
+	from alumnos;
+	Select count(*) into v_notas
+	from notas;
+	if v_asignaturas<=0 and v_alumnos<=0 and v_notas<=0 then
+		raise_application_error(-20001,'Las tablas estan vacias');
+	end if;
+end;
+/
+
+Create or replace procedure ModuloNoExiste(v_nombre asignaturas.nombre%type)
+is
+	v_nombreC Number;
+begin
+	Select count(*) into v_nombreC
+	from Asignaturas
+	where Nombre=v_nombre;
+	if v_nombreC != 1 then
+		raise_application_error(-20002,'No existe ese modulo.');
+	end if;
+end;
+/
+
+Create or replace procedure ComprobarExcepciones(v_nombre asignaturas.nombre%type)
+is
+begin
+	TablasNoVacias;
+	ModuloNoExiste(v_nombre);
+end;
+/
+
+Create or replace procedure MostrarCabecera
+is
+begin
+	dbms_output.put_line('Nombre---Nota');
+	dbms_output.put_line('-----------------');
+end;
+/
+
+Create or replace procedure MostrarAlumnos(v_apenom alumnos.apenom%type,v_notas notas.nota%type)
+is
+begin
+	dbms_output.put_line(v_apenom||'---'||v_notas);
+end;
+/
+
+Create or replace procedure CuentaNotas(v_suspenso number,v_aprobados number,v_notables number,v_sobresalientes number)
+is
+begin
+	dbms_output.put_line('Nº de Suspensos'||':'||v_suspenso);
+	dbms_output.put_line('Nº de Aprobados'||':'||v_aprobados);
+	dbms_output.put_line('Nº de Notables'||':'||v_notables);
+	dbms_output.put_line('Nº de Sobresalientes'||':'||v_sobresalientes);
+end;
+/
+
+Create or replace procedure ContarTipoNotas(v_notas notas.nota%type,v_suspenso in out number,v_aprobados in out number,v_notables in out number,v_sobresalientes in out number)
+is
+begin
+	case
+		when v_notas < 5 then
+			v_suspenso:=v_suspenso+1;
+		when v_notas = 5 or v_notas =6 then
+			v_aprobados:=v_aprobados+1;
+		when v_notas= 7 or v_notas = 8 then
+			v_notables:=v_notables+1;
+		when v_notas = 9 or v_notas = 10 then
+			v_sobresalientes:=v_sobresalientes+1;
+	end case;
+end;
+/
+
+Create or replace procedure MostrarNotas(v_suspenso number,v_aprobados number,v_notables number,v_sobresalientes number)
+is
+begin
+	dbms_output.put_line('----------------');
+	dbms_output.put_line('Nº de Suspensos'||':'||v_suspenso);
+	dbms_output.put_line('Nº de Aprobados'||':'||v_aprobados);
+	dbms_output.put_line('Nº de Notables'||':'||v_notables);
+	dbms_output.put_line('Nº de Sobresalientes'||':'||v_sobresalientes);
+end;
+/
+
+
+Create or replace procedure ComprobarMaxMin(v_notas notas.nota%type,v_nombre alumnos.apenom%type,v_notamin in out number,v_notamax in out number,v_AlumnoMax in out alumnos.apenom%type,v_AlumnoMin in out alumnos.apenom%type)
+is
+begin
+	if v_notas > v_notamax then
+		v_notamax:=v_notas;
+		v_AlumnoMax:=v_nombre;
+	end if;
+	if v_notas < v_notamin then
+		v_notamin:=v_notas;
+		v_AlumnoMin:=v_nombre;
+	end if;
+end;
+/
+Create or replace procedure MostrarAlumnosMaxMin(v_notamin number,v_notamax number,v_AlumnoMax alumnos.apenom%type,v_AlumnoMin alumnos.apenom%type)
+is
+begin
+	dbms_output.put_line('Nota Max: '||v_notamax||' '||'Alumno: '||v_AlumnoMax);
+	dbms_output.put_line('Nota Min: '||v_notamin||' '||'Alumno: '||v_AlumnoMin);
+end;
+/
+Create or replace procedure MostrarAlumnado(v_nombre asignaturas.nombre%type)
+is
+	cursor c_notas is
+	Select a.apenom as apellidos, n.nota as notasA
+	from notas n, alumnos a
+	where a.dni=n.dni
+	and Cod in (Select Cod
+		    from Asignaturas
+		    where Nombre=v_nombre);
+	v_suspenso number:=0;
+	v_aprobados number:=0;
+	v_notables number:=0;
+	v_sobresalientes number:=0;
+	v_notamin number := 11;
+	v_notamax number := -1;
+	v_AlumnoMax alumnos.apenom%type:='';
+	v_AlumnoMin alumnos.apenom%type:='';
+begin
+	ComprobarExcepciones(v_nombre);
+	MostrarCabecera;
+	for v_info in c_notas loop
+		MostrarAlumnos(v_info.apellidos,v_info.notasA);
+		ContarTipoNotas(v_info.notasA,v_suspenso,v_aprobados,v_notables,v_sobresalientes);
+		ComprobarMaxMin(v_info.notasA,v_info.apellidos,v_notamin,v_notamax,v_AlumnoMax,v_AlumnoMin);
+	end loop;
+	MostrarNotas(v_suspenso,v_aprobados,v_notables,v_sobresalientes);
+	MostrarAlumnosMaxMin(v_notamin,v_notamax,v_AlumnoMax,v_AlumnoMin);
+end;
+/
+
+Ejercicio 3
+
+A partir de las tablas creadas con el siguiente script:
+
+
+CREATE TABLE productos
+(
+	CodProducto VARCHAR2(10) CONSTRAINT p_cod_no_nulo NOT NULL,
+	Nombre VARCHAR2(20) CONSTRAINT p_nom_no_nulo NOT NULL,
+	LineaProducto VARCHAR2(10),
+	PrecioUnitario NUMBER(6),
+	Stock NUMBER(5),
+	PRIMARY KEY (CodProducto)
+);
+
+
+CREATE TABLE ventas
+(
+	CodVenta VARCHAR2(10) CONSTRAINT cod_no_nula NOT NULL,
+	CodProducto VARCHAR2(10) CONSTRAINT pro_no_nulo NOT NULL,
+	FechaVenta DATE,
+	UnidadesVendidas NUMBER(3),
+	PRIMARY KEY (CodVenta)
+);
+
+INSERT INTO productos VALUES ('1','Procesador P133', 'Proc',15000,20);
+INSERT INTO productos VALUES ('2','Placa base VX',   'PB',  18000,15);
+INSERT INTO productos VALUES ('3','Simm EDO 16Mb',   'Memo', 7000,30);
+INSERT INTO productos VALUES ('4','Disco SCSI 4Gb',  'Disc',38000, 5);
+INSERT INTO productos VALUES ('5','Procesador K6-2', 'Proc',18500,10);
+INSERT INTO productos VALUES ('6','Disco IDE 2.5Gb', 'Disc',20000,25);
+INSERT INTO productos VALUES ('7','Procesador MMX',  'Proc',15000, 5);
+INSERT INTO productos VALUES ('8','Placa Base Atlas','PB',  12000, 3);
+INSERT INTO productos VALUES ('9','DIMM SDRAM 32Mb', 'Memo',17000,12);
+ 
+INSERT INTO ventas VALUES('V1', '2', '22/09/97',2);
+INSERT INTO ventas VALUES('V2', '4', '22/09/97',1);
+INSERT INTO ventas VALUES('V3', '6', '23/09/97',3);
+INSERT INTO ventas VALUES('V4', '5', '26/09/97',5);
+INSERT INTO ventas VALUES('V5', '9', '28/09/97',3);
+INSERT INTO ventas VALUES('V6', '4', '28/09/97',1);
+INSERT INTO ventas VALUES('V7', '6', '02/10/97',2);
+INSERT INTO ventas VALUES('V8', '6', '02/10/97',1);
+INSERT INTO ventas VALUES('V9', '2', '04/10/97',4);
+INSERT INTO ventas VALUES('V10','9', '04/10/97',4);
+INSERT INTO ventas VALUES('V11','6', '05/10/97',2);
+INSERT INTO ventas VALUES('V12','7', '07/10/97',1);
+INSERT INTO ventas VALUES('V13','4', '10/10/97',3);
+INSERT INTO ventas VALUES('V14','4', '16/10/97',2);
+INSERT INTO ventas VALUES('V15','3', '18/10/97',3);
+INSERT INTO ventas VALUES('V16','4', '18/10/97',5);
+INSERT INTO ventas VALUES('V17','6', '22/10/97',2);
+INSERT INTO ventas VALUES('V18','6', '02/11/97',2);
+INSERT INTO ventas VALUES('V19','2', '04/11/97',3);
+INSERT INTO ventas VALUES('V20','9', '04/12/97',3);
+
+a) Realiza un procedimiento que actualice la columna Stock de la tabla Productos a partir de los registros de la tabla Ventas.
+
+El citado procedimiento debe informarnos por pantalla si alguna de las tablas está vacía o si el stock de un producto pasa a ser negativo, en cuyo caso se parará la actualización.
+
+b) Realiza un procedimiento que presente por pantalla un listado de las ventas con el siguiente formato:
+
+Linea Producto: NombreLinea1
+	
+	Prod11		UnidadesTotales1	ImporteTotal1
+ 	Prod12		UnidadesTotales2	ImporteTotal2
+	…
+	Prod1n		UnidadesTotalesn	ImporteTotaln
+
+Importe total NombreLinea1: ImporteLinea1
+
+Linea Producto: NombreLinea2
+	
+	Prod21		UnidadesTotales1	ImporteTotal1
+ 	Prod22		UnidadesTotales2	ImporteTotal2
+	…
+	Prod2n		UnidadesTotalesn	ImporteTotaln
+
+Importe total NombreLinea2: ImporteLinea2
+.
+.
+.
+Total Ventas: Importedetodaslaslineas
+
+Create or replace procedure TablasVaciasVentas
+is
+	v_venta number;
+begin
+	Select count(*) into v_venta
+	from ventas;
+	if v_venta<=0 then
+		raise_application_error(-20002,'La tabla ventas esta vacia');
+	end if;
+end;
+/
+
+Create or replace procedure TablasVaciasProductos
+is
+	v_producto number;
+	v_venta number;
+begin
+	Select count(*) into v_producto
+	from productos;
+	if v_producto<=0 then
+		raise_application_error(-20001,'La tabla productos esta vacia');
+	end if;
+end;
+/
+
+Create or replace procedure StockNegativo3(p_codprod productos.codproducto%type,p_unidades ventas.unidadesvendidas%type)
+is
+	v_stock number;
+begin
+	select stock into v_stock
+	from productos
+	where codproducto=p_codprod;
+	if v_stock < p_unidades then
+		raise_application_error(-20004,'El stock inicial es mayor que la actualización.');
+	end if;
+	
+end;
+/
+Create or replace procedure ComprobarExcepciones3
+is
+begin
+	TablasVaciasProductos;
+	TablasVaciasVentas;
+end;
+/
+
+a)
+Create or replace procedure ProcesamientoProductos(p_codprod productos.codproducto%type,p_unidades ventas.unidadesvendidas%type)
+is
+begin
+	StockNegativo3(p_codprod,p_unidades);
+	update productos
+	set stock=stock-p_unidades
+	where codproducto=p_codprod;
+end;
+/
+Create or replace procedure actualizarstock
+is
+	cursor c_compras
+	is
+	Select codproducto,nvl(sum(unidadesvendidas),0) as unidades
+	from ventas
+	group by codproducto;
+begin
+	ComprobarExcepciones3;
+	for v_ventas in c_compras loop
+		ProcesamientoProductos(v_ventas.codproducto,v_ventas.unidades);
+	end loop; 
+end;
+/
+
+b)
+
+Create or replace procedure Cabecera
+is
+begin
+	dbms_output.put_line('Informe de las lineas de productos');
+	dbms_output.put_line('----------------------------------');
+end;
+/
+
+Create or replace function ProcesarLasLineas(p_lineas productos.lineaproducto%type)
+return number
+is
+	cursor c_prod
+	is
+	select p.nombre,sum(v.unidadesvendidas) as unidades,p.preciounitario*sum(v.unidadesvendidas) as importetotal
+	from productos p, ventas v
+	where p.codproducto=v.codproducto
+	and p.lineaproducto=p_lineas
+	group by p.nombre,p.preciounitario
+	order by importetotal;
+	v_totaldelineas number:=0;
+begin
+	dbms_output.put_line(p_lineas);
+	for v_prod in c_prod loop
+		dbms_output.put_line(chr(9)||v_prod.nombre||chr(9)||v_prod.unidades||chr(9)||v_prod.importetotal);
+		v_totaldelineas:=v_totaldelineas+v_prod.importetotal;
+	end loop;
+	dbms_output.put_line('Importe Total '||p_lineas||': '||v_totaldelineas);
+	dbms_output.put_line('');
+	return v_totaldelineas;
+end;
+/
+
+
+Create or replace procedure MostrarLineasProd
+is
+	cursor c_lineas
+	is
+	select distinct lineaproducto as lineas
+	from productos;
+	v_ventas number:=0;
+	v_lineas number:=0;
+begin
+	Cabecera;
+	for v_linea in c_lineas loop
+		v_lineas:=ProcesarLasLineas(v_linea.lineas);
+		v_ventas:=v_ventas+v_lineas;
+	end loop;
+	dbms_output.put_line('Total de ventas: '||v_ventas);
+end;
+/

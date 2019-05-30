@@ -1,0 +1,15 @@
+Nombre->SSH Entertainment
+Tipo->Informática
+Labor->Reparación de Ordenadores
+Factores de Riesgos->-Psicológicos
+		     -Eléctricos(calambres in extremis)
+		     -Incendios
+		     -Cortes con productos de hardware
+		     -Intoxicación(por soldaduras, fuente de alimentacion algun condensador sobrecarga)
+		     -Problemas de vista(luz azul)
+		     -Falta de formación
+		     -Fuga de información(Base de datos vulnerable)
+		     -Robo de Información de la base de datos
+		     -Vulnerabilidad web(Al ser una empresa de reparación, la gente puede hackear la web para conseguir reparaciones gratis, robar información de los clientes,etc)
+		     -Higiene(Para la correcta manipulación del hardware)
+

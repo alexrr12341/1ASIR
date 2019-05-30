@@ -1,0 +1,59 @@
+Un jefe de departamento (jefe).
+Empleados (empleado1,..., empleado4)
+Grupos: grupo1, grupo2
+
+
+
+Se trata de conseguir:
+1. Para el trabajo de cada empleado se tendrá un directorio de trabajo /mnt/empresa/empleadoi (i=1,2,3,4). Dentro de dicho directorio, el empleado debe crear el fichero trabajo_individuali. Este fichero podrá ser visto por el jefe, y podrá modificarlo. Cada empleado sólo tendrá acceso a sus ficheros. 
+
+Creo los ficheros en los empleados.
+Para que sea visto por el jefe añadimos al jefe a los 4 grupos de empleados y le damos permisos de lectura y escritura. for i in {1..4};do `usermod -G empleado$i jefe`;done
+
+2. Para el trabajo en grupo, cada grupo dispondrá de su directorio /mnt/empresa/grupo1,/mnt/empresa/grupo2 . Todos los empleados pertenecientes a un grupo (empleado1 y empleado2 pertenecen al grupo1 y el resto al grupo 2), pueden escribir en el directorio del grupo pero no pueden leer ni escribir en el directorio de otros grupos. El jefe podrá ver los ficheros de este directorio y modificarlos. 
+
+for i in {1..2};do `mkdir /mnt/empresa/grupo$i`;done
+
+Grupo 1->Empleado1 y empleado2
+Grupo 2->Empleado3 y empleado4
+
+Empleados
+----------
+Tienen permiso de escritura en SU directorio.
+No pueden leer y escribir en otros grupos
+
+Jefe
+---------
+Puede ver los ficheros y modificarlos
+
+
+3. Habrá un directorio /mnt/compartida en el que todos los empleados tendrán un fichero de nombre empleadoi, que sólo podrá modificar dicho empleado, pero podrá ser leído por todos los demás. 
+
+for i in {1..4};do `touch empleado$i`;done
+for i in {1..4};do `chown empleado$i:empleado$i empleado$i`;done
+for i in {1..4};do `chmod 774 empleado$i`;done
+
+4. Se debe habilitar un sistema de quotas por usuario en empresa, de tal forma que los diferentes usuarios tendrán un 10% de quota de disco.
+
+En /etc/fstab
+
+UUID=543cbc97-6cdd-4812-b707-286e04c261dd       /mnt/empresa            ext4    defaults,usrquota,grpquota              1       2
+UUID=d89bd650-7dd7-496c-b7dd-9c6bf5942556       /mnt/compartida         ext4    defaults,usrquota,grpquota               1       3
+
+
+10% de 500 MB=50MB que son 51200 K(Esto lo pongo en el hard)
+
+edquota -u empleado1
+edquota -u empleado2
+edquota -u empleado3
+edquota -u empleado4
+
+5. Se debe habilitar un sistema de quotas para el grupo2 en empresa de límite 100 ficheros, sin posibilidad de sobrepasarlo.
+
+edquota -g grupo2
+
+IMPORTANTE DONDE PONE HARD DETRAS DE INODOS ES LO QUE LE PERMITES OMG VAYA FALLO DE NOOBY
+
+Y lo añadimos en la particion de empresas numero de inodos 100
+
+6. Se debe habilitar el automontaje para la partición compartida. 

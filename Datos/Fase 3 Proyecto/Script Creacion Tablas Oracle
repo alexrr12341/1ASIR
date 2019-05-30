@@ -1,0 +1,139 @@
+ORACLE
+-------
+Create table Viveros
+(
+Codigo Varchar2(10),
+Direccion Varchar2(150),
+Telefono Varchar2(9),
+CONSTRAINT pk_Codigo_Vivero PRIMARY KEY (Codigo),
+CONSTRAINT direccionvivero_correcta check(Direccion like '%(Dos Hermanas)%' or Direccion like '%(Alcala)%' or Direccion like '%(Gelves)%')
+);
+
+Create table Empleados
+(
+DNI Varchar2(9),
+Nombre Varchar2(30),
+Apellido Varchar2(40),
+Direccion Varchar2(150),
+eMail Varchar2(100),
+CONSTRAINT pk_DNI_Empleados PRIMARY KEY (DNI),
+CONSTRAINT dnicliente_correcto check(regexp_like(DNI,'^([0-9]{8}[A-Z])$') or regexp_like(DNI,'^([KLMXYZ][0-9]{7}[A-Z])$')),
+CONSTRAINT correoelectronico_correcto check(eMail like '%@%.es' or eMail like '%@%.com' or eMail like '%@%.org' or eMail like '%@%.net')
+);
+
+Create table Responsables
+(
+Cod_Vivero Varchar2(10),
+FechaInicio DATE,
+Empleados_DNI Varchar2(9),
+FechaFin DATE,
+CONSTRAINT fk_cod_vivero_responsable FOREIGN KEY (Cod_Vivero) REFERENCES Viveros(Codigo),
+CONSTRAINT fk_empleados_dni_responsable FOREIGN KEY (Empleados_DNI) REFERENCES Empleados(DNI),
+CONSTRAINT pk_Clave_Responsables PRIMARY KEY(Cod_Vivero,FechaInicio,Empleados_DNI)
+);
+
+Create table Zonas
+(
+Codigo Varchar2(10),
+Cod_Vivero Varchar2(10),
+Nombre Varchar2(20),
+Descripcion Varchar2(100),
+Tipo Varchar2(15),
+CONSTRAINT fk_codigovivero_zonas FOREIGN KEY (Cod_Vivero) REFERENCES Viveros(Codigo),
+CONSTRAINT pk_clave_zonas PRIMARY KEY(Codigo,Cod_Vivero)
+);
+
+Create table TurnosporZona
+(
+Cod_Vivero Varchar2(10),
+Cod_Zona Varchar2(10),
+FechaInicio DATE,
+DNIEmpleado Varchar2(9),
+FechaFin DATE,
+CONSTRAINT fk_dniempleado_turnoszonas FOREIGN KEY (DNIEmpleado) REFERENCES Empleados(DNI),
+CONSTRAINT fk_zonas_turnoszonas FOREIGN KEY (Cod_Zona,Cod_Vivero) REFERENCES Zonas(Codigo,Cod_Vivero),
+CONSTRAINT pk_clave_turnoszonas PRIMARY KEY(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado)
+);
+
+Create table Riegos
+(
+Codigo Varchar2(10),
+Tipo Varchar2(15),
+CONSTRAINT pk_Codigo_Riegos PRIMARY KEY(Codigo),
+CONSTRAINT tipos_riegos check(Tipo in ('Aspersion','Goteo','Surcos','Difusion','Exudacion'))
+);
+
+Create table RiegosPorZona
+(
+FechaMasHora DATE,
+Cod_Vivero Varchar2(10),
+Cod_Riego Varchar2(10),
+Cod_zona Varchar2(10),
+Cantidad Number(5),
+Duracion Number(3),
+CONSTRAINT fk_codriego_riegosporzona FOREIGN KEY (Cod_Riego) REFERENCES Riegos(Codigo),
+CONSTRAINT fk_codigozona_riegosporzona FOREIGN Key (Cod_zona,Cod_Vivero) REFERENCES Zonas(Codigo,Cod_Vivero),
+CONSTRAINT pk_claveriegosporzona PRIMARY KEY(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona),
+CONSTRAINT horarioriegos_correcto check(to_char(FechaMasHora,'HH24:MI') Between '07:00' and '10:00' or to_char(FechaMasHora,'HH24:MI') Between '18:00' and '20:00')
+);
+
+Create table Datos
+(
+Cod_Zona Varchar2(10),
+Cod_Vivero Varchar2(10),
+FechaMasHora DATE,
+Temperatura Number(2,1),
+Humedad Number(3,1),
+CONSTRAINT fk_codzona_datos FOREIGN KEY(Cod_Zona,Cod_Vivero) REFERENCES Zonas(Codigo,Cod_Vivero),
+CONSTRAINT pk_clave_datos PRIMARY KEY(Cod_Zona,Cod_Vivero,FechaMasHora)
+);
+
+Create table Productos
+(
+Codigo Varchar2(10),
+Nombre Varchar2(150) not null,
+PrecioVenta Number(4,2),
+CONSTRAINT pk_productos PRIMARY KEY(Codigo),
+CONSTRAINT codigoproducto_correcto check(regexp_like(Codigo,'^(D\-[0-9]{4}[A-Za-z0-9]{3})$') or regexp_like(Codigo,'^(P\-[0-9]{4}[A-Za-z0-9]{3})$')),
+CONSTRAINT precioproducto_correcto check(PrecioVenta<=900 and PrecioVenta>=0)
+);
+
+Create table Plantas
+(
+Codigo Varchar2(10),
+NombreComercial Varchar2(150),
+NombreCientifico Varchar2(100),
+CONSTRAINT pk_claveplantas PRIMARY KEY(Codigo),
+CONSTRAINT letramayus_plantas check(NombreCientifico=Initcap(NombreCientifico))
+);
+
+Create table Productos_Planta
+(
+Cod_Producto Varchar2(10),
+Cod_Planta Varchar2(10),
+Edad Number(2),
+CONSTRAINT fk_codproducto_productosplanta FOREIGN KEY(Cod_Producto) REFERENCES Productos(Codigo),
+CONSTRAINT fk_codplanta_productosplantas FOREIGN KEY(Cod_Planta) REFERENCES Plantas(Codigo),
+CONSTRAINT pk_productosplanta PRIMARY KEY(Cod_Producto)
+);
+
+Create table ArticulosDecoracion
+(
+Cod_Producto Varchar2(10),
+Color Varchar2(15),
+Descripcion Varchar2(300),
+CONSTRAINT pk_clave_articulosdec PRIMARY KEY(Cod_Producto)
+);
+
+Create table StockPorZona
+(
+Cod_Vivero Varchar2(10),
+Cod_Zona Varchar2(10),
+Fecha DATE,
+Cod_Producto Varchar2(10),
+stock Number(4),
+CONSTRAINT fk_codproducto_stockporzona FOREIGN KEY(Cod_Producto) REFERENCES Productos(Codigo),
+CONSTRAINT fk_codzonas_stockporzona FOREIGN KEY(Cod_Zona,Cod_Vivero) REFERENCES Zonas(Codigo,Cod_Vivero),
+CONSTRAINT pk_clave_stockporzona PRIMARY KEY(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto)
+);
+

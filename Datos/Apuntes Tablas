@@ -1,0 +1,56 @@
+emple|Cod PK
+    Nombre not null
+    Sueldo 1500 y 2000
+insert into emple
+values('1001','PEPE',1000);
+insert into emple(codigo,nombre)
+values('1002','JUAN');
+Orden valores=Mismo que tabla creada
+------------
+ALTER TABLE
+------------
+ALTER TABLE {NombreTabla}
+#Para añadir una nueva restricción:
+add constraint ....;
+#Para renombrar una columna:
+rename {Nombre columna} to {Nuevo Nombre}
+#Para borrar una columna:
+drop column {columna}
+#Para crear una columna:
+add {columna}
+#Para modificar el valor(number,varchar2,etc):
+Modify {NombreColumna} {ValorNuevo}
+--------------
+UPDATEAR FILAS
+--------------
+update {NOmbreTABLA} set {Nombrecolumna}={Cosas que añadir}
+where {Nombre claveprimaria}={LO que le has puesto a la clave}
+--------------
+DELETEAR FILAS
+--------------
+delete from {NOMBRETABLA} where {Nombre claveprimaria}={'Lo que hay'}
+
+-------------------------------
+Restriccion Longitud de cadenas
+-------------------------------
+add constraint {NombreRestriccion} check(length({Nombrecolumna} > < >= = <= {numero})
+
+
+--------
+Postgres
+--------
+Varchar2=Varchar
+Number=Numeric
+Regexp_like = ~
+instr= position({nombrecadena} in {campo})
+
+-------
+MariaDB
+-------
+regexp_like = CHECK ({NOmbre campo} RLIKE {Expresion Regular})
+BINARY ES DIOS
+Fecha con extract
+Diferencia Mayus/Minus=Binary
+Varchar2=Varchar
+Number=Numeric
+

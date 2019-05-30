@@ -1,0 +1,101 @@
+Create table Clientes
+(
+Codigo VARCHAR2(10),
+Direccion VARCHAR2(50),
+Telefono VARCHAR2(9),
+CONSTRAINT pk_Codigo_Clientes PRIMARY KEY(Codigo)
+);
+
+Create table Proyectos
+(
+Codigo VARCHAR2(10),
+CodigoClientes VARCHAR2(10),
+Descripcion VARCHAR2(200),
+FechaInicio DATE,
+FechaFin DATE,
+Cuantia Numeric(10),
+CONSTRAINT pk_Codigo_Proyectos PRIMARY KEY(Codigo),
+CONSTRAINT fk_Codigo_Clientes FOREIGN KEY(CodigoClientes) REFERENCES Clientes(Codigo),
+CONSTRAINT Codigo_correcto_Proyectos check(Codigo like 'S%' or Codigo like 'T%' or Codigo like '_S%' or Codigo like '_T%' or Codigo like '__S%' or Codigo like '__T%' or Codigo like '___S%' or Codigo like '___T%'),
+CONSTRAINT FechaInicio_FechaFin check(FechaInicio<=FechaFin)
+);
+
+Create table Bancos
+(
+NumeroCuenta VARCHAR2(30),
+Nombre VARCHAR2(30),
+CONSTRAINT pk_NumeroCuenta_Bancos PRIMARY KEY(NumeroCuenta),
+CONSTRAINT Nombre_Banco_Mayus check(Nombre=INITCAP(Nombre))
+);
+
+Create table Colaboradores
+(
+NIF VARCHAR2(10),
+NumeroCuentaBanco VARCHAR2(30),
+Nombre VARCHAR2(20),
+Apellidos VARCHAR2(40),
+Domicilio VARCHAR2(30),
+Telefono VARCHAR2(9),
+CONSTRAINT pk_NIF_Colaboradores PRIMARY KEY(NIF),
+CONSTRAINT fk_Cuenta_Banco FOREIGN KEY(NumeroCuentaBanco) REFERENCES Bancos(NumeroCuenta),
+CONSTRAINT Nombre_Colab check(Nombre=INITCAP(Nombre) and regexp_like(Nombre,'^[A-Z]'))
+);
+
+Create table Colaboraciones
+(
+NIFColaborador VARCHAR2(10),
+CodigoProyecto VARCHAR2(10),
+CONSTRAINT fk_NIFColaborador FOREIGN KEY(NIFColaborador) REFERENCES Colaboradores(NIF),
+CONSTRAINT fk_CodigoProyecto FOREIGN KEY(CodigoProyecto) REFERENCES Proyectos(Codigo),
+CONSTRAINT pk_Colaboraciones PRIMARY KEY(NIFColaborador,CodigoProyecto)
+);
+
+Create table TiposDePago
+(
+Codigo VARCHAR2(10),
+Descripcion VARCHAR2(100),
+CONSTRAINT pk_Codigo_Tiposdepago PRIMARY KEY(Codigo),
+CONSTRAINT Tipo_pago check((Descripcion like 'Efectivo') or (Descripcion like 'Transferencia') or (Descripcion like 'Plazos'))
+);
+
+Create table Pagos
+(
+Numero VARCHAR2(20),
+CodigoTipoDePago VARCHAR2(10),
+CodigoProyecto VARCHAR2(10),
+NIFColaborador VARCHAR2(10),
+Concepto VARCHAR2(20),
+Importe DECIMAL(10,2),
+Fecha DATE,
+CONSTRAINT pk_Numero_Pagos PRIMARY KEY(Numero),
+CONSTRAINT fk_CodigoTipodepago FOREIGN KEY(CodigoTipoDePago) REFERENCES TiposDePago(Codigo),
+CONSTRAINT fk_CodigoProyecto_Pagos FOREIGN KEY(CodigoProyecto) REFERENCES Proyectos(Codigo),
+CONSTRAINT fk_nif_colaborador FOREIGN KEY(NIFColaborador) REFERENCES Colaboradores(NIF),
+CONSTRAINT importe_valido check(Importe<35000 and MOD(Importe,10)=0)
+);
+
+------------------------------------------------------------------------------------------------------------
+
+Alter table Proyectos
+add CONSTRAINT fecha_invalida check(FechaInicio >= to_date('01052009','DDMMYYYY'));
+
+Alter table Colaboradores
+add CONSTRAINT telefono_movil check(Telefono like '6%');
+
+Alter table Clientes
+add CONSTRAINT codigo_correcto_Clientes check(regexp_like(Codigo,'^(C-)') and regexp_like(Codigo,'[a-z]$') and LENGTH(Codigo) BETWEEN 6 and 9);
+
+Alter table Pagos
+add CONSTRAINT Importes_Oblig check(Importe is not null);
+
+Alter table Proyectos
+add Nombre VARCHAR2(20);
+
+Alter table Pagos
+disable constraint importe_valido;
+
+Drop table Colaboraciones;
+
+Alter table Pagos
+drop column Concepto;
+

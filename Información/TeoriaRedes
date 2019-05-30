@@ -1,0 +1,25 @@
+Nivel fisico:
+-Que es la velocidad, latencia,etc
+-posibles topologias de red.
+-Ethernet primeras versiones 10 MBITS
+-Tenemos BASET varias categorias.
+-Gigabit Ethernet pero no detalles.
+
+Nivel enlace:
+-Que es.
+-En que se divide y cuales son sus funciones.
+-Que es eso de TDM O FDM(no es tan importante)
+-Que es CSMA/CD.
+-Que es una colision
+-Que contiene una trama.Direcciones,Tipos,datos,suma de comprobacion.
+(Para wireshark)
+-Que es la MTU si se puede cambiar.
+-Que es la MAC
+-Que es ARP como se usa, capturar esa informacion,etc Que es el cacheo de ARP y proxy ARP
+
+Nivel transporte:
+-Que es un puerto
+-Que es UDP(no al detalle) Si caracteristicas
+-Establecimiento de conexion(Una idea)
+
+

@@ -1,0 +1,263 @@
+1.
+#Esta vista devuelve la suma de stock de las plantas que tienen 2 y 3 años
+Create view maxstock
+as
+Select sum(stock) as suma
+from StockPorZona
+where Cod_Producto in (Select Cod_Producto
+		       from Productos_Planta
+		       where Edad='2' or Edad='3')
+group by Cod_Vivero;
+
+
+#Esta vista devuelve la suma de los dias de periodos de responsabilidad
+Create view dias
+as
+Select Empleados_DNI,sum(date_part('day',FechaFin::timestamp - FechaInicio::timestamp)) as dia
+from Responsables
+group by Empleados_DNI;
+
+#Esta vista devuelve el maximo dia de periodos de responsabilidad que son menor de 2 años.
+Create view diasmax
+as
+Select max(dia) as diasmax
+from dias
+where dia<='730';
+
+
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI)
+values
+((Select distinct Cod_Vivero
+ from Responsables
+ where Cod_Vivero =  (Select Cod_Vivero
+		      from StockPorZona
+		      where Cod_Producto in (Select Cod_Producto
+				             from Productos_Planta
+			                     where Edad='2' or Edad='3')
+	              group by Cod_Vivero
+		      having sum(stock) = (Select max(suma)
+				           from maxstock))),
+now(),
+(Select Empleados_DNI
+from dias
+where dia = (Select diasmax
+	     from diasmax))
+);
+
+
+2.
+insert into Empleados(DNI,Nombre,Apellido,Direccion,eMail)
+values('48821575G','Javier','Dominguez Maner','C/Grecia Nº20,Alcala','javierdominguezmaner@gmail.es');
+
+insert into Responsables(Cod_Vivero,FechaInicio,Empleados_DNI,FechaFin)
+values('64443','2016-05-02','48821575G','2016-03-10');
+
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2019-03-11 18:00:00','64443','10000','67431',500,10);
+
+insert into Productos(Codigo,Nombre,PrecioVenta)
+values('D-1101700','PalmeraGrande',50.00);
+
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('64443','67431','2016-12-12','D-1101700',30);
+
+#Esta vista cuenta los DNIs distintos agrupados por los Viveros
+Create view CuentaDNI
+as
+Select count(distinct Empleados_DNI) as empleados
+from Responsables
+group by Cod_Vivero;
+
+#Esta vista consigue el vivero con mas empleados distintos
+Create view ViveroMax
+as
+Select Cod_Vivero
+from Responsables
+group by Cod_Vivero
+having count(distinct Empleados_DNI) = (Select max(empleados)
+			                from CuentaDNI);
+#Esta vista consigue el Codigo del producto, que es el producto con el mayor precio y no está en los articulos de decoracion.
+Create view ProductoPedido
+as
+Select Codigo
+from Productos
+where PrecioVenta = (Select max(PrecioVenta)
+		     from Productos)
+and Codigo not in (Select Cod_Producto
+		   from ArticulosDecoracion);
+#Esa vista consigue el codigo de zona que tiene la máxima duracion, su vivero es el que mas empleados tiene 
+Create view ZonaRiego
+as
+Select Cod_zona
+from RiegosPorZona
+where Duracion= (Select max(Duracion)
+		 from RiegosPorZona)
+and Cod_Vivero=(Select Cod_Vivero
+		from ViveroMax)
+and Cod_zona in (Select Cod_zona
+	         from RiegosPorZona
+	         where date_part('day',now()::timestamp - FechaMasHora::timestamp)<365);
+
+Update StockPorZona
+Set Stock = Stock+200
+where Cod_Zona = (Select Cod_zona
+		  from ZonaRiego)
+and Cod_Producto = (Select Codigo
+		    from ProductoPedido);
+
+3.
+Select sum(Cantidad),Cod_Vivero
+from RiegosPorZona
+group by Cod_Vivero
+having count(distinct Cod_Zona)>3;
+
+4.
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2013-07-12','D-1101500',30);
+
+Select s.stock*p.Precioventa as preciototal
+from StockPorZona s,Productos p
+where Cod_Producto in (Select Cod_Producto
+		       from ArticulosDecoracion)
+and Cod_Vivero in (Select Cod_Vivero
+		   from Zonas
+		   group by Cod_Vivero
+		   having count(distinct Codigo)>3)
+and s.Cod_Producto=p.Codigo;
+
+5.
+Create view zonasplantas2014
+as
+Select distinct Cod_zona
+from StockPorZona
+where Cod_producto in (Select Cod_Producto
+		       from Productos_Planta
+		       where Edad<2)
+and (to_char(Fecha,'YYYY'))='2014';
+
+#Devuelve las zonas de plantas que tienen edad menor de 2 en 2015
+Create view zonasplantas2015
+as
+Select distinct Cod_zona
+from StockPorZona
+where Cod_producto in (Select Cod_Producto
+		       from Productos_Planta
+		       where Edad<2)
+and (to_char(Fecha,'YYYY'))='2015';
+
+#Devuelve las zonas de planats que tienen edad menor de 2 en 2016
+
+Create view zonasplantas2016
+as
+Select distinct Cod_zona
+from StockPorZona
+where Cod_producto in (Select Cod_Producto
+		       from Productos_Planta
+		       where Edad<2)
+and (to_char(Fecha,'YYYY'))='2016';
+
+Select distinct Cod_zona
+from StockPorZona
+where Cod_zona in (Select Cod_zona
+		   from zonasplantas2014)
+and Cod_zona in (Select Cod_zona
+		 from zonasplantas2015)
+and Cod_zona in (Select Cod_zona
+		 from zonasplantas2016);
+
+6.
+Select count(distinct t.DNIEmpleado),t.Cod_Vivero
+from TurnosPorZona t right outer join Empleados e on (t.DNIEmpleado=e.DNI)
+where extract(MONTH from now())-extract(MONTH from t.FechaInicio)<=1
+and to_char(t.FechaInicio,'YYYY')=to_char(now(),'YYYY')
+group by Cod_Vivero;
+
+7.
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2017-03-05 19:25:00','11567','12345','65321',10,15);
+
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2017-03-11 18:00:00','64443','10000','67431',2,10);
+
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2017-03-20 19:25:00','11567','12345','65321',12,15);
+
+insert into RiegosPorZona(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values('2017-03-06 19:25:00','11567','12345','65321',10,15);
+
+Select date_part('day',max(FechaMasHora)-min(FechaMasHora))
+from RiegosPorZona
+where to_char(FechaMasHora,'YYYY/MM')='2017/03'
+group by Cod_Zona;
+
+
+8.
+
+#Esta vista coge todo el tiempo que ha trabajado un empleado
+Create view sumameses
+as
+Select DNIEmpleado,Cod_Vivero,sum(date_part('day',FechaFin::timestamp - FechaInicio::timestamp)) as suma
+from TurnosporZona
+group by Cod_Vivero,DNIEmpleado;
+
+Select DNI,Nombre,Apellido
+from Empleados
+where DNI in (Select DNIEmpleado
+	      from sumameses
+	      where (Cod_Vivero,suma) in (Select Cod_Vivero,max(suma)
+			    		  from sumameses
+			    		  group by Cod_Vivero));
+
+9.
+Select DNIEmpleado,Cod_Vivero
+from TurnosporZona
+where (DNIEmpleado,Cod_Vivero) not in (Select Empleados_DNI,Cod_Vivero
+			     	       from Responsables);
+
+10.
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12345','44212','2018-12-12','D-1101100',75);
+
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('11567','65321','2017-12-12','D-1101200',80);
+
+insert into StockPorZona(Cod_Vivero,Cod_Zona,Fecha,Cod_Producto,stock)
+values('12114','87644','2016-12-12','D-1100800',104);
+
+insert into Plantas(Codigo,NombreComercial,NombreCientifico)
+values('10006','Palmera','Arecales Arecaceae');
+
+insert into Productos_Planta(Cod_Producto,Cod_Planta,Edad)
+values('D-1101700','10006',11);
+
+
+Create view sumaresponsables
+as
+Select Empleados_DNI,Cod_Vivero,sum(date_part('day',FechaFin::timestamp - FechaInicio::timestamp)) as suma
+from Responsables
+group by Cod_Vivero,Empleados_DNI;
+
+#Esta vista da la cantidad de stock que hay en cada vivero, de cada producto.
+Create view PlantaViverosStock
+as
+Select Cod_Vivero,Cod_Producto,sum(stock) as suma
+from StockporZona
+where Cod_Producto in (Select Cod_Producto
+		       from Productos_Planta)
+group by Cod_Producto,Cod_Vivero;
+
+Select distinct s.Cod_Producto,e.Nombre,e.Apellido,e.Direccion
+from Stockporzona s,Empleados e,TurnosporZona t
+where e.DNI=t.DNIEmpleado
+and t.Cod_zona=s.Cod_zona
+and t.Cod_Vivero=s.Cod_Vivero
+and s.Cod_Producto in (Select Cod_Producto
+	               from PlantaViverosStock
+	               where suma in (Select max(suma)
+			    	      from PlantaViverosStock
+			    	      group by Cod_Vivero))
+and t.DNIEmpleado in (Select Empleados_DNI
+	             from sumaresponsables
+	      	     where (Cod_Vivero,suma) in (Select Cod_Vivero,max(suma)
+			    		  	 from sumaresponsables
+			    		 	 group by Cod_Vivero));

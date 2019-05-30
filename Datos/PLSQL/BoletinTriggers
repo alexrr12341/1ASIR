@@ -1,0 +1,204 @@
+1.Haz un trigger que solo permita a los vendedores tener comisiones.
+CREATE OR REPLACE TRIGGER ComisionesVendedores
+BEFORE INSERT or update of comm,job on emp
+for each row
+begin
+	if(:new.Job!='SALESMAN' and :new.comm is not null) then
+		raise_application_error(-20001,'Solo los vendedores pueden tener comisiones');
+	end if;
+end;
+/
+
+2.Registrar todas las operaciones sobre la tabla EMP de SCOTT en una tabla llamada AUDIT_EMP donde se guarde usuario, fecha y tipo de operación.
+Create table AUDIT_EMP
+(
+Usuario varchar2(15),
+Fecha date,
+TipoOperacion varchar2(15),
+constraint pk_auditemp primary key(Fecha,Usuario)
+);
+CREATE OR REPLACE TRIGGER AuditoriaEmp
+after insert or update or delete on emp
+begin
+	case
+	when inserting then
+		insert into audit_emp values(user,sysdate,'Insert');
+	when updating then
+		insert into audit_emp values(user,sysdate,'Update');
+	when deleting then
+		insert into audit_emp values(user,sysdate,'Delete');
+	end case;
+end;
+/
+
+#Version Raul
+CREATE OR REPLACE TRIGGER AuditoriaEmp
+after insert or update or delete on emp
+declare
+	v_operacion varchar2(15);
+begin
+	case
+	when inserting then
+		v_operacion:='Insert';
+	when updating then
+		v_operacion:='Update';
+	when deleting then
+		v_operacion:='Delete';
+	end case;
+	insert into audit_emp values(user,sysdate,v_operacion);
+end;
+/
+
+Create table AUDIT_EMP_Total
+(
+Usuario varchar2(15),
+Fecha date,
+TipoOperacion varchar2(15),
+CodEmpleadoNuevo number(4),
+NombreEmpleadoNuevo varchar2(15),
+CodEmpleadoAntiguo number(4),
+NombreEmpleadoAntiguo varchar2(15),
+constraint pk_auditemptotal primary key(Fecha,Usuario)
+);
+
+CREATE OR REPLACE TRIGGER AuditoriaEmpTodo
+after insert or update or delete on emp
+for each row
+begin
+	case
+	when inserting then
+		insert into audit_emp_total(Usuario,Fecha,TipoOperacion,CodEmpleadoNuevo,NombreEmpleadoNuevo)
+		values(user,sysdate,'Insert',:new.empno,:new.ename);
+	when updating then
+		insert into audit_emp_total
+		values(user,sysdate,'Update',:new.empno,:new.ename,:old.empno,:old.ename);
+	when deleting then
+		insert into audit_emp_total(Usuario,Fecha,TipoOperacion,CodEmpleadoAntiguo,NombreEmpleadoAntiguo)
+		values(user,sysdate,'Delete',:old.empno,:old.ename);
+	end case;
+end;
+/
+
+#Version Raul
+CREATE OR REPLACE TRIGGER AuditoriaEmpTodo
+after insert or update or delete on emp
+for each row
+declare
+	v_operacion varchar2(15);
+begin
+	case
+	when inserting then
+		v_operacion:='Insert';
+	when updating then
+		v_operacion:='Update';
+	when deleting then
+		v_operacion:='Delete';
+	end case;
+	insert into audit_emp_total
+	values(user,sysdate,v_operacion,:new.empno,:new.ename,:old.empno,:old.ename);
+end;
+/
+
+3.Haz un trigger que controle si los sueldos están en los siguientes rangos:
+
+CLERK: 800 – 1100
+ANALYST: 1200 – 1600
+MANAGER:1800 – 2000
+
+Si un empleado tiene otros a su cargo o su oficio no es uno de los anteriores, no se aplican los límites.
+
+Momento:Before
+Tipo: for each row
+Evento: Insert or update of job,sal on emp
+
+Si no tiene empleados a su cargo, para saberlo tengo que mirar el cargo mgr de la tabla emp (Tabla mutante, investigar o no hacer)
+
+Create or replace trigger SueldosRangos
+before insert or update on emp
+for each row
+begin
+	case :new.job
+	when 'CLERK' then
+		if :new.sal<800 and :new.sal>1100 then
+			raise_application_error(-20001,'Sueldo invalido');
+		end if;
+	when 'ANALYST' then
+		if :new.sal<1200 and :new.sal>1600 then
+			raise_application_error(-20002,'Sueldo invalido');
+		end if;
+	when 'MANAGER' then
+		if :new.sal<1800 and :new.sal>2000 then
+			raise_application_error(-20003,'Sueldo invalido');
+		end if;
+	end case;
+end;
+/
+
+4. Haz un trigger que impida al usuario MANOLO que cambie el sueldo de los empleados que trabajan en DALLAS.
+
+Create or replace trigger ManoloTuNo
+before update of sal on emp
+for each row
+declare
+	v_localidad dept.loc%type;
+begin
+	if user = 'Manolo' then
+		Select loc into v_localidad
+		from dept
+		where deptno=:new.deptno;
+		if v_localidad = 'DALLAS' then
+			raise_application_error(-20001,'No toques el sueldo a los de dalas');
+		end if;
+	end if;
+end;
+/
+
+5. Haz un trigger que le suba un 10% el sueldo a los empleados cuando cambia la localidad donde trabajan.
+
+Primer Trigger:Cambia la localidad del departamento y le sube el sueldo.
+
+Create or replace trigger CambiaLocalidad
+after update of loc on dept
+for each row
+begin
+	if :new.loc != :old.loc then
+		update emp
+		set sal = sal * 1.1
+		where deptno = :new.deptno;
+	end if;
+end;
+/
+
+Segundo Trigger: Se cambia el empleado de departamento y tienen localidades distintas
+
+Create or replace function DevuelveLocalidad(p_deptno dept.deptno%type)
+return dept.loc%type
+is
+	v_loc dept.loc%type;
+begin
+	Select loc into v_loc
+	from dept
+	where deptno=p_deptno;
+	return v_loc;
+exception
+	when NO_DATA_FOUND then
+		raise_application_error(-20002,'No existe el departamento');
+end;
+/
+
+Create or replace trigger CambiodeDepartamento
+after update of deptno on emp
+for each row
+declare
+	v_locantigua dept.loc%type;
+	v_locnueva dept.loc%type;
+begin
+	v_locantigua:=DevuelveLocalidad(:old.deptno);
+	v_locnueva:=DevuelveLocalidad(:new.deptno);
+	if v_locantigua!=v_locnueva then
+		update emp
+		set sal = sal * 1.1
+		where empno = :new.empno;	
+	end if;
+end;
+/

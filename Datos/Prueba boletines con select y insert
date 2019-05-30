@@ -1,0 +1,27 @@
+insert into alum
+select * from nuevos;
+
+insert into emp(empno,ename,deptno,sal,comm,hiredate,mgr)
+select 2000,'SAAVEDRA',deptno,sal*1.2,comm,sysdate
+from emp
+where ename='MILLER';
+
+UPDATE
+
+Cambia el sueldo de los empleados cuyo nombre empieza por A al doble del sueldo más bajo de la empresa.
+
+Update emp
+set sal = 2*(Select min(sal)
+	     from emp)
+where ename like 'A%'
+
+DELETE
+
+Borra los empleados que trabajan en el departamento SALES desde antes de 1990.
+
+Delete from emp
+where deptno in
+(Select *
+from dept
+where dname='SALES')
+and to_char(hiredate,'YYYY')<'1990'

@@ -1,0 +1,16 @@
+LeagueOfLegends->
+curl --request GET https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/Shumito?api_key=RGAPI-6a05da94-4519-4ca3-afbf-beec45471dc4
+curl --request GET https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/yQzqvmTntGZKYdeeq9gtbcYADbCIIKdSegSnX0SH9iOrzY4?api_key=RGAPI-6a05da94-4519-4ca3-afbf-beec45471dc4
+curl --request GET https://euw1.api.riotgames.com/lol//lol/spectator/v4/active-games/by-summoner/yQzqvmTntGZKYdeeq9gtbcYADbCIIKdSegSnX0SH9iOrzY4?api_key=RGAPI-6a05da94-4519-4ca3-afbf-beec45471dc4
+
+Fortnite->
+
+curl -H 'TRN-Api-Key: 296b54ee-29bd-49cb-a067-268a03ddbd33' --request GET https://api.fortnitetracker.com/v1/profile/pc/Alexrr12341
+
+eSports->
+curl --request GET https://api.pandascore.co/lol/champions?token=5aJirIu0oG_KuPCq0BBlOcyKDk7LDAp0X8N0OYittskVZS145s0
+
+Youtube->
+curl --request GET https://www.googleapis.com/youtube/v3/search?part=GuiaLol?key=AIzaSyBhJVIbnPbqyzIPe0ZMPLby3UuX2y_q7Uc
+
+

@@ -1,0 +1,64 @@
+Create or replace function SacarHumedadZona(p_codzona RiegosPorZona.Cod_Zona%type)
+return Datos.Humedad%type
+is
+	cursor c_humedad is
+	Select Humedad
+	from Datos
+	where Cod_Zona=p_codzona
+	order by FechaMasHora desc;
+	v_humedad c_humedad%rowtype;
+begin
+	open c_humedad;
+	fetch c_humedad into v_humedad;
+	return v_humedad.Humedad;
+	close c_humedad;
+end;
+/
+	
+
+Create or replace trigger RiegoZonasHumedad
+before insert on RiegosPorZona
+for each row
+declare
+	v_humedad Datos.Humedad%type;
+begin
+	v_humedad:=SacarHumedadZona(:new.Cod_zona);
+	if v_humedad>90 then
+		raise_application_error(-20001,'Maximo de humedad permitido');
+	end if;
+end;
+/
+
+Postgres
+--------
+Create function SacarHumedadZona(p_codzona RiegosPorZona.Cod_Zona%type) returns Datos.Humedad%type as $$
+declare
+	c_humedad cursor for
+	Select Humedad
+	from Datos
+	where Cod_Zona=p_codzona
+	order by FechaMasHora desc;
+	v_humedad Datos.Humedad%type;
+begin
+	open c_humedad;
+	fetch c_humedad into v_humedad;
+	close c_humedad;
+	return v_humedad.Humedad;
+end;
+$$ language plpgsql;
+
+Create function RiegosZonasHumedad() returns trigger as $$
+declare
+	v_humedad Datos.Humedad%type;
+begin
+	v_humedad:=SacarHumedadZona(NEW.Cod_Zona);
+	if v_humedad>90 then
+		RAISE EXCEPTION 'Maximo de humedad permitido';
+	end if;
+end;
+$$ language plpgsql;
+
+Create trigger RiegosMaxHum
+before insert on RiegosPorZona
+for each row
+execute procedure RiegosZonasHumedad();

@@ -1,0 +1,846 @@
+1. Realiza una función que reciba el nombre científico de una planta, un código de vivero y un codigo de
+zona y nos devuelva el último stock registrado de esa planta en esa zona de ese vivero. Debes
+controlar las siguientes excepciones: Vivero Inexistente, Zona Inexistente, Planta Inexistente y Planta
+sin stock en esa zona.
+
+ORACLE
+-----------
+Create or replace procedure ViveroInexistente(p_codvivero Viveros.Codigo%type)
+is
+	v_cuentaviveros number:=0
+;
+begin
+	Select count(Codigo) into v_cuentaviveros
+	from Viveros
+	where Codigo=p_codvivero;
+	if v_cuentaviveros = 0 then
+		raise_application_error(-20001,'Vivero inexistente');
+	end if;
+end;
+/
+
+Create or replace procedure ZonaInexistente(p_codzona Zonas.Codigo%type)
+is
+	v_cuentazonas number:=0;
+begin
+	Select count(Codigo) into v_cuentazonas
+	from Zonas
+	where Codigo=p_codzona;
+	if v_cuentazonas = 0 then
+		raise_application_error(-20002,'Zona inexistente');
+	end if;
+end;
+/
+
+Create or replace procedure PlantaInexistente(p_nombreC Plantas.NombreCientifico%type)
+is
+	v_cuentaplantas number;
+begin
+	Select count(Codigo) into v_cuentaplantas
+	from Plantas
+	where NombreCientifico=p_nombreC;
+	if v_cuentaplantas = 0 then
+		raise_application_error(-20003,'Planta inexistente');
+	end if;
+end;
+/
+
+Create or replace function ConseguirCodPlanta(p_nombreC Plantas.NombreCientifico%type)
+return Plantas.Codigo%type
+is
+	v_codigo varchar2(100);
+begin
+	Select Cod_Producto into v_codigo
+	from Productos_Planta
+	where Cod_Planta in (Select Codigo
+			     from Plantas
+			     where NombreCientifico=p_nombreC);
+	return v_codigo;
+end;
+/
+
+
+Create or replace procedure PlantaSinStock(p_nombreC Plantas.NombreCientifico%type,p_codzona Zonas.Codigo%type)
+is
+	v_codplanta varchar2(100):=ConseguirCodPlanta(p_nombreC);
+	v_cuentastock number:=0;
+begin
+	Select count(stock) into v_cuentastock
+	from StockPorZona
+	where Cod_zona=p_codzona
+	and Cod_Producto=v_codplanta;
+	if v_cuentastock = 0 then
+		raise_application_error(-20006,'No se ha registrado ningun stock');
+	end if;
+end;
+/
+Create or replace procedure GestionExcepcionesPlantas(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+begin
+	ViveroInexistente(p_codvivero);
+	ZonaInexistente(p_codzona);
+	PlantaInexistente(p_nombreC);
+	PlantaSinStock(p_nombreC,p_codzona);
+end;
+/
+
+Create or replace function UltimoStock(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+return StockPorZona.stock%type
+is
+	v_codplanta varchar2(100):=ConseguirCodPlanta(p_nombreC);
+	cursor c_stock is
+	Select stock
+	from StockPorZona
+	where Cod_zona=p_codzona
+	and Cod_Producto=v_codplanta
+	order by Fecha desc;
+	v_stock c_stock%rowtype;
+begin
+	GestionExcepcionesPlantas(p_nombreC,p_codvivero,p_codzona);
+	open c_stock;
+	fetch c_stock into v_stock;
+	return v_stock.stock;
+	close c_stock;
+end;
+/
+
+POSTGRES
+------------
+Create function ViveroInexistente(p_codvivero Viveros.Codigo%type) Returns Void as $$
+declare
+	v_cuentavivero numeric:=0;
+begin
+	Select count(Codigo) into v_cuentavivero
+	from Viveros
+	where Codigo=p_codvivero;
+	if v_cuentavivero = 0 then
+		Raise Exception 'Vivero inexistente';
+	end if;
+end;
+$$ language plpgsql;
+
+Create function ZonaInexistente(p_codzona Zonas.Codigo%type) returns void as $$
+declare
+	v_cuentazonas numeric:=0;
+begin
+	Select count(Codigo) into v_cuentazonas
+	from Zonas
+	where Codigo=p_codzona;
+	if v_cuentazonas = 0 then
+		Raise Exception 'Zona inexistente';
+	end if;
+end;
+$$ language plpgsql;
+
+Create function PlantaInexistente(p_nombreC Plantas.NombreCientifico%type) returns void as $$
+declare
+	v_cuentaplantas numeric:=0;
+begin
+	Select count(Codigo) into v_cuentaplantas
+	from Plantas
+	where NombreCientifico=p_nombreC;
+	if v_cuentaplantas = 0 then
+		Raise Exception 'Planta inexistente';
+	end if;
+end;
+$$ language plpgsql;
+
+
+Create or replace function ConseguirCodPlanta(p_nombreC Plantas.NombreCientifico%type) returns Plantas.Codigo%type as $$
+declare
+	v_codigo varchar(100);
+begin
+	Select Cod_Producto into v_codigo
+	from Productos_Planta
+	where Cod_Planta in (Select Codigo
+			     from Plantas
+			     where NombreCientifico=p_nombreC);
+	return v_codigo;
+end;
+$$ language plpgsql;
+
+
+Create function PlantaSinStock (p_nombreC Plantas.NombreCientifico%type,p_codzona Zonas.Codigo%type) returns void as $$
+declare
+	v_codplanta varchar(100):=ConseguirCodPlanta(p_nombreC);
+	v_cuentastock numeric:=0;
+begin
+	Select count(stock) into v_cuentastock
+	from StockPorZona
+	where Cod_zona=p_codzona
+	and Cod_Producto=v_codplanta;
+	if v_cuentastock = 0 then
+		Raise Exception 'No se ha registrado ningun stock';
+	end if;
+end;
+$$ language plpgsql;
+
+Create function GestionExcepcionesPlantas(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type) returns void as $$
+declare
+begin
+	perform ViveroInexistente(p_codvivero);
+	perform ZonaInexistente(p_codzona);
+	perform PlantaInexistente(p_nombreC);
+	perform PlantaSinStock(p_nombreC,p_codzona);
+end;
+$$ language plpgsql;
+
+Create function UltimoStock(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type) returns StockPorZona.stock%type as $$
+declare
+	v_codplanta varchar(100):=ConseguirCodPlanta(p_nombreC);
+	c_stock cursor for
+	Select stock
+	from StockPorZona
+	where Cod_zona=p_codzona
+	and Cod_Producto=v_codplanta
+	order by Fecha desc;
+	v_stock StockPorZona.stock%type;
+begin
+	perform GestionExcepcionesPlantas(p_nombreC,p_codvivero,p_codzona);
+	open c_stock;
+	fetch c_stock into v_stock;
+	return v_stock.stock;
+	close c_stock;
+end;
+$$ language plpgsql;
+
+
+2. Realiza un procedimiento que sea capaz de realizar informes sobre los riegos realizados y las
+condiciones de cada zona del vivero. El primer parámetro será el tipo de informe que deseamos, el
+segundo será el nombre del mes y el tercero el año del que queremos esa información. El significado
+del resto de los parámetros cambiará según el tipo de informe deseado. Controla las excepciones que
+consideres oportunas. Los informes a realizar serán los siguientes:
+Informe Tipo 1: El cuarto parámetro será el código de un vivero y el quinto el de una zona. El informe
+nos mostrará todos los riegos realizados en esa zona en el mes y año indicados.
+Mes: xxxxxxxx
+Año:n.nnn
+Codigo Vivero: xxxxxxxxxx
+Nombre Zona: xxxxxxxxx
+Día Riego1 HoraRiego1
+CantidadRiego Duración Riego HumedadPrevia HumedadPosterior
+CantidadRiego Duración Riego HumedadPrevia HumedadPosterior
+...
+Día RiegoN HoraRiegoN
+Número Litros Totales Zona: n.nnn
+Informe Tipo 2: El cuarto parámetro será el código de un vivero. El quinto estará en blanco. El informe
+nos mostrará todos los riegos realizados en el vivero en el mes y año señalados.
+Mes: xxxxxxxx
+Año:n.nnn
+Codigo Vivero: xxxxxxxxxx
+Nombre Zona: xxxxxxxxx
+Día Riego1 HoraRiego1
+CantidadRiego Duración Riego HumedadPrevia HumedadPosterior
+CantidadRiego Duración Riego HumedadPrevia HumedadPosterior
+...
+Día RiegoN HoraRiegoN
+Número Litros Totales Zona: n.nnn
+Nombre Zona: xxxxxxxxx
+...
+Número Litros Totales Vivero: nn.nnnInforme Tipo 3: El cuarto y quinto parámetro estarán en blanco. El informe nos mostrará todos los riegos
+realizados en todos los viveros en el mes y año señalados.
+Mes: xxxxxxxx
+Año:n.nnn
+Codigo Vivero: xxxxxxxxxx
+Nombre Zona: xxxxxxxxx
+DíaRiego1 HoraRiego1 CantRiego
+DuraciónRiego HumPrevia HumPosterior
+DuraciónRiego HumPrevia HumPosterior
+...
+DíaRiego1 HoraRiego1 CantRiego
+Número Litros Totales Zona: n.nnn
+Nombre Zona: xxxxxxxxx
+...
+Número Litros Totales Vivero: nn.nnn
+Codigo Vivero: xxxxxxxxxx
+...
+Número Litros Totales: n.nnn.nnn
+
+Create or replace procedure ComprobarMesCorrecto(p_nombremes varchar2)
+is
+begin
+	if upper(p_nombremes) not in ('ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE') then
+		raise_application_error(-20001,'Nombre de mes incorrecto');
+	end if;
+end;
+/
+
+Create or replace procedure AnyoNoDetectado(p_anyo varchar2)
+is
+	v_cuentafecha varchar2(4);
+begin
+	Select count(*) into v_cuentafecha
+	from RiegosPorZona
+	where to_char(FechaMasHora,'YYYY')=p_anyo;
+	if v_cuentafecha=0 then
+		raise_application_error(-20002,'Usted se equivocó de año');
+	end if;
+end;
+/
+
+Create or replace procedure ComprobarExcepcionesPrincipal(p_nombremes varchar2,p_anyo varchar2)
+is
+begin
+	ComprobarMesCorrecto(p_nombremes);
+	AnyoNoDetectado(p_anyo);
+end;
+/
+
+Create or replace procedure ViveroNoExiste(p_codvivero Viveros.Codigo%type)
+is
+	v_cuenta_viveros number;
+begin
+	Select count(*) into v_cuenta_viveros
+	from Viveros
+	where Codigo=p_codvivero;
+	if v_cuenta_viveros=0 then
+		raise_application_error(-20003,'No existe ese vivero');
+	end if;
+end;
+/
+
+Create or replace procedure ZonaNoExiste(p_codzona Zonas.Codigo%type)
+is
+	v_cuenta_zonas number;
+begin
+	Select count(*) into v_cuenta_zonas
+	from Zonas
+	where Codigo=p_codzona;
+	if v_cuenta_zonas=0 then
+		raise_application_error(-20004,'No existe esa zona');
+	end if;
+end;
+/
+
+Create or replace procedure CodZonaNoVivero(p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+	v_cuentavivezonas number;
+begin
+	Select count(*) into v_cuentavivezonas
+	from Zonas
+	where Cod_Vivero=p_codvivero
+	and Codigo=p_codzona;
+	if v_cuentavivezonas=0 then
+		raise_application_error(-20005,'Esa zona no es de ese vivero');
+	end if;
+end;
+/
+
+
+Create or replace procedure ComprobarExcepcionesT1(p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+begin
+	ViveroNoExiste(p_codvivero);
+	ZonaNoExiste(p_codzona);
+	CodZonaNoVivero(p_codvivero,p_codzona);
+end;
+/
+
+
+Create or replace function ConseguirNombrezona(p_codzona Zonas.Codigo%type)
+return Zonas.Nombre%type
+is
+	v_nombre Zonas.Nombre%type;
+begin
+	Select Nombre into v_nombre
+	from Zonas
+	where Codigo=p_codzona;
+	return v_nombre;
+end;
+/
+
+Create or replace procedure MostrarInfoBasicaT1(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type,v_nombrezona Zonas.Nombre%type)
+is
+begin
+	dbms_output.put_line('Mes: '||p_nombremes||chr(9)||'Año: '||p_anyo);
+	dbms_output.put_line('Codigo Vivero: '||p_codvivero);
+	dbms_output.put_line('Nombre Zona: '||v_nombrezona);
+end;
+/
+
+Create or replace function DiaAnterior(p_mes varchar2,p_anyo varchar2,p_dia varchar2,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+return Datos.Humedad%type
+is
+	v_humedad Datos.Humedad%type:=0;
+begin
+	Select Humedad into v_humedad
+	from Datos
+	where to_char(FechaMasHora,'YYYY')=p_anyo
+	and to_char(FechaMasHora,'MM')=p_mes
+	and Cod_Vivero=p_codvivero
+	and Cod_Zona=p_codzona
+	and to_char(FechaMasHora,'DD')=to_number(p_dia)-1;
+	return v_humedad;
+exception
+	when NO_DATA_FOUND then
+		return '';
+end;
+/
+
+Create or replace procedure InformesRiegoT1(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_info is
+	Select to_char(r.FechaMasHora,'DD') as dia,to_char(r.FechaMasHora,'HH24:MI') as hora,r.Cantidad as cantidad,r.Duracion as duracion,d.Humedad as humedad
+	from RiegosPorZona r,Datos d
+	where r.Cod_Vivero=d.Cod_Vivero
+	and r.Cod_zona=d.Cod_Zona
+	and to_char(r.FechaMasHora,'YYYY/MM/DD')=to_char(d.FechaMasHora,'YYYY/MM/DD')
+	and to_char(r.FechaMasHora,'MM')=p_mes
+	and r.Cod_Vivero=p_codvivero
+	and r.Cod_Zona=p_codzona
+	and to_char(r.FechaMasHora,'YYYY')=p_anyo
+	order by dia;
+	cursor c_info2 is
+	Select Humedad
+	from Datos d
+	where to_char(FechaMasHora,'YYYY')=p_anyo
+	and to_char(FechaMasHora,'MM')=p_mes
+	and Cod_Vivero=p_codvivero
+	and Cod_Zona=p_codzona;
+	
+	v_nombrezona varchar(100):=ConseguirNombrezona(p_codzona);
+	v_maxcantidad number:=0;
+	v_info1 c_info%rowtype;
+	v_info2 c_info%rowtype;
+	v_dia_Anterior Datos.Humedad%type;
+begin
+	ComprobarExcepcionesT1(p_codvivero,p_codzona);
+	open c_info;
+	fetch c_info into v_info1;
+	MostrarInfoBasicaT1(p_nombremes,p_anyo,p_codvivero,v_nombrezona);
+	while c_info%FOUND loop
+		v_dia_Anterior:=DiaAnterior(p_mes,p_anyo,v_info1.dia,p_codvivero,p_codzona);
+		dbms_output.put_line(chr(9)||'Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
+		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
+		fetch c_info into v_info1;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
+	close c_info;
+end;
+/
+
+Create or replace procedure ComprobarExcepcionesT2(p_codvivero Viveros.Codigo%type)
+is
+begin
+	ViveroNoExiste(p_codvivero);
+end;
+/
+
+
+
+Create or replace procedure MostrarLineasRiegosT2(p_codzonas Zonas.Codigo%type,v_maxcantidad in out number,p_nombremes varchar2,p_anyo varchar2)
+is
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_info is
+	Select to_char(r.FechaMasHora,'DD') as dia,to_char(r.FechaMasHora,'HH24:MI') as hora,r.Cantidad as cantidad,r.Duracion as duracion,d.Humedad as humedad,to_char(r.FechaMasHora,'MM') as mes,to_char(r.FechaMasHora,'YYYY') as anyo,r.Cod_Vivero
+	from RiegosPorZona r,Datos d
+	where r.Cod_Vivero=d.Cod_Vivero
+	and r.Cod_zona=d.Cod_Zona
+	and to_char(r.FechaMasHora,'YYYY/MM/DD')=to_char(d.FechaMasHora,'YYYY/MM/DD')
+	and to_char(r.FechaMasHora,'YYYY')=p_anyo
+	and to_char(r.FechaMasHora,'MM')=p_mes
+	and r.Cod_Zona=p_codzonas
+	order by dia;
+	v_nombrezona varchar2(100):=ConseguirNombrezona(p_codzonas);
+	v_info1 c_info%rowtype;
+	v_info2 c_info%rowtype;
+	v_dia_Anterior Datos.Humedad%type;
+begin
+	dbms_output.put_line(chr(9)||'Nombre Zona: '||v_nombrezona);
+	open c_info;
+	fetch c_info into v_info1;
+	while c_info%FOUND loop
+		v_dia_Anterior:=DiaAnterior(v_info1.mes,v_info1.anyo,v_info1.dia,v_info1.Cod_Vivero,p_codzonas);
+		dbms_output.put_line(chr(9)||chr(9)||'Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
+		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
+		fetch c_info into v_info1;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
+	close c_info;
+end;
+/
+
+Create or replace procedure MostrarInfoBasicaT2(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type)
+is
+begin
+	dbms_output.put_line('Mes: '||p_nombremes||chr(9)||'Año: '||p_anyo);
+end;
+/
+
+Create or replace procedure InformesRiegoT2(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type)
+is
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_vivero is
+	Select distinct Cod_Zona
+	from RiegosPorZona
+	where Cod_Vivero=p_codvivero
+	and to_char(FechaMasHora,'YYYY')=p_anyo
+	and to_char(FechaMasHora,'MM')=p_mes;
+	v_maxcantidad number:=0;
+	v_maxcantidadviveros number:=0;
+begin
+	ComprobarExcepcionesT2(p_codvivero);
+	MostrarInfoBasicaT2(p_nombremes,p_anyo,p_codvivero);
+	for v_viveros in c_vivero loop
+		MostrarLineasRiegosT2(v_viveros.Cod_Zona,v_maxcantidad,p_nombremes,p_anyo);
+		v_maxcantidadviveros:=v_maxcantidadviveros+v_maxcantidad;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Vivero: '||v_maxcantidadviveros);
+end;
+/
+
+Create or replace procedure MostrarInfoBasicaT3(p_nombremes varchar2,p_anyo varchar2)
+is
+begin
+	dbms_output.put_line('Mes: '||p_nombremes||chr(9)||'Año: '||p_anyo);
+
+end;
+/
+
+Create or replace procedure MostrarLineasRiegos2T3(p_codzona Zonas.Codigo%type,v_maxcantidad in out number,p_nombremes varchar2,p_anyo varchar2)
+is
+	v_nombrezona varchar2(100):=ConseguirNombrezona(p_codzona);
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_info is
+	Select to_char(r.FechaMasHora,'DD') as dia,to_char(r.FechaMasHora,'HH24:MI') as hora,r.Cantidad as cantidad,r.Duracion as duracion,d.Humedad as humedad,to_char(r.FechaMasHora,'MM') as mes,r.Cod_Vivero,to_char(r.FechaMasHora,'YYYY') as anyo
+	from RiegosPorZona r,Datos d
+	where r.Cod_Vivero=d.Cod_Vivero
+	and r.Cod_zona=d.Cod_Zona
+	and to_char(r.FechaMasHora,'YYYY')=p_anyo
+	and to_char(r.FechaMasHora,'MM')=p_mes
+	and r.Cod_Zona=p_codzona
+	order by dia;
+	v_info1 c_info%rowtype;
+	v_info2 c_info%rowtype;
+	v_dia_Anterior Datos.Humedad%type;
+begin
+	dbms_output.put_line('Nombre Zona: '||v_nombrezona);
+	open c_info;
+	fetch c_info into v_info1;
+	fetch c_info into v_info2;
+	while c_info%FOUND loop
+		v_dia_Anterior:=DiaAnterior(v_info1.mes,v_info1.anyo,v_info1.dia,v_info1.Cod_Vivero,p_codzona);
+		dbms_output.put_line(chr(9)||chr(9)||' Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
+		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
+		fetch c_info into v_info1;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
+	close c_info;
+end;
+/
+
+Create or replace procedure MostrarLineasRiegosT3(p_codvivero Viveros.Codigo%type,v_maxcantidadvivero in out number,p_nombremes varchar2,p_anyo varchar2)
+is
+	cursor c_vivero is
+	Select distinct Cod_Zona
+	from RiegosPorZona
+	where Cod_Vivero=p_codvivero;
+	v_maxcantidad number:=0;
+begin
+	dbms_output.put_line('Codigo Vivero: '||p_codvivero);
+	for v_vivero in c_vivero loop
+		MostrarLineasRiegos2T3(v_vivero.Cod_Zona,v_maxcantidad,p_nombremes,p_anyo);
+		v_maxcantidadvivero:=v_maxcantidadvivero+v_maxcantidad;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Vivero: '||v_maxcantidadvivero);
+end;
+/
+
+Create or replace procedure InformesRiegoT3(p_nombremes varchar2,p_anyo varchar2)
+is
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_todo is
+	Select distinct Cod_Vivero
+	from RiegosPorZona
+	where to_char(FechaMasHora,'YYYY')=p_anyo
+	and to_char(FechaMasHora,'MM')=p_mes;
+	v_maxcantidadtotal number:=0;
+	v_maxcantidadvivero number:=0;
+begin
+	MostrarInfoBasicaT3(p_nombremes,p_anyo);
+	for v_todo in c_todo loop
+		MostrarLineasRiegosT3(v_todo.Cod_Vivero,v_maxcantidadvivero,p_nombremes,p_anyo);
+		v_maxcantidadtotal:=v_maxcantidadtotal+v_maxcantidadvivero;
+	end loop;
+	dbms_output.put_line('Número Litros Totales: '||v_maxcantidadtotal);
+end;
+/
+
+Create or replace procedure InformesRiegos(p_tipo number,p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+begin
+	ComprobarExcepcionesPrincipal(p_nombremes,p_anyo);
+	if p_tipo = 1 then
+		InformesRiegoT1(p_nombremes,p_anyo,p_codvivero,p_codzona);
+	elsif p_tipo = 2 then
+		InformesRiegoT2(p_nombremes,p_anyo,p_codvivero);
+	elsif p_tipo = 3 then
+		InformesRiegoT3(p_nombremes,p_anyo);
+	else
+		dbms_output.put_line('Tipo incorrecto');
+	end if;
+end;
+/
+
+
+
+
+3. Realiza un trigger que impida que se inserte un riego en una zona si el último dato de
+humedad de esa zona antes de ese riego supera el 90%.
+
+Oracle
+------
+
+Create or replace procedure SacarHumedadZona(p_codzona RiegosPorZona.Cod_Zona%type,v_humedad in out Datos.Humedad%type)
+is
+	cursor c_humedad is
+	Select Humedad
+	from Datos
+	where Cod_Zona=p_codzona
+	order by FechaMasHora desc;
+begin
+	open c_humedad;
+	fetch c_humedad into v_humedad;
+	close c_humedad;
+end;
+/
+	
+
+Create or replace trigger RiegoZonasHumedad
+before insert on RiegosPorZona
+for each row
+declare
+	v_humedad Datos.Humedad%type;
+begin
+	SacarHumedadZona(:new.Cod_zona,v_humedad);
+	if v_humedad>90 then
+		raise_application_error(-20001,'Maximo de humedad permitido');
+	end if;
+end;
+/
+
+Postgres
+--------
+Create function SacarHumedadZona(p_codzona RiegosPorZona.Cod_Zona%type) returns Datos.Humedad%type as $$
+declare
+	c_humedad cursor for
+	Select Humedad
+	from Datos
+	where Cod_Zona=p_codzona
+	order by FechaMasHora desc;
+	v_humedad Datos.Humedad%type;
+begin
+	open c_humedad;
+	fetch c_humedad into v_humedad;
+	close c_humedad;
+	return v_humedad;
+end;
+$$ language plpgsql;
+
+Create function RiegosZonasHumedad() returns trigger as $$
+declare
+	v_humedad Datos.Humedad%type;
+begin
+	v_humedad:=SacarHumedadZona(NEW.Cod_Zona);
+	if v_humedad>90 then
+		RAISE EXCEPTION 'Maximo de humedad permitido';
+	end if;
+end;
+$$ language plpgsql;
+
+Create trigger RiegosMaxHum
+before insert on RiegosPorZona
+for each row
+execute procedure RiegosZonasHumedad();
+
+
+4. Realiza un trigger que envíe un correo eléctrónico al responsable de un vivero cada
+vez que la temperatura de una zona con plantas de ese vivero descienda por debajo
+de cero grados para que tome las medidas oportunas de protección de las plantas,
+para ello comunicará la zona afectada y los nombres científicos de las plantas
+existentes en la misma.
+
+
+
+5. Añade una columna llamada DiasTrabajados en la tabla Empleados y rellénala con un
+procedimiento a partir de los datos existentes en la tabla TurnosporZona. Realiza un
+trigger que mantenga dicha columna actualizada automáticamente.
+
+Alter table Empleados
+add DiasTrabajados number(5);
+tipo after insert
+
+#Necesito una tabla que tenga
+#DNI Empleado
+#Dias Trabajados
+
+Create or replace package PkgDiasTrabajados
+as
+	Type tEmpTrabajadores is record
+	(
+		DNI_Empleado Empleados.DNI%type,
+		Dias_Trabajados number
+	);
+	type tTablaTrabajadores is table of tEmpTrabajadores
+	index by binary_integer;
+	vTabTrabajadores tTablaTrabajadores;
+end;
+/
+
+#Hacer un cursor que contenga las dos informaciones.
+
+Create or replace trigger RellenarDiasTrabajados
+after insert on TurnosPorZona
+declare
+	cursor c_diastrab is
+	Select DNIEmpleado,to_number(sum(trunc(FechaFin)-trunc(FechaInicio))) as dias
+	from TurnosPorZona
+	group by DNIEmpleado;
+	i number:=0;
+begin
+	for v_diastrab in c_diastrab loop
+		PkgDiasTrabajados.vTabTrabajadores(i).DNI_Empleado:=v_diastrab.DNIEmpleado;
+		PkgDiasTrabajados.vTabTrabajadores(i).Dias_Trabajados:=v_diastrab.dias;
+		i:=i+1;
+	end loop;
+end;
+/
+
+
+Create or replace function MostrarDiasTrabajados(p_dni TurnosPorZona.DNIEmpleado%type)
+return number
+is
+begin
+	for i in PkgDiasTrabajados.vTabTrabajadores.FIRST..PkgDiasTrabajados.vTabTrabajadores.LAST loop
+		if p_dni=PkgDiasTrabajados.vTabTrabajadores(i).DNI_Empleado then
+			return PkgDiasTrabajados.vTabTrabajadores(i).Dias_Trabajados;
+		end if;
+	end loop;
+end;
+/
+
+Create or replace procedure ActualizarTablaEmpleados(p_dni TurnosPorZona.DNIEmpleado%type,p_dias number)
+is
+begin
+	Update Empleados
+	set DiasTrabajados=p_dias
+	where DNI=p_dni;
+end;
+/
+
+Create or replace procedure CrearFilaEmpleados(p_dni TurnosPorZona.DNIEmpleado%type,p_dias number)
+is
+begin
+	PkgDiasTrabajados.vTabTrabajadores(PkgDiasTrabajados.vTabTrabajadores.LAST+1).DNI_Empleado:=p_dni;
+	PkgDiasTrabajados.vTabTrabajadores(PkgDiasTrabajados.vTabTrabajadores.LAST+1).Dias_Trabajados:=p_dias;
+end;
+/
+
+Hacer un trigger por fila que compruebe si los datos estan metidos o no.
+Create or replace trigger ComprobarDiasTrabajados
+after insert on TurnosPorZona
+for each row
+declare
+	v_diastrabajados number:=0;
+begin
+	v_diastrabajados:=MostrarDiasTrabajados(:new.DNIEmpleado);
+	if v_diastrabajados!=0 then
+		ActualizarTablaEmpleados(:new.DNIEmpleado,v_diastrabajados);
+	else
+		CrearFilaEmpleados(:new.DNIEmpleado,v_diastrabajados);
+	end if;
+end;
+/
+
+insert into TurnosporZona(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
+values('64443','67431',to_date('2018-05-20','YYYY-MM-DD'),'32953215B',to_date('2018-10-03','YYYY-MM-DD'));
+
+
+6. Realiza los módulos de programación necesarios para garantizar que una zona no
+recibe un riego si ha recibido otro en las últimas ocho horas.
+
+Paso 1)
+Necesito una tabla que recoja el codigo de zona junto a las horas que lleva esa zona sin regarse
+Tipo before insert on RiegosPorZona
+
+Paso 2)
+Create or replace package PkgZonasRiegos
+as
+	TYPE tZonRiegos is RECORD
+	(
+		CodZona Zonas.Codigo%type,
+		HorasRiego number
+	);
+	TYPE tRiegosZonas is table of tZonRiegos
+	index by binary_integer;
+	vTabRiegos tRiegosZonas;
+end;
+/
+
+Paso 3)
+Creamos un trigger que recoja en un cursor la información que necesitamos.
+
+Create or replace trigger RellenarHorasZonas
+before insert on RiegosPorZona
+declare
+	cursor c_horas is
+	Select Cod_Zona,min(trunc(sysdate-FechaMasHora)*24) as horas
+	from RiegosPorZona
+	group by Cod_Zona;
+	i number:=0;
+begin
+	for v_horas in c_horas loop
+		PkgZonasRiegos.vTabRiegos(i).CodZona:=v_horas.Cod_Zona;
+		PkgZonasRiegos.vTabRiegos(i).HorasRiego:=v_horas.horas;
+		i:=i+1;
+	end loop;
+end;
+/
+
+Create or replace function SacarHorasPorRiego(p_codzona RiegosPorZona.Cod_Zona%type)
+return number
+is
+begin
+	for i in PkgZonasRiegos.vTabRiegos.FIRST..PkgZonasRiegos.vTabRiegos.LAST loop
+		if PkgZonasRiegos.vTabRiegos(i).CodZona=p_codzona then
+			return PkgZonasRiegos.vTabRiegos(i).HorasRiego;
+		end if;
+	end loop;
+end;
+/
+
+Paso 4)
+Create or replace procedure ActualizarPaqueteriaHoras(p_codzona RiegosPorZona.Cod_Zona%type,p_horas number)
+is
+begin
+	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST+1).CodZona:=p_codzona;
+	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST+1).HorasRiego:=p_horas;
+end;
+/
+
+Create or replace trigger ControlHorasZonas
+before insert on RiegosPorZona
+for each row
+declare
+	v_horasporriego number:=0;
+begin
+	v_horasporriego:=SacarHorasPorRiego(:new.Cod_Zona);
+	if v_horasporriego>8 then
+		raise_application_error(-20001,'Riego realizado en menos de 8 horas');
+	else
+		ActualizarPaqueteriaHoras(:new.Cod_Zona,v_horasporriego);
+	end if;
+end;
+/
+
+7. Realiza los módulos de programación necesarios para garantizar que un empleado no
+tiene asignados turnos en dos zonas distintas simultáneamente, es decir, que no se
+solapan los turnos asignados a un mismo empleado.
+
+
+
+8. Realiza los módulos de programación necesarios para garantizar que los productos
+relacionados con una planta van subiendo de precio con la edad de la misma hasta
+que la planta cumple veinte años, esto es, que cuanto más ha crecido la planta, mayor
+es su coste. Garantiza también que a partir de los veinte años, el coste comienza a
+descender paulatinamente, esto es, cuanto más vieja es, menor es su precio.

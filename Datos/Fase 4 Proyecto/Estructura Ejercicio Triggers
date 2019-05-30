@@ -1,0 +1,12 @@
+Ejercicio 9
+--
+
+
+create or replace trigger NotaMediaDelete
+before delete on notas
+for each row
+begin
+	TratarNotaEliminada(:old.dni, :old.nota);
+end;
+
+

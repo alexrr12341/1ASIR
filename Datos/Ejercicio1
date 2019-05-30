@@ -1,0 +1,77 @@
+Create table Clientes
+(
+Codigo VARCHAR(10),
+NIF VARCHAR(10) UNIQUE,
+Nombre VARCHAR(20),
+Direccion VARCHAR(20),
+Ciudad VARCHAR(20),
+Telefono VARCHAR(9),
+CONSTRAINT pk_Codigo_Clientes PRIMARY KEY (Codigo),
+CONSTRAINT DNI_Correcto check (NIF RLIKE '^([0-9]{8})([A-Z]{1})$' and LENGTH(NIF)=9),
+CONSTRAINT telefono_empieza check (( Telefono LIKE '6%') or (Telefono LIKE '7%') or (Telefono LIKE '9%'))
+);
+
+Create table Modelos
+(
+Nombre VARCHAR(20) not null,
+Marca VARCHAR(20) not null,
+CONSTRAINT pk_Nombre_Modelo PRIMARY KEY (Nombre)
+);
+
+Create table Coches
+(
+Matricula VARCHAR(15),
+NombreModelo VARCHAR(20),
+Color VARCHAR(20),
+PVP INTEGER(30),
+CONSTRAINT pk_Matricula_Coche PRIMARY KEY (Matricula),
+CONSTRAINT fk_NombreModelo FOREIGN KEY (NombreModelo) REFERENCES Modelos (Nombre),
+CONSTRAINT color_coches check((Color like "rojo") or (Color like "amarillo") or (Color like "negro") or (Color like "verde")),
+CONSTRAINT matricula_letrasnumeros check ((Matricula RLIKE '^([0-9]{4})([A-Z]{3})$') or (Matricula RLIKE '^([A-Z]{1,2}-)([0-9]{4})(-[A-Z]{1,2})$')),
+CONSTRAINT Precio_Coche check (PVP BETWEEN 10000 and 90000)
+);
+
+Create table Revisiones
+(
+Codigo VARCHAR(10),
+Fecha DATETIME,
+CONSTRAINT pk_Codigo_Revisiones PRIMARY KEY (Codigo),
+CONSTRAINT horarios_fechas check(extract(HOUR_MINUTE FROM Fecha)>=800 and extract(HOUR_MINUTE FROM Fecha)<=2000)
+
+);
+
+Create table Operaciones
+(
+Codigo VARCHAR(10),
+Descripcion VARCHAR(100),
+HorasMO NUMERIC(2),
+CONSTRAINT pk_Codigo_Operaciones PRIMARY KEY (Codigo),
+CONSTRAINT horasMO_menos check ((HorasMO<=6) and (HorasMO>=0))
+);
+
+Create table Materiales
+(
+Codigo VARCHAR(10),
+Nombre VARCHAR(20),
+Precio NUMERIC(30),
+CONSTRAINT pk_Codigo_Materiales PRIMARY KEY (Codigo)
+);
+
+Create table Arreglos
+(
+Codigo_Operacion VARCHAR(10),
+Codigo_Revision VARCHAR(10),
+CONSTRAINT fk_Codigo_Operacion_Arreglos FOREIGN KEY (Codigo_Operacion) REFERENCES Operaciones (Codigo),
+CONSTRAINT fk_Codigo_Revisiones_Arreglos FOREIGN KEY (Codigo_Revision) REFERENCES Revisiones (Codigo),
+CONSTRAINT pk_Codigo_Arreglos PRIMARY KEY (Codigo_Operacion,Codigo_Revision)
+);
+
+Create table PiezasporOperacion
+(
+Codigo_Material VARCHAR(10),
+Codigo_Operacion VARCHAR(10),
+Cantidad NUMERIC(10) default 1,
+CONSTRAINT fk_Codigo_Material FOREIGN KEY (Codigo_Material) REFERENCES Materiales(Codigo),
+CONSTRAINT fk_Codigo_Operacion_Piezas FOREIGN KEY (Codigo_Operacion) REFERENCES Operaciones(Codigo),
+CONSTRAINT pk_Codigo_Piezas PRIMARY KEY (Codigo_Material,Codigo_Operacion)
+);

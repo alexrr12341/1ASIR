@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prestamos>
+   <Pedido codigo='2123'>
+        <libro>
+            <CodigoISBN>12314</CodigoISBN>
+            <Nombre>El Quijote</Nombre>
+            <Editorial>Nueva Villa</Editorial>
+            <AñoPublicacion>1944</AñoPublicacion>
+            <Autor>Miguel de Cervantes</Autor>
+            <Ejemplar Codigo='12312'></Ejemplar>
+        </libro>
+        <Socio>
+           <DNI>3242342-A</DNI>
+           <Nombre>Roberto Fernandez de la Pradera Oculta de la Hoja</Nombre>
+               
+        </Socio>
+    </Pedido>
+</prestamos>

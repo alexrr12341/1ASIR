@@ -1,0 +1,12 @@
+Guia Windows
+-------------
+Obviamente le ponemos contraseña
+Vamos a \C:Windows\system32\Sysprep
+Y ejecutamos el .exe
+
+Para habilitar escritorio remoto->
+sconfig, 7 , E
+
+Para poder hacerle ping->
+
+netsh advfirewall set allprofiles state off

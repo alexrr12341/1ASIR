@@ -1,0 +1,54 @@
+Error->
+select ename,job
+from emp
+where deptno = 20
+and job = (Select job
+	From emp
+	Where deptno = (select deptno
+			from dept
+			where dname='SALES'));
+
+ERROR at line 4:
+ORA-01427: single-row subquery returns more than one row
+
+Reparar->
+select ename,job
+from emp
+where deptno = 20
+and job """""in""""" (Select job
+	From emp
+	Where deptno = (select deptno
+			from dept
+			where dname='SALES'));
+
+Error->
+select ename,dname
+from emp,dept
+where emp.deptno=dept.deptno;
+
+ERROR at line 3:
+ORA-00918: column ambiguously defined
+
+Reparar->
+
+select ename,dname
+from emp,dept
+where """emp""".deptno="""dept""".deptno;
+
+Especifica la tabla
+
+
+
+
+Error->
+Select deptno, AVG(sal)
+from emp;
+
+ERROR at line 1:
+ORA-00937: not a single-group group function
+
+Reparar->
+Select deptno, AVG(sal)
+from emp
+group by deptno;
+

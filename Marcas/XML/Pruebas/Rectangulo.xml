@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dibujo color="#FFFFFF">
+    <figura tipo="Rectangulo">
+        <punto x='150' y='400'>
+        </punto>
+        <altura>
+        120
+        </altura>
+        <anchura>
+        150
+        </anchura>
+    </figura>
+    
+    <figura tipo="Circunferencia">
+        <punto x='400' y='400'>
+        </punto>
+        <radio>
+        100
+        </radio>
+    </figura>
+    
+    <figura tipo="Recta">
+        <punto1 x='300' y='520'>
+        </punto1>
+        <punto2 x='400' y='400'>
+        </punto2>
+    </figura>
+</dibujo>

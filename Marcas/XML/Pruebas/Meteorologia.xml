@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ciudad nombre='Dos Hermanas' Fecha='2011-10-25 00:00:00 UCT+1'>
+    <temperatura>
+        <maxima>21º</maxima>
+        <minima>10º</minima>
+        <sensacionMax>21º</sensacionMax>
+        <sensacionMin>10º</sensacionMin>
+    </temperatura>
+    <viento Direccion='Suroeste'>
+        <velocidad>10Km/h</velocidad>
+    </viento>
+    <humedad>
+        <maxima>90%</maxima>
+        <minima>50%</minima>
+    </humedad>
+    <UltraVioleta>3</UltraVioleta>
+</ciudad>

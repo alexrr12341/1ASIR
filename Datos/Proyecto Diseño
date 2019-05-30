@@ -1,0 +1,30 @@
+PeriodosRespons 0 No sabemos de qué vívero es responsable cada empleado. Además, hay errores de cardinalidad. VISTO
+TurnosZona 0 Error de cardinalidad entre Viveros y Zonas.CHECKED El diseño de los turnos podría ser mucho más simple VISTO
+
+
+
+EspecProductos 0.25 Los atributos comunes a todos los subtipos deben ir en el supertipo.VISTO
+
+Desarrollo Especies 0 Las plantas son productos diferentes según la edad que tengan, igual que las pizzas de distintos tamaños son productos diferentes. VISTO
+Las plantas son productos distintos dependiendo de la edad, asique hay que reflejarlo en el diseño
+
+
+Stock por Zona 0 Entidad innecesaria. No sabemos la cantidad de plantas de cada tamaño por zona visto
+Compras 0 No hay detalle de la cantidad y tipo de los productos comprados a los proveedores.VISTO Las semillas no deberían tener tamaño VISTO
+Siembras 0 No se sabe en qué zona se siembran las semillas preguntar  VISTO
+Info por Hora 0 Error de cardinalidad entre Zonas y Datos Horarios VISTO
+Riegos 0 Error de cardinalidad entre Riegos y Zonas VISTO
+Tratamientos 0 Error de cardinalidad entre Zonas y Tratamientos VISTO
+Eficacia 0 No se almacena información de la eficacia de cada producto contra cada plaga. VISTO
+Plagas 0,25 Falta saber a qué especies de plantas afecta cada plaga Visto
+Abonados 0 Error de cardinalidad entre Zonas y Abonados VISTO
+Fertilizantes 0 Error de cardinalidad entre Abonados y Fertilizantes VISTO
+Pedidos 0 Error de cardinalidad entre Empleados y Lineas de Pedidos, relación que, por cierto, no debería existir. QUITADA Falta la cantidad de cada producto. VISTO La Fecha es del pedido, no de cada línea...VISTO
+Clientes 0 Error grave: información repetida (nº pedidos) VISTO
+
+
+Tipos Suscripciones 0 Error grave: no se crean entidades de las cosas de las que solo hay una ocurrencia QUITADO
+Portes 0 Error de cardinalidad entre Portes y Líneas Pedido VISTO.
+Empresas Proveedores 0.25 No aporta demasiado. Los proveedores ya son empresas normalmente.
+
+

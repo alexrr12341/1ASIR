@@ -1,0 +1,5 @@
+insert into alum
+select * from nuevos;
+
+insert into emp(empno,ename,deptno,sal,comm,hiredate,mgr)
+select 2000,'SAAVEDRA',deptno,sal*1.2,comm,sysdate

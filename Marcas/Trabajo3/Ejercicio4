@@ -1,0 +1,10 @@
+def notamedia(lista):
+	return sum(lista)/len(lista)
+
+f=open('Alumnos.txt','r')
+
+alumnos=f.readlines()
+alumnos=[]
+for alumno in alumnos:
+	alumno.append(alumno.replace("\n",""))
+	print(alumno)

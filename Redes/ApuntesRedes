@@ -1,0 +1,190 @@
+HTTP->
+Protocolo nivel de aplicacion
+Funciona arquitectura cliente-servidor
+Cliente abre TCP->Al servidor
+http->Protocolo sencillo texto plano
+METODOS->GET,POST,HEAD
+Se trabaja con HTTP1.0 Y HTTP1.2, RESTO EXTENSIONES
+Peticiones->
+Puede ser en un directorio o virtual
+
+Proxy->
+Maquina intermedia con un servidor que da acceso al servidor real
+Para acelerar conexion o para distribuir la carga
+Proxy es de varios clientes y tiene una cache asociada
+https://->
+La conexion esta cifrada, solo lo entiende el navegador y el ordenador.
+Se pueden usar certificados para mayor seguridad.
+
+Persistencia->
+Puedes mantener la conexion todo lo que quieras
+-Cookies
+-URLS incluidas en paginas
+-Forma extenera a http(ip)
+-Campos ocultos
+
+DNS->
+Base de datos para consultar la IP
+Va desde . (Raiz) ICNN
+Hasta un servidor concreto en esa web
+Dominios de primer nivel->.com/.edu/.gov/.org....
+Dominios de segundo nivel->sun/mit/acm....
+Subdominios->Son paginas dentro de las paginas, ejemplo (Le doy click a Financiacion en una pagina, financiazcion.sun.com)
+La organizacion encargada de la administracion del dominio decide si hacer subdominios
+Cada nombre tiene una IP distinta, asi no hay tanto lio
+Para cada IP proporciona un nombre
+
+Fases->
+Llama al S.O
+Se convierte en trama ethernet por red
+Llegas al nivel de aplicacion(Servidor)
+Y vuelve
+
+Consultas a un servidor->
+Recursivas y iterativas(Recorres hasta que encuentras lo que quieres)
+Tipos de servidores->
+Primarios(Doblega al primario)
+Secundarios(Transferencias)
+Reenviadores(Vuelve a pedir)
+
+
+
+Hubs->
+Topologia en estrella
+Trama ethernet
+A todos los nodos
+Grandes colisiones al enviar cada trama a todos los nodos
+
+Conmutador->
+Trabaja a nivel de enlace
+Cada uno es independiente
+Evolucion de los hubs
+Trama al puerto destino
+
+1-Difusion
+Interconectados a nivel de enlace
+Misma subred
+L3 segmentan
+L2 no pueden
+L2->Control de acceso, control de flujo
+
+2-Interconexion
+En forma de arbol
+Brigde-Un punto de acceso de dos redes que son de distinta topologia
+SPINE-LEAF, todos los switches se conectan con todos los intermedios
+
+3-Puerto Uplink
+Se conecta a un switch mediante redes Ethernet
+Intercomunicar switches:
+Uplink a normal o al contrario(directo)
+Normal a normal o uplink a uplink(cruzado)
+A veces funciones adicionales
+Algunos Fast Ethernet, dicen si es necesario o no el cruce
+Gigabit Ethernet no necesario puerto uplink, todos los cables son directos
+
+4-Transceptores
+Dispositivos para conectar diferentes redes.Fibra optica
+Puertos especiales para transceptores
+GBIC desuso
+SFP conocido como mini-GBIC
+Enlaces 10gbps en switches gigabit ethernet o fibra optica
+Comunmente utilizados
+
+5-Spanning Tree Protocol
+Evita bucles y la topologia es siempre arbol
+Switches dicen cual es la raiz
+
+
+Switches Gestionables->
+Es un switch que se adapta a las necesidades de una empresa
+
+VLANs->
+Dividir la red local en redes virtuales
+IEEE 802.1Q PROTOCOLO ESTANDAR
+Solo los equipos conectados a la VLAN se podrán comunicar
+
+RALs Virtuales->
+Solo entran los ordenadores a la conexión por un color(pero pertenencen al mismo switch)
+Reconfiguracion sin tocar cables
+Seguridad
+Rendimiento por controlar la difusion
+Organizamos la red como nos interese independientemente de tu localización física
+
+Tipos de VLANs->
+Basadas en puertos físicos(Cada puerto va a un color distinto)
+Basadas en direcciones MAC
+Basadas en subredes(Menos típico)
+
+VLANs asimétricas
+Tienen puertos comunes pero tienen redes distintas
+
+QoS(Calidad de servicio)->
+Descargas y Stream->Mayor ancho de banda
+SSH y Juegos->Mayor latencia
+
+Esto hace que las conexiones se nivelen entre sí para que unas no sobrepasen a las otras
+
+VoIP->Voz sobre IP, típica conexión de teléfonos que van por el router
+Transferencia de Archivos
+Streaming de Video
+Por ello hay que implantar métodos de calida de servicios
+Dar prioridad a unas cosas más que otras
+Algunas cosas tienen mas prioridad sobre otras:
+1-Voz,2-Datos,3-Vídeo,4-Emisión.
+
+Port Trunking->
+Varios enlaces físicos en un enlace lógico(trunk), único puerto con mayor ancho de banda
+Aumenta el ancho de banda entre 2 switches
+Redundancia->Fiabilidad
+Solución escalable
+Aumenta el ancho de banda entre un switch y un equipo de la red
+
+Port Mirroring->
+Sirve para capturar todo el tráfico
+Ej:Grabar conversaciones de VoIP en un centro de llamada(Call Center)
+
+Switches apilables->
+Un grupo de switches funciona como un único switch para ampliar la capacidad al usar todos
+Ej: Si un switch tiene 8 puertos, lo multiplicamos por 4 switches apilables, tendremos 32 puertos
+Un switch maestro es el switch que manda sobre los demás
+Switch maestro y Backup se sincronizan para tener la misma configuracion
+Si un switch falla su funcionalidad la hace otro distinto
+Si el maestro falla el Backup se onvierte en el nuevo maestro
+
+SNMP->
+Protocolo desarrollado para gestionar/configurar dispositivos en una red IP
+Varios dispositivos:Servidores,PCs,routers,firewalls,switches,telefonos IP...
+Sirve para:
+Supervisar el estado de la red
+Encontrar y resolver problemas
+Planificar ampliaciones de la red
+Multitud de productos que usan este protocolo
+
+VLANs->
+Segmentacion de redes:
+-Separar una red en varias
+-Segmentamos la red
+Características:
+-Independencia
+-Reducir difusión
+-Poca flexibilidad
+-Desperdicio de IPs
+-Multiples IPs
+-Switches exclusivos para la sub red
+Esta en desuso.
+
+VLAN:
+Creacion de redes locales individuales
+Caracteristicas:
+Todas las VLAN en la misma subred
+Aprovechan todos los puertos de switches
+Los switches permiten el trafico
+Diferentes mecanismos, estandar IEEE 802.1q
+
+Cada VLAN tiene su numero VID
+Muchos switches permiten asociar un nombre al VID
+Costumbre asignar nombres a los switches
+IEEE 802.1q hasta 4094 VIDs
+
+
+

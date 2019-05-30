@@ -1,0 +1,66 @@
+Para que salgan cosas por la pantalla:
+
+set serveroutput on
+
+Bloque anonimo:
+
+begin
+	dbms_output.put_line('Hola mundo!');
+end;
+
+create or replace procedure HolaMundo
+is
+begin
+	dbms_output.put_line('Hola Mundo!');
+end;
+/
+
+Para ver los errores de compilacion
+show err;
+
+Para ejecutar los procedures:
+
+exec HolaMundo;
+
+Haz un procedimiento que reciba como perimetro un codigo de empleado y muestra por pantalla su nombre:
+
+Create or replace procedure MostrarNombre (p_codemp emp.empno%type)
+is
+	v_nombre emp.ename%type;
+begin
+	select ename into v_nombre
+	from emp
+	where empno=p_codemp;
+	dbms_output.put_line('El nombre del empleado '||p_codemp||' es '||v_nombre);
+exception
+	when NO_DATA_FOUND then
+		dbms_output.put_line('No existe empleado con codigo '||p_codemp);
+end;
+/
+
+exec MostrarNombre(7800)
+
+
+Create or replace procedura suma (a in Number,b in Number,c out Number)
+is
+begin
+	c:=a+b;
+end;
+
+Create or replace procedura suma (a in Number,b in Number)
+return Number
+is
+begin
+	return(a+b);
+end;
+
+Para llamar al procedimiento: suma(7,9,resultado):
+
+Create or replace procedura suma (7 in Number,9 in Number)
+return Number
+is
+begin
+	return(7+9);
+end;
+
+Para llamar a la funcion resultado:=suma(7,9):

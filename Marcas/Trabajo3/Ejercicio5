@@ -1,0 +1,35 @@
+'''Primero, len lineas
+Segundo, while estado=={algo}:
+			contador+=1
+Tercero,dar la url de la ciudad {nombre}
+Tener la URL Y AÑADIRLE PRIMERO LO SEGUNDO Y DESPUES LO PRIMERO
+
+Conclusiones:SI la informacion que esta guardada en un fichero tiene una estructura
+
+Primero hacer un split separado por comas
+Nombre ciudad
+-------------
+ciudad.split(',')
+ciudad.split(',')[1].split(":")[1].strip()[1:-1]
+ciudad.split('"')[7]
+
+LatitudLongitud
+---------------
+ciudad.split(',')[2]
+ciudad.split('"')[10]
+ciudad.split('"')[10].split(',').split'''
+
+
+f=open('zips','r')
+lineas=f.readlines()
+contador=0
+contadorcod=0
+for ciudad in lineas:
+	contador+=1
+for ciudad in lineas:
+	estados=ciudad.split(',')[5].split(':')[1].split('"')[1]
+	
+	print(contadorcod)
+print("Hay",contador,"Codigos postales")
+print("Hay",contadorcod,"Codigos postales")
+	

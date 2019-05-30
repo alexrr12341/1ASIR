@@ -1,0 +1,326 @@
+Create or replace procedure ComprobarMesCorrecto(p_nombremes varchar2)
+is
+begin
+	if upper(p_nombremes) not in ('ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE') then
+		raise_application_error(-20001,'Nombre de mes incorrecto');
+	end if;
+end;
+/
+
+Create or replace procedure AnyoNoDetectado(p_anyo varchar2)
+is
+	v_cuentafecha varchar2(4);
+begin
+	Select count(*) into v_cuentafecha
+	from RiegosPorZona
+	where to_char(FechaMasHora,'YYYY')=p_anyo;
+	if v_cuentafecha=0 then
+		raise_application_error(-20002,'Usted se equivocó de año');
+	end if;
+end;
+/
+
+Create or replace procedure ComprobarExcepcionesPrincipal(p_nombremes varchar2,p_anyo varchar2)
+is
+begin
+	ComprobarMesCorrecto(p_nombremes);
+	AnyoNoDetectado(p_anyo);
+end;
+/
+
+Create or replace procedure ViveroNoExiste(p_codvivero Viveros.Codigo%type)
+is
+	v_cuenta_viveros number;
+begin
+	Select count(*) into v_cuenta_viveros
+	from Viveros
+	where Codigo=p_codvivero;
+	if v_cuenta_viveros=0 then
+		raise_application_error(-20003,'No existe ese vivero');
+	end if;
+end;
+/
+
+Create or replace procedure ZonaNoExiste(p_codzona Zonas.Codigo%type)
+is
+	v_cuenta_zonas number;
+begin
+	Select count(*) into v_cuenta_zonas
+	from Zonas
+	where Codigo=p_codzona;
+	if v_cuenta_zonas=0 then
+		raise_application_error(-20004,'No existe esa zona');
+	end if;
+end;
+/
+
+Create or replace procedure CodZonaNoVivero(p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+	v_cuentavivezonas number;
+begin
+	Select count(*) into v_cuentavivezonas
+	from Zonas
+	where Cod_Vivero=p_codvivero
+	and Codigo=p_codzona;
+	if v_cuentavivezonas=0 then
+		raise_application_error(-20005,'Esa zona no es de ese vivero');
+	end if;
+end;
+/
+
+
+Create or replace procedure ComprobarExcepcionesT1(p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+begin
+	ViveroNoExiste(p_codvivero);
+	ZonaNoExiste(p_codzona);
+	CodZonaNoVivero(p_codvivero,p_codzona);
+end;
+/
+
+
+Create or replace function ConseguirNombrezona(p_codzona Zonas.Codigo%type)
+return Zonas.Nombre%type
+is
+	v_nombre Zonas.Nombre%type;
+begin
+	Select Nombre into v_nombre
+	from Zonas
+	where Codigo=p_codzona;
+	return v_nombre;
+end;
+/
+
+Create or replace procedure MostrarInfoBasicaT1(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type,v_nombrezona Zonas.Nombre%type)
+is
+begin
+	dbms_output.put_line('Mes: '||p_nombremes||chr(9)||'Año: '||p_anyo);
+	dbms_output.put_line('Codigo Vivero: '||p_codvivero);
+	dbms_output.put_line('Nombre Zona: '||v_nombrezona);
+end;
+/
+
+Create or replace function DiaAnterior(p_mes varchar2,p_anyo varchar2,p_dia varchar2,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+return Datos.Humedad%type
+is
+	v_humedad Datos.Humedad%type:=0;
+begin
+	Select Humedad into v_humedad
+	from Datos
+	where to_char(FechaMasHora,'YYYY')=p_anyo
+	and to_char(FechaMasHora,'MM')=p_mes
+	and Cod_Vivero=p_codvivero
+	and Cod_Zona=p_codzona
+	and to_char(FechaMasHora,'DD')=to_number(p_dia)-1;
+	return v_humedad;
+exception
+	when NO_DATA_FOUND then
+		return '';
+end;
+/
+
+Create or replace procedure InformesRiegoT1(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_info is
+	Select to_char(r.FechaMasHora,'DD') as dia,to_char(r.FechaMasHora,'HH24:MI') as hora,r.Cantidad as cantidad,r.Duracion as duracion,d.Humedad as humedad
+	from RiegosPorZona r,Datos d
+	where r.Cod_Vivero=d.Cod_Vivero
+	and r.Cod_zona=d.Cod_Zona
+	and to_char(r.FechaMasHora,'YYYY/MM/DD')=to_char(d.FechaMasHora,'YYYY/MM/DD')
+	and to_char(r.FechaMasHora,'MM')=p_mes
+	and r.Cod_Vivero=p_codvivero
+	and r.Cod_Zona=p_codzona
+	and to_char(r.FechaMasHora,'YYYY')=p_anyo
+	order by dia;
+	cursor c_info2 is
+	Select Humedad
+	from Datos d
+	where to_char(FechaMasHora,'YYYY')=p_anyo
+	and to_char(FechaMasHora,'MM')=p_mes
+	and Cod_Vivero=p_codvivero
+	and Cod_Zona=p_codzona;
+	
+	v_nombrezona varchar(100):=ConseguirNombrezona(p_codzona);
+	v_maxcantidad number:=0;
+	v_info1 c_info%rowtype;
+	v_info2 c_info%rowtype;
+	v_dia_Anterior Datos.Humedad%type;
+begin
+	ComprobarExcepcionesT1(p_codvivero,p_codzona);
+	open c_info;
+	fetch c_info into v_info1;
+	MostrarInfoBasicaT1(p_nombremes,p_anyo,p_codvivero,v_nombrezona);
+	while c_info%FOUND loop
+		v_dia_Anterior:=DiaAnterior(p_mes,p_anyo,v_info1.dia,p_codvivero,p_codzona);
+		dbms_output.put_line(chr(9)||'Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
+		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
+		fetch c_info into v_info1;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
+	close c_info;
+end;
+/
+
+Create or replace procedure ComprobarExcepcionesT2(p_codvivero Viveros.Codigo%type)
+is
+begin
+	ViveroNoExiste(p_codvivero);
+end;
+/
+
+
+
+Create or replace procedure MostrarLineasRiegosT2(p_codzonas Zonas.Codigo%type,v_maxcantidad in out number,p_nombremes varchar2,p_anyo varchar2)
+is
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_info is
+	Select to_char(r.FechaMasHora,'DD') as dia,to_char(r.FechaMasHora,'HH24:MI') as hora,r.Cantidad as cantidad,r.Duracion as duracion,d.Humedad as humedad,to_char(r.FechaMasHora,'MM') as mes,to_char(r.FechaMasHora,'YYYY') as anyo,r.Cod_Vivero
+	from RiegosPorZona r,Datos d
+	where r.Cod_Vivero=d.Cod_Vivero
+	and r.Cod_zona=d.Cod_Zona
+	and to_char(r.FechaMasHora,'YYYY/MM/DD')=to_char(d.FechaMasHora,'YYYY/MM/DD')
+	and to_char(r.FechaMasHora,'YYYY')=p_anyo
+	and to_char(r.FechaMasHora,'MM')=p_mes
+	and r.Cod_Zona=p_codzonas
+	order by dia;
+	v_nombrezona varchar2(100):=ConseguirNombrezona(p_codzonas);
+	v_info1 c_info%rowtype;
+	v_info2 c_info%rowtype;
+	v_dia_Anterior Datos.Humedad%type;
+begin
+	dbms_output.put_line(chr(9)||'Nombre Zona: '||v_nombrezona);
+	open c_info;
+	fetch c_info into v_info1;
+	while c_info%FOUND loop
+		v_dia_Anterior:=DiaAnterior(v_info1.mes,v_info1.anyo,v_info1.dia,v_info1.Cod_Vivero,p_codzonas);
+		dbms_output.put_line(chr(9)||chr(9)||'Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
+		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
+		fetch c_info into v_info1;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
+	close c_info;
+end;
+/
+
+Create or replace procedure MostrarInfoBasicaT2(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type)
+is
+begin
+	dbms_output.put_line('Mes: '||p_nombremes||chr(9)||'Año: '||p_anyo);
+end;
+/
+
+Create or replace procedure InformesRiegoT2(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type)
+is
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_vivero is
+	Select distinct Cod_Zona
+	from RiegosPorZona
+	where Cod_Vivero=p_codvivero
+	and to_char(FechaMasHora,'YYYY')=p_anyo
+	and to_char(FechaMasHora,'MM')=p_mes;
+	v_maxcantidad number:=0;
+	v_maxcantidadviveros number:=0;
+begin
+	ComprobarExcepcionesT2(p_codvivero);
+	MostrarInfoBasicaT2(p_nombremes,p_anyo,p_codvivero);
+	for v_viveros in c_vivero loop
+		MostrarLineasRiegosT2(v_viveros.Cod_Zona,v_maxcantidad,p_nombremes,p_anyo);
+		v_maxcantidadviveros:=v_maxcantidadviveros+v_maxcantidad;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Vivero: '||v_maxcantidadviveros);
+end;
+/
+
+Create or replace procedure MostrarInfoBasicaT3(p_nombremes varchar2,p_anyo varchar2)
+is
+begin
+	dbms_output.put_line('Mes: '||p_nombremes||chr(9)||'Año: '||p_anyo);
+
+end;
+/
+
+Create or replace procedure MostrarLineasRiegos2T3(p_codzona Zonas.Codigo%type,v_maxcantidad in out number,p_nombremes varchar2,p_anyo varchar2)
+is
+	v_nombrezona varchar2(100):=ConseguirNombrezona(p_codzona);
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_info is
+	Select to_char(r.FechaMasHora,'DD') as dia,to_char(r.FechaMasHora,'HH24:MI') as hora,r.Cantidad as cantidad,r.Duracion as duracion,d.Humedad as humedad,to_char(r.FechaMasHora,'MM') as mes,r.Cod_Vivero,to_char(r.FechaMasHora,'YYYY') as anyo
+	from RiegosPorZona r,Datos d
+	where r.Cod_Vivero=d.Cod_Vivero
+	and r.Cod_zona=d.Cod_Zona
+	and to_char(r.FechaMasHora,'YYYY')=p_anyo
+	and to_char(r.FechaMasHora,'MM')=p_mes
+	and r.Cod_Zona=p_codzona
+	order by dia;
+	v_info1 c_info%rowtype;
+	v_info2 c_info%rowtype;
+	v_dia_Anterior Datos.Humedad%type;
+begin
+	dbms_output.put_line('Nombre Zona: '||v_nombrezona);
+	open c_info;
+	fetch c_info into v_info1;
+	fetch c_info into v_info2;
+	while c_info%FOUND loop
+		v_dia_Anterior:=DiaAnterior(v_info1.mes,v_info1.anyo,v_info1.dia,v_info1.Cod_Vivero,p_codzona);
+		dbms_output.put_line(chr(9)||chr(9)||' Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
+		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
+		fetch c_info into v_info1;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
+	close c_info;
+end;
+/
+
+Create or replace procedure MostrarLineasRiegosT3(p_codvivero Viveros.Codigo%type,v_maxcantidadvivero in out number,p_nombremes varchar2,p_anyo varchar2)
+is
+	cursor c_vivero is
+	Select distinct Cod_Zona
+	from RiegosPorZona
+	where Cod_Vivero=p_codvivero;
+	v_maxcantidad number:=0;
+begin
+	dbms_output.put_line('Codigo Vivero: '||p_codvivero);
+	for v_vivero in c_vivero loop
+		MostrarLineasRiegos2T3(v_vivero.Cod_Zona,v_maxcantidad,p_nombremes,p_anyo);
+		v_maxcantidadvivero:=v_maxcantidadvivero+v_maxcantidad;
+	end loop;
+	dbms_output.put_line('Número Litros Totales Vivero: '||v_maxcantidadvivero);
+end;
+/
+
+Create or replace procedure InformesRiegoT3(p_nombremes varchar2,p_anyo varchar2)
+is
+	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
+	cursor c_todo is
+	Select distinct Cod_Vivero
+	from RiegosPorZona
+	where to_char(FechaMasHora,'YYYY')=p_anyo
+	and to_char(FechaMasHora,'MM')=p_mes;
+	v_maxcantidadtotal number:=0;
+	v_maxcantidadvivero number:=0;
+begin
+	MostrarInfoBasicaT3(p_nombremes,p_anyo);
+	for v_todo in c_todo loop
+		MostrarLineasRiegosT3(v_todo.Cod_Vivero,v_maxcantidadvivero,p_nombremes,p_anyo);
+		v_maxcantidadtotal:=v_maxcantidadtotal+v_maxcantidadvivero;
+	end loop;
+	dbms_output.put_line('Número Litros Totales: '||v_maxcantidadtotal);
+end;
+/
+
+Create or replace procedure InformesRiegos(p_tipo number,p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+is
+begin
+	ComprobarExcepcionesPrincipal(p_nombremes,p_anyo);
+	if p_tipo = 1 then
+		InformesRiegoT1(p_nombremes,p_anyo,p_codvivero,p_codzona);
+	elsif p_tipo = 2 then
+		InformesRiegoT2(p_nombremes,p_anyo,p_codvivero);
+	elsif p_tipo = 3 then
+		InformesRiegoT3(p_nombremes,p_anyo);
+	else
+		dbms_output.put_line('Tipo incorrecto');
+	end if;
+end;
+/

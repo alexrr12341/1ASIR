@@ -1,0 +1,115 @@
+Microprocesadores->
+Estructura de Von Neumann->
+-Memoria principal
+-ALU
+-Unidad de control
+-Unidad entrada y salida
+
+Tipos->
+Mononucleo->
+1 solo procesador
+Multinucleo->
+Se reparten el trabajo entre los nucleos(Caches por cada nucleo, tienen una compartida cada 1)
+Elementos->
+-Unidad de control
+-Decodificadores de instrucciones
+-ALU
+-Unidad de coma flotante
+-Memoria caché
+-Bus frontal
+-Bus trasero
+
+
+NUEVO TEMA
+---------->
+
+FUNCIONAMIENTOS DE UN MICROPROCESADOR
+-------------------------------------
+Instruccion:Codigo binario que solo la CPU entiende
+Programa:Conjunto de instrucciones
+ISA:Arquitectura del conjunto de instrucciones
+-Ejecucion secuencial
+-Traer la instruccion desde la memoria hacia el registro, el registro la traduce y la CPU lleva a cabo dicha instruccion
+-Registro A->Acumulador
+-TODOS los procesadores trabajan con un conjunto de instrucciones concreto
+-Dos procesadores compatibles si comprenden las mismas instrucciones
+-El conjunto de instrucciones x86 es el compatible con PC
+-Se extiende hasta 64 bits
+-Cada nueva generacion ese conjunto de instrucciones se amplia, por lo que un procesador nuevo soporta -las instrucciones antiguas pero uno antiguo no podría con uno nuevo
+-Puede ser por razones de velocidad la incompatibilidad pero principalmente por esto
+INTEL
+-----
+IA-32->Extension del conjunto x86 para trabajar con 32 bits
+MMX->Por pentium,nuevas instrucciones de forma mas eficientes en aplicaciones graficas
+SSE->trabajan con numeros en coma flotante y simultaneamente con la FPU
+SSE2,3,4,5,AVX...->Mejores versiones para manejo de graficos
+IA-32e,Intel64->Extension de x86 para trabajar con 64 bits
+AMD
+---
+3Dnow!->Respuesta de AMD a MMX
+AMD64->Extension de x86 para trabajar con 64 bits
+
+TIPOS DE INSTRUCCIONES
+----------------------
+CISC->Conjunto de instrucciones complejo (Muchas instrucciones distintas)
+RISC->Conjunto de instrucciones reducido (Pocas instrucciones distintas)
+
+Niveles de lenguaje->
+Alto nivel(Python)->Ensamblador->Maquina->Conjunto de instrucciones de un microprocesador
+
+CISC->
+Objetivo:Reducir el numero de lineas de codigo ensamblador de programas
+Mas complejas->Mas tiempo de ejecución
+
+RISC->
+Objetivo:Instrucciones mas sencillas mas rapidamente
+
+Se transforman las instrucciones en microinstrucciones, asique realmente se espera a que trabaje con instrucciones mas sencillas
+
+Memoria virtual->Una memoria que hace sobrepasar el limite de la memoria(Se la suele enviar al disco duro)
+
+Paralelismo
+-----------
+Varios calculos se pueden realizar simultáneamente.
+
+Tecnicas->
+Multitarea->Habilidad que tiene el procesador de dar la apariencia que hace 2 tareas a la vez
+
+Multihilo-->Dividir el trabajo de un programa en varios subtrabajos que pueden correr en distintos procesadores.
+
+Multinúcleo->Procesadores que contienen dos o mas núcleos.Permite 1 hilo por nucleo.
+
+Hyperthreading(Intel)->Ejemplo de tecnologia multihilo
+Mejora el rendimiento total del ordenador, un microprocesador emula a dos
+Para poder usarlo el S.O, la placa base, el chipset y la BIOS deben soportar el HT
+Necesario que aplicaciones esten programadas de forma que sean divisibles en varios hilos
+
+Refrigeración
+-------------
+Todo componente electronico en corriente electrica genera calor
+Dicho calor puede hacer que sea el dispositivo inestable y produzca errores en funcionamiento
+IMPORTANTISIMO disipar calor que producen los elementos de un ordenador.
+Mas voltaje->Mas calor
+Mas velocidad->Mas calor
+
+Tipos->
+Pasiva por aire(Disipadores)->
+Incrementar la superficie de contacto con el aire para maximizar el calor que este es capaz de retirar
+Activa por aire(Disipador+Ventilador)->
+Mejora la eficacia del anterior
+
+Refrigeracion líquida->
+Un radiador,un deposito,una bomba de agua y el circuito de tubos
+Mas eficaz que por el aire
+Menos ruido
+Permite refrigerar todos los componentes a la vez
+Peligrosa y muy cara
+
+Refrigeracion inmersion->
+Sumerguido en un liquido de conductividad electronica muy baja(aceite)
+
+Refrigeracion por heatpipes->
+Circuito cerrado en donde un fluido se calienta en contacto con CPU, se evapora, sube el vapor hacia el disipador, se condensa y baja como liquido nuevamente(Un ciclo muy bonito), se ajusta bien la temperatura optima. Placas actuales
+
+
+

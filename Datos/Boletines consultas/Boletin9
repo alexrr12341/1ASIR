@@ -1,0 +1,86 @@
+1.- Crea las tablas considerando que las claves primarias son los campos que se encuentran subrayados y, además, tenemos las siguientes condiciones:
+
+En la tabla OPOSICION la categoría será un carácter entre la 'A' y la 'E'.
+
+En los campos prueba1 y prueba2 de la tabla MATRICULAS se guardan calificaciones numéricas que estarán entre 0 y 50. El tipo de matricula puede ser 'Oficial' o 'Libre'. El campo inscripcion es de tipo Fecha.
+
+Introduce una buena cantidad de registros de prueba.
+
+2.- Obtener el nombre de los cursos de más de 300 horas y que admiten a más de 100 alumnos.
+
+3.- Obtener el nombre, código, fecha de inicio, fecha final y horas de todos los cursos que se imparten en la academia, ordenados alfabéticamente por nombre.
+
+4.- Mostrar toda la información de los cursos que comienzan en el mes de Mayo, incluyendo Nombre, Código, DNI del profesor, número máximo de alumnos, fecha de inicio, fecha final y número de horas.
+
+5.- Mostrar el nombre de la oposición y la categoría de las oposiciones de categoría A, B o C.
+
+6.- Mostrar los nombres completos de los profesores con el título que poseen.
+
+7.- Obtener un listado con el nombre completo de los alumnos con matricula oficial, el nombre del curso en el que están matriculados y la fecha de inscripción a dicho curso.
+
+8.- Relación de los cursos que sirven para preparar la oposición llamada 'Maestros de Primaria' junto con el nombre del profesor que lo imparte.
+
+9.- Listado de las oposiciones a las que se puede acceder, recibiendo los cursos que imparte el profesor 'Manuel López García'.
+
+10.- Titulo y precio de los manuales recomendados para el curso 'Función Pública'.
+
+11.- Obtener un listado con los alumnos más jóvenes que 'Luisa Sánchez Donoso'.
+
+12.- Obtener el nombre de los cursos en los que hay más alumnos matriculados que en el curso más numeroso del profesor 'Manuel López García'.
+
+13.- Obtener el nombre completo de los profesores que impartan cursos con un número de horas mayor que alguno de los cursos impartidos por el profesor 'Manuel López García'.
+
+14.- Obtener los nombres de los cursos impartidos por el profesor 'Luis Pérez Sánchez' que sirvan para la oposición 'Funcionario de Prisiones'.
+
+15.- Obtener el nombre y los apellidos de los alumnos que no se han matriculado por libre en ningún curso.
+
+16.- Obtener nombre, apellidos, sueldo y título de aquellos profesores que tienen un sueldo mayor que el de alguno de sus compañeros de titulación.
+
+17.- Obtener nombre y apellido de los profesores que imparten algún curso de más de 100 horas pero no imparten ningún curso de menos de 50 alumnos.
+
+18.- Mostrar el nombre de las oposiciones que son de la misma categoría pero distinto organismo que la oposición con código 'C-512'.
+
+19.- Obtener el nombre y apellidos de los alumnos que solo se han presentado a una de las pruebas en algún curso.
+
+20.- Nombre de todos los cursos junto con el código de las oposiciones para las que están destinados.
+
+21.- Obtener un listado con el nombre completo de los alumnos matriculados en el curso 'Función Pública' junto con sus notas en ambas pruebas siempre que su media entre las dos supere los 25 puntos.
+
+22.- Mostrar el nombre y los apellidos de los alumnos que tengan más de 31 años.
+
+23.- Mostrar para cada curso su nombre y el número máximo de alumnos si admitiésemos un 25% más de los permitidos.
+
+24.- Obtener el nombre y los apellidos de todos los alumnos cuyo primer apellido empiece por la letra 'P'.
+
+25.- Obtener el nombre y los apellidos junto a la fecha de nacimiento de todos los alumnos nacidos en el mes de abril.
+
+26.- Mostrar una relación de los cursos que comienzan en el mes de septiembre, junto con el nombre y apellidos del profesor que lo imparte y la fecha de inicio del mismo.
+
+27.-Nombre completo de los alumnos y puntuación media (entre las dos pruebas) de aquellos que hayan sacado más de 20 puntos de media en el curso 'La Constitución'.
+
+28.- Nombre completo de todas las personas (alumnos y profesores) que hay en la academia, ordenados alfabéticamente por apellidos.
+
+29.- Obtener el nombre y los apellidos de todos los profesores, junto con el nombre de los cursos que imparten (o en blanco si no imparten ningún curso)
+
+30.- Número de alumnos matriculados en el curso 'La Constitución'.
+
+31.- Número de alumnos nacidos en 1970.
+
+32.- Nombre del curso con más horas.
+
+33.- Obtener el nombre completo de los alumnos junto con el curso y la nota obtenida en la prueba 1 de aquellos que han obtenido la nota más alta en dicha prueba en cada curso.
+
+34.- Número total de alumnos matriculados en los cursos que imparte 'Luis Pérez Sánchez', así como la nota máxima y la mínima calificada por este profesor en la prueba 1 de cualquier curso.
+
+35.- Obtener un listado con el nombre de los profesores junto con el número total de alumnos que tienen matriculados en sus cursos.
+
+36.- Obtener la nota mínima, máxima y media en las pruebas 1 y 2 obtenidas en todos los cursos agrupadas por sexos.
+
+37.- Nombre, apellidos y número de cursos de los profesores que imparten mayor número de cursos.
+
+38.- Nombre de las oposiciones que necesitan tres o más cursos.
+
+39.- Obtener el nombre y apellidos de los profesores que imparten cursos que suman más horas que todos los cursos de 'Luis Pérez Sánchez'.
+
+40.- Obtener el nombre y los apellidos de los profesores que dan menos horas.
+

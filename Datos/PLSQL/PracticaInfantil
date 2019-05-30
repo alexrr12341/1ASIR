@@ -1,0 +1,496 @@
+
+Ejercicio 1
+
+Haz una función llamada DevolverCodDept que reciba el nombre de un departamento y devuelva su código.
+
+Create or replace function DevolverCodDept(d_nombre dept.dname%type)
+return dept.deptno%type
+as
+	d_codigo dept.deptno%type;
+begin
+	Select deptno into d_codigo
+	from dept
+	where dname=d_nombre;
+	return d_codigo;
+exception
+	when NO_DATA_FOUND then
+		dbms_output.put_line('No existe ese nombre.');
+		return -1;
+	when TOO_MANY_ROWS then
+		dbms_output.put_line('Hay varios departamentos con ese nombre.');
+		return -2;
+end;
+/
+
+Create or replace procedure Prueba(v_nombre dept.dname%type)
+as
+begin
+	dbms_output.put_line(DevolverCodDept(v_nombre));
+exception
+	when NO_DATA_FOUND then
+		dbms_output.put_line('No existe ese nombre.');
+		
+end;
+/
+
+
+
+Ejercicio 2
+
+Realiza un procedimiento llamado HallarNumEmp que recibiendo un nombre de departamento, muestre en pantalla el número de empleados de dicho departamento. Puedes utilizar la función creada en el ejercicio 1.
+
+Si el departamento no tiene empleados deberá mostrar un mensaje informando de ello. Si el departamento no existe se tratará la excepción correspondiente.
+
+Create or replace function DevolverCodDept(d_nombre dept.dname%type)
+return dept.deptno%type
+as
+	d_codigo dept.deptno%type;
+begin
+	Select deptno into d_codigo
+	from dept
+	where dname=d_nombre;
+	if d_codigo is not null then
+		return d_codigo;
+	end if;
+exception
+	when NO_DATA_FOUND then
+		dbms_output.put_line('No existe ese nombre.');
+		return -1;xx
+end;
+/
+
+Create or replace function ContarEmp(d_codigo dept.deptno%type)
+return number
+as
+	e_contador number;
+begin
+	Select count(*) into e_contador
+	from emp
+	where deptno = (Select deptno
+			from dept
+			where deptno=d_codigo);
+	if e_contador = 0 then
+		dbms_output.put_line('No hay empleados.');
+	else
+		return e_contador;
+	end if;
+end;
+/
+
+Create or replace procedure HallarNumEmp(v_nombre dept.dname%type)
+as
+begin
+	dbms_output.put_line(ContarEmp(DevolverCodDept(v_nombre)));
+	
+end;
+/
+Ejercicio 3
+
+Realiza una función llamada CalcularCosteSalarial que reciba un nombre de departamento y devuelva la suma de los salarios y comisiones de los empleados de dicho departamento. Trata las excepciones que consideres necesarias.
+
+Create or replace function CalcularCosteSalarial(d_nombre dept.dname%type)
+return number
+as
+	suma_salcomm Number;
+	v_codigo dept.deptno%type;
+	
+begin
+	v_codigo:=DevolverCodDept(d_nombre);
+	if v_codigo > 0 then
+		Select nvl(sum(sal+nvl(comm,0)),0) into suma_salcomm
+		from emp
+		where deptno = v_codigo;
+	else
+		suma_salcomm:=-1;
+	end if;
+	return suma_salcomm;
+end;
+/
+
+
+Ejercicio 4
+
+Realiza un procedimiento MostrarCostesSalariales que muestre los nombres de todos los departamentos y el coste salarial de cada uno de ellos. Puedes usar la función del ejercicio 3.
+
+Create or replace procedure MostrarCostesSalariales
+as
+	cursor c_dept is
+	select dname from dept;
+	v_totalsal NUMBER;
+	v_totalempresa NUMBER:=0;
+begin
+	dbms_output.put_line('Nombre Departamento:		Coste');
+	dbms_output.put_line('----------------------------------------');
+	for v_dept in c_dept loop
+		v_totalsal:=CalcularCosteSalarial(v_dept.dname);
+		if v_totalsal != -1 then
+			v_totalempresa=v_totalempresa+v_totalsal;
+			dbms_output_put.line(v_dept.dname ||' '||v_totalsal);
+		end if;
+	end loop;
+	dbms_output.put_line('Total coste empresa:'||' '||v_totalempresa);
+end;
+/
+
+
+Ejercicio 5
+
+Realiza un procedimiento MostrarAbreviaturas que muestre las tres primeras letras del nombre de cada empleado.
+
+Create or replace procedure MostrarAbreviaturas
+as
+	cursor c_emp is
+	select ename
+	from emp;
+begin
+	for v_emp in c_emp loop
+		dbms_output.put_line(substr(v_emp.ename,1,3));
+	end loop;
+end;
+/
+
+O
+
+Create or replace procedure MostrarAbreviaturas
+as
+	cursor c_emp is
+	select substr(ename,1,3) as abreviatura
+	from emp;
+begin
+	for v_emp in c_emp loop
+		dbms_output.put_line(v_emp.abreviatura);
+	end loop;
+end;
+/
+
+Ejercicio 6
+
+Realiza un procedimiento MostrarMasAntiguos que muestre el nombre del empleado más antiguo de cada departamento junto con el nombre del departamento. Trata las excepciones que consideres necesarias.
+
+Create or replace procedure MostrarMasAntiguoDept(p_deptno dept.deptno%type)
+as
+	cursor c_emp is
+	Select ename,dname
+	from emp e, dept d
+	where e.deptno=d.deptno
+	and e.deptno=p_deptno
+	order by hiredate;
+	
+	v_emp c_emp%ROWTYPE;
+begin
+	open c_emp;
+	fetch c_emp into v_emp;
+	if c_emp%FOUND then
+		dbms_output.put_line(v_emp.ename||' '||v_emp.dname);
+	else
+		dbms_output.put_line('El departamento '||p_deptno|| ' no tiene empleados.');
+	end if;
+	close c_emp;
+end;
+/
+Create or replace procedure MostrarMasAntiguos
+as
+	cursor c_dept is
+	Select deptno
+	from dept;
+begin
+	for v_dept in c_dept loop
+		MostrarMasAntiguoDept(v_dept.deptno);
+	end loop;
+end;
+/
+
+Select dname,ename
+from emp e, dept d
+where e.deptno=d.deptno
+and e.hiredate = (Select min(hiredate)
+		  from emp e2
+		  where e2.deptno=e.deptno);
+
+O
+
+Select dname,ename
+from emp e, dept d
+where e.deptno=d.deptno
+and (e.deptno,hiredate) in (Select deptno,min(hiredate)
+			    from emp
+			    group by deptno);
+
+Select dname,ename,hiredate
+from emp e,dept d
+where e.deptno=d.deptno
+order by hiredate;
+
+Ejercicio 7
+
+Realiza un procedimiento MostrarJefes que reciba el nombre de un departamento y muestre los nombres de los empleados de ese departamento que son jefes de otros empleados.Trata las excepciones que consideres necesarias.
+
+Create or replace procedure MostrarJefes(v_name dept.dname%type)
+as
+	v_codept dept.deptno%type;
+	cursor c_emp is
+	select ename
+	from emp
+	where deptno = (Select deptno
+			from dept
+			where dname=v_name)
+	and empno in (Select MGR
+		    	from emp);
+	e_name c_emp%rowtype;
+	e_ind NUMBER:=0;
+begin
+	v_codept:=DevolverCodDept(v_name);
+	dbms_output.put_line('Jefes del departamento '||v_name)
+	if v_codept >= 0 then
+		for nomemp in c_emp loop
+			dbms_output.put_line(nomemp.ename);
+			e_ind:=1;
+		end loop;
+		if e_ind = 0 then
+			dbms_output.put_line('No hay jefes.')
+		end if;
+	end if;
+exception
+	when TOO_MANY_ROWS then
+		dbms_output.put_line('Hay demasiados departamentos con ese nombre.');
+end;
+/
+
+Ejercicio 8
+
+Realiza un procedimiento MostrarMejoresVendedores que muestre los nombres de los dos vendedores con más comisiones. Trata las excepciones que consideres necesarias.
+
+Create or replace procedure ComprobarTablaVacia
+is
+	v_cuenta Number;
+begin
+	Select count(*) into v_cuenta
+	from emp;
+	if v_cuenta = 0 then
+		raise_application_error(-20001,'Tabla EMP vacia');
+	end if;
+end;
+/
+
+Create or replace procedure ComprobarSiHayVendedores
+is
+	v_cuenta Number;
+begin
+	Select count(*) into v_cuenta
+	from emp
+	where job='SALESMAN';
+	if v_cuenta = 0 then
+		raise_application_error(-20002,'No hay vendedores en la tabla EMP');
+	end if;
+end;
+/
+
+Create or replace procedure ComprobarNumComisiones
+is
+	v_cuenta Number;
+begin
+	Select count(*) into v_cuenta
+	from emp
+	where comm is not null;
+	if v_cuenta < 2 then
+		raise_application_error(-20003,'No hay suficientes comisiones en la tabla emp');
+	end if;
+end;
+/
+
+
+Create or replace procedure ComprobarExcepciones
+is
+begin
+	ComprobarTablaVacia;
+	ComprobarSiHayVendedores;
+	ComprobarNumComisiones;
+end;
+/
+
+Create or replace procedure MostrarMejoresVendedores
+as
+	cursor c_emp is
+	Select ename
+	from emp
+	where comm is not null
+	and job='SALESMAN'
+	order by nvl(comm,0) desc;
+	v_nombre c_emp%rowtype;
+begin
+	ComprobarExcepciones;
+	open c_emp;
+	fetch c_emp into v_nombre; 
+	while c_emp%FOUND and c_emp%ROWCOUNT<=2 loop 
+		dbms_output.put_line(v_nombre.ename);
+		fetch c_emp into v_nombre;
+	end loop;
+	close c_emp;
+end;
+/
+
+Ejercicio 9
+
+Realiza un procedimiento MostrarsodaelpmE que reciba el nombre de un departamento al revés y muestre los nombres de los empleados de ese departamento. Trata las excepciones que consideres necesarias.
+
+Create or replace function DevolverCadAlReves(v_cadena Varchar2)
+return Varchar2
+is
+	v_cadenainversa Varchar2(100):='';
+begin
+	for i in reverse 1..length(v_cadena) loop
+		v_cadenainversa :=  v_cadenainversa || substr(v_cadena,i,1);
+	end loop;
+	return v_cadenainversa;
+end;
+/
+
+Create or replace procedure MostrarEmpleados(p_nombre dept.dname%type)
+is
+	v_deptno dept.deptno%type;
+	cursor c_emp
+	is
+	Select ename
+	from emp
+	where deptno = v_deptno;
+begin
+	v_deptno:=DevolverCodDept(p_nombre);
+	ComprobarSiHayEmpleados(v_deptno);
+	for v_emp in c_emp loop
+		dbms_output.put_line(v_emp.ename);
+	end loop;
+end;
+/
+
+Create or replace procedure ComprobarSiHayEmpleados(p_deptno dept.deptno%type)
+is
+	v_num NUMBER;
+begin
+	Select count(*) into v_num
+	from emp
+	where deptno=p_deptno;	
+	if v_num=0 then
+		raise_application_error(-20001,'El departamento no tiene empleados');
+	end if;
+end;
+/
+
+Create or replace procedure MostrarsodaelpmE(v_dname dept.dname%type)
+as
+	v_nombreI emp.ename%type;
+begin
+	v_nombreI:=DevolverCadAlReves(v_dname);
+	MostrarEmpleados(v_nombreI);
+end;
+/
+
+Ejercicio 10
+
+Realiza un procedimiento RecortarSueldos que recorte el sueldo un 20% a los empleados cuyo nombre empiece por la letra que recibe como parámetro.Trata las excepciones que consideres necesarias.
+
+Excepciones:
+	Tabla EMP vacia.
+Create or replace procedure ComprobarTablaEmpVacia
+is
+	v_num NUMBER;
+begin
+	Select count(*) into v_num
+	from emp;
+	if v_num = 0 then
+		raise_application_error(-20001,'No hay empleados en la tabla EMP');
+	end if;
+end;
+/
+
+Create or replace procedure RecortarSueldos(p_letra Varchar2)
+is
+begin
+	ComprobarTablaEmpVacia;
+	update emp
+	set sal=sal*0.8
+	where substr(ename,1,1) = p_letra;
+	dbms_output.put_line(SQL%ROWCOUNT || ' FILAS ACTUALIZADAS.');
+end;
+/
+
+Ejercicio 11
+
+Realiza un procedimiento BorrarBecarios que borre a los dos empleados más nuevos de cada departamento. Trata las excepciones que consideres necesarias.
+
+Excepciones:
+	Tabla EMP vacia.
+	Hay departamentos con menos de dos empleados. Para cada departamento recorrer los empleados ordenados por hiredate (los mas nuevos antes) y borrar los dos primeros.
+
+Create or replace function DevolverNumDptosVacios
+return NUMBER
+is
+	v_numdeptvacio NUMBER;
+begin
+	Select count(*) into v_numdeptvacio
+	from dept
+	where deptno not in (Select distinct deptno
+			     from emp);
+	return v_numdeptvacio;
+end;
+/
+
+Create or replace procedure ComprobarNumMinEmpportDept(p_umbral NUMBER)
+is
+	v_NumMinEmp NUMBER;
+	v_deptvacio NUMBER;
+begin
+	Select min(count(*)) into v_NumMinEmp
+	from emp
+	group by deptno;
+	v_deptvacio:=DevolverNumDeptosVacios;
+	if v_NumMinEmp < p_umbral or v_deptvacio>0 then
+		raise_application_error(-20001,'No hay suficientes empleados en todos los departamentos.'):
+	end if;
+end;
+/
+
+
+
+Create or replace procedure ComprobarExcepcionesBorrar
+is
+begin
+	ComprobarTablaEmpVacia;
+	ComprobarNumMinEmpportDept(2);
+end;
+/
+
+
+
+Create or replace procedure BorrarDosMasNuevos(p_deptno dept.deptno%type)
+is
+	cursor c_emp
+	is
+	Select empno
+	from emp
+	where deptno=p_deptno
+	order by hiredate desc;
+	v_emp c_emp%rowtype;
+begin
+	open c_emp;
+	fetch c_emp into v_emp;
+	while c_emp%found and c_emp%rowcount<=2 loop
+		delete emp
+		where empno=v_emp.empno;
+		fetch c_emp into v_emp;
+	end loop;
+end;
+/
+
+Create or replace procedure BorrarBecarios
+is
+	cursor c_dept
+	is
+	select deptno
+	from dept;
+begin
+	ComprobarExcepcionesBorrarBecarios;
+	for v_dept in c_dept loop
+		BorrarDosMasNuevos(v_dept.deptno);
+	end loop;
+end;
+/

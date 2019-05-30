@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<paneles>
+    <evento>
+        <Señal tipo='Accidente' Fecha='2015-12-12 11:00:00 GMT'>
+           <via>
+                <PuntoKM>42,200</PuntoKM>
+                <Nombre>A-49</NombreVia>
+                <Sentido>Huelva</Sentido>
+                <Corte>1 Carril</Corte>
+                <Retención km='8'>Si</Retención>
+            </via>
+        </Señal>
+    </evento>
+    <evento>
+        <Señal tipo='Retencion' Fecha='2015-12-12 11:00:01 GMT'>
+           <via>
+            <PuntoKM>550</PuntoKM>
+            <Nombre>A-4</Nombre>
+            <Sentido>Sevilla</Sentido>
+            <Retención km='3'>Si</Retención>
+            </via>
+        </Señal>
+    </evento>   
+</paneles>

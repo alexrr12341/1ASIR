@@ -1,0 +1,49 @@
+Hardware
+--------
+-Arquitectura de un ordenador
+
+-Arquitectura de Von Neumann
+
+-Componentes de un SI(I)
+Reconocer placa base elementos
+Reconocer conectores
+Datos genéricos
+
+Distinguir cajas de PC/SERVIDORES
+
+-Fuente alimentacion
+Que es, para que se utiliza
+Conectores
+Calculo de potencia(Da datos)(Pero muy poquito)
+Ejemplos de fuentes
+Que es 80+
+
+-Placa base
+Reconocer elementos que la integran(Estandar)
+Conectores PCI y PCI-E
+
+-Microprocesadores
+TODO
+Un poco idea de como se organiza hoy el procesador respecto a anteriormente
+Explicar esquemas de arquitecturas de placa base
+Caracteristicas generales bus de datos, bus de direcciones, etc
+Memoria caché
+Arquitectura de memoria
+Diferencia entre distintos tipos de memoria
+Factor de Multiplicación
+Que es TDP
+Que es la virtualizacion
+Como funciona una CPU(Busqueda de ejecucion,etc)
+CISC:Utilizar un conjuto de instrucciones complejas
+RISC:Utilizar un conjunto de instrucciones simples
+HASTA EL PUNTO 6
+DE CISC Y RISC PARA ADELANTE NO PREGUNTA
+
+-Memoria
+Caracteristicas
+Tipos
+Formatos
+Jerarquia de memoria
+Esquema no(Saber distinguir de ROM DE RAM)
+
+FIN DEL EXAMEN

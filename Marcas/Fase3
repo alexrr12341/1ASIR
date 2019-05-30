@@ -1,0 +1,32 @@
+Nombre de la ruta: /
+¿Se accede con get o con post?: Con Get
+¿Qué se hace en esa ruta?: Muestra la rotación gratuita de los campeones del LoL junto a la tienda de Fortnite
+
+Nombre de la ruta: /estadisticas
+¿Se accede con get o con post?:Con Get
+¿Qué se hace en esa ruta?: Devuelve dos formularios, donde en uno debes rellenar tu información del fortnite y en otro la del LoL
+
+
+Nombre de la ruta:/metas
+¿Se accede con get o con post?:Con Get
+¿Qué se hace en esa ruta?:Devuelve dos formularios, uno de fortnite y otro del LoL, se debe indicar cuales son tus metas de futuro para que el programa te calcule cuanto te queda para llegar a esa meta.
+
+Nombre de la ruta:/esports
+¿Se accede con get o con post?:Con Get
+¿Qué se hace en esa ruta?:Te muestra la información de los torneos de League of Legends mas recientes(si está vacio esque no se juega ningun torneo en la fecha), junto a un apartado de los torneos que están en vivo.
+
+Nombre de la ruta:/leagueoflegends
+¿Se accede con get o con post?:Con Post
+¿Qué se hace en esa ruta?:Es la continuación de /estadisticas de la parte del LoL, se envia la información del formulario y te muestra tus estadisticas básicas, las de tu liga, tus maestrias de campeones y tus 5 ultimas partidas
+
+Nombre de la ruta:/fortnite
+¿Se accede con get o con post?:Con Post
+¿Qué se hace en esa ruta?:Es la continuacion de /estadisticas de la parte de Fortnite,se envia la información del formulario y te muestra tus estadisticas generales,de solo,de duo y de squad
+
+Nombre de la ruta:/metas/leagueoflegends
+¿Se accede con get o con post?:Con Post
+¿Qué se hace en esa ruta?:Es la continuación de /metas de la parte del LoL, se envia la información del formulario y el programa detecta cuantas ligas te quedan para tu objetivo,cuantas victorias y cuantos niveles.
+
+Nombre de la ruta:/metas/fortnite
+¿Se accede con get o con post?:Con Post
+¿Qué se hace en esa ruta?:Es la continuación de /metas de la parte del Fortnite, se envia la información del formulario y el programa detecta cuantas kills te quedan parta tu objetivo,cuantas victorias y cuanta puntuación.

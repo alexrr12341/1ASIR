@@ -1,0 +1,52 @@
+Monitores de procesos: top,htop
+Control jobs:bg,fg,jobs,ctrl+z, ctrl+c,&
+Gestion procesos:pidof, ps, pstree, pkill, killall, nohup, nice, renice, pgrep
+señales: kill -l, man 7 signal
+Ubicacion procesos: /proc/nºproceso
+Procesos prueba: find /
+		ls -R /
+		yes
+		sleep
+		xclock -d -update 1 & (digital)
+		xclock -bg wheat -update 1 & (analogico)
+		watch -n sg binario
+		(while sleep xx;do date;done)&
+		
+pidof (nombre proceso)=te devuelve el identificador de proceso del proceso que tu le hayas dado
+nohup=sirve para que aunque el proceso padre termine el proceso hijo no se termine tambien sino que siga ejecutandose
+/proc/nºproceso= el directorio proc tiene directorios que coinciden con numeros de procesos en el que esta la informacion del proceso
+
+lscpu y nproc=muestra los numeros de cores de tu procesador, npros solo devuelve el numero de cores y lscpu da mucha mas informacion de la cpu
+chcpu=activa o desactiva cores
+lscpu -ae= Muestra informacion de los cores
+taskset= Ejecucion de un proceso en un determinado core
+pigz= compresor gz, con posibilidad de asignacion de cores al proceso de compresion
+stress --cpu 2 --io 1 --vm 1 --timeout 10 (le mete carga a la maquina durante 10 segundos para estresarla)
+
+at (hora)= programa una tarea a la hora que le pongamos
+atq=te muestra las tareas programadas
+
+nice=permite cambiar la prioridad de un proceso 
+renice= hace lo mismo que nice pero a los procesos que ya se estan ejecutando
+
+screen=permite trabajar con sesiones para interactuar con los procesos
+screen -ls = Muestra las sesiones activas
+screen -r (identificador sesion) = para conectarse a la sesion
+screen -x (indetificador sesion) = para conectarse a una sesion multiusuario
+screen -S (nombre sesion) = crear sesiones
+ctrl+a=ponerse en modo gestion de screen
+	-ctrl + a + ? (te muestra la ayuda)	
+	-ctrl + a + " (te dice las ventanas que tienes abiertas en la sesion para meterte en ellas)	
+	-ctrl + a + A (renombrar ventanas)	
+	-ctrl + a + c (crea ventanas)
+	-ctrl + a + k (cierra ventanas)
+	-ctrl + a + S (te divide en dos regiones horizontales)
+	-ctrl + a + tab (cambia de una region a otra)
+	-ctrl + a + d (salir de la sesion)
+	-ctrl + a + | (divide verticalmente en dos regiones la ventana)
+	-ctrl + a + X (cierra regiones)
+	-ctrl + a + n (cambia a la siguiente ventana)
+	-ctrl + a + {numero ventana} (cambia a la ventana que tenga ese numero)
+	-ctrl + a + x (bloquear)
+para cargarse sesiones solo hay que poner exit
+

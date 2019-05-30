@@ -1,0 +1,139 @@
+ORACLE
+----------------------------------------------------------------------------------------------------
+
+create table ALUMNOS
+(
+	DNI VARCHAR2(10),
+	Nombre VARCHAR2(20) not null,
+	Direccion VARCHAR2(20),
+	Telefono VARCHAR2(10),
+	constraint pk_dni PRIMARY KEY(DNI),
+	constraint restr_dni check(regexp_like(DNI,'^[0-9]{3}-[a-zA-Z]$')),
+	constraint restr_telef check (Telefono like '95%')
+);
+
+create table EMPRESAS
+(
+	CIF VARCHAR2(10),
+	Nombre VARCHAR2(20),
+	Direccion VARCHAR2(20) not null,
+	Responsable_Legal VARCHAR2(10),
+	Sector VARCHAR2(15),
+	constraint pk_cif PRIMARY KEY(CIF),
+	constraint nombreunico UNIQUE(Nombre)
+);
+
+create table PRACTICAS
+(
+	DNIALUMNOS VARCHAR2(10),
+	CIFEMPRESAS VARCHAR2(10),
+	Fecha_Inicio DATE,
+	NumHoras NUMBER(4) default 0,
+	constraint fk_dnialumno FOREIGN KEY(DNIALUMNOS) REFERENCES ALUMNOS,
+	constraint fk_cifempresa FOREIGN KEY(CIFEMPRESAS) REFERENCES EMPRESAS,
+	constraint pk_dnicif PRIMARY KEY(DNIALUMNOS,CIFEMPRESAS)
+);
+
+
+
+
+---------------------------------------------------------------------------------------------------
+#Empieza y termina por mayus
+Alter table EMPRESAS
+add constraint letra_mayus check (regexp_like(CIF,'^[A-Z].*[A-Z]$'));
+#Fecha Inicio Abril y Mayo
+Alter table PRACTICAS
+
+#Formas de hacer restriccion fecha_abrilmayo
+#Este
+add constraint fecha_abrilmayo check ((extract(MONTH) from Fecha_Inicio) in('04','05'));
+#Este
+add constraint fecha_abrilmayo check(extract(MONTH from Fecha_Inicio)='04' or extract(MONTH from Fecha_Inicio)='05');
+#O Este
+add constraint fecha_abrilmayo check(to_char(Fecha_Inicio,'MM')='04' or to_char(Fecha_Inicio,'MM')='05'
+
+#Sectores de practicas
+Alter table EMPRESAS
+add constraint sector_nombre check((sector like 'Informatica') or (sector like 'I+D') or (sector like 'Electronica'))
+
+#Numero de horas multiplo 6
+add constraint multiplo_6 check(Mod(NumHoras,6)=0)
+
+#Restricciones de tablas
+Alter table ALUMNOS
+add constraint pasa_DNIalu check(length(DNI)<=5)
+add constraint pasa_Nombrealu check(length(Nombre)<=20)
+add constraint pasa_Direccionalu check(length(Direccion)<=20)
+add constraint pasa_Telefonoalu check(length(Telefono)<=10)
+
+Alter table EMPRESAS
+add constraint pasa_CIF check(length(CIF)<=10)
+add constraint pasa_NombreEmp check(length(Nombre)<=20)
+add constraint pasa_DireccionEmp check(length(Direccion)<=20)
+add constraint pasa_ResponsableLegalEmp check(length(Responsable_Legal)<=10)
+add constraint pasa_SectorEmp check(length(Sector)<=15)
+
+Alter table PRACTICAS
+add constraint pasa_horasprac check(NumHoras<=9999)
+----------------------------------------------------------------------------------------------------
+
+Postgres
+----------------------------------------------------------------------------------------------------
+create table ALUMNOS
+(
+	DNI VARCHAR(10),
+	Nombre VARCHAR(20) not null,
+	Direccion VARCHAR(20),
+	Telefono VARCHAR(10),
+	constraint pk_dni PRIMARY KEY(DNI),
+	constraint restr_dni check(DNI ~ '^[0-9]{3}-[a-zA-Z]$'),
+	constraint restr_telef check (Telefono like '95%')
+);
+
+create table EMPRESAS
+(
+	CIF VARCHAR(10),
+	Nombre VARCHAR(20),
+	Direccion VARCHAR(20) not null,
+	Responsable_Legal VARCHAR(10),
+	Sector VARCHAR(15),
+	constraint pk_cif PRIMARY KEY(CIF),
+	constraint nombreunico UNIQUE(Nombre)
+);
+
+create table PRACTICAS
+(
+	DNIALUMNOS VARCHAR(10),
+	CIFEMPRESAS VARCHAR(10),
+	Fecha_Inicio DATE,
+	NumHoras NUMERIC(4) default 0,
+	constraint fk_dnialumno FOREIGN KEY(DNIALUMNOS) REFERENCES ALUMNOS,
+	constraint fk_cifempresa FOREIGN KEY(CIFEMPRESAS) REFERENCES EMPRESAS,
+	constraint pk_dnicif PRIMARY KEY(DNIALUMNOS,CIFEMPRESAS)
+);
+#Empieza y termina por mayus
+Alter table EMPRESAS
+add constraint letra_mayus check(CIF ~'^[A-Z].*[A-Z]$');
+#Fecha Inicio Abril y Mayo
+Alter table PRACTICAS
+
+#Formas de hacer restriccion fecha_abrilmayo
+#Este
+add constraint fecha_abrilmayo check ((extract(MONTH) from Fecha_Inicio) in('04','05'));
+#Este
+add constraint fecha_abrilmayo check(extract(MONTH from Fecha_Inicio)='04' or extract(MONTH from Fecha_Inicio)='05');
+#O Este
+add constraint fecha_abrilmayo check(to_char(Fecha_Inicio,'MM')='04' or to_char(Fecha_Inicio,'MM')='05'
+
+#Sectores de practicas
+Alter table EMPRESAS
+add constraint sector_nombre check((sector like 'Informatica') or (sector like 'I+D') or (sector like 'Electronica'))
+
+#Numero de horas multiplo 6
+add constraint multiplo_6 check(Mod(NumHoras,6)=0)
+---------------------------------------------------------------------------------------------------------------------
+
+MariaDB
+
+---------------------------------------------------------------------------------------------------------------------
+

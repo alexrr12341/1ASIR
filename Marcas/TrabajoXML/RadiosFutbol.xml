@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Fútbol es Radio</title>
+  <description><![CDATA[Un programa deportivo sin periodistas deportivos. Conducido por Dieter Brandau y Juan Pablo Polvorinos.]]></description>
+  <link>https://esradio.libertaddigital.com/</link>
+    <atom:link href="https://esradio.libertaddigital.com/futbol-es-radio/podcast.xml" rel="self" type="application/rss+xml" />
+  <language>es-ES</language>
+  <lastBuildDate>Wed, 20 Feb 2019 15:59:15 +0100</lastBuildDate>
+  <image>
+    <description><![CDATA[Un programa deportivo sin periodistas deportivos. Conducido por Dieter Brandau y Juan Pablo Polvorinos.]]></description>
+    <title>esRadio. Fútbol es Radio</title>
+    <url>https://s.libertaddigital.com/2016/10/03/futbol-es-radio-podcast-baja.jpg</url>
+    <link>https://esradio.libertaddigital.com/</link>
+  </image>
+  <itunes:summary>Un programa deportivo sin periodistas deportivos. Conducido por Dieter Brandau y Juan Pablo Polvorinos.</itunes:summary>
+  <itunes:owner>
+    <itunes:name>esRadio</itunes:name>
+    <itunes:email>info@esradio.fm</itunes:email>
+  </itunes:owner>
+  <itunes:author>esRadio</itunes:author>
+  <itunes:explicit>no</itunes:explicit>
+  <itunes:image href="http://s.libertaddigital.com/2016/10/03/futbol-es-radio-podcast-baja.jpg" />
+  <itunes:category text="Deportes y ocio" />
+  <item>
+    <description>Dieter y Juan Pablo comentan con Luis Herrero, José Luis Garci, Juanma Rodríguez y David Vinuesa toda la actualidad del fútbol.</description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-20/futbol-es-radio-momento-clave-del-atletico-en-la-champions-133556.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/20/futbol-es-radio-momento-clave-del-atletico-en-la-champions-133556.mp3?aw_0_req.gdpr=false" length="24936196" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-20/futbol-es-radio-momento-clave-del-atletico-en-la-champions-133556.html</guid>
+    <title>Fútbol es Radio: Momento clave del Atlético en la Champions</title>
+    <pubDate>Wed, 20 Feb 2019 15:59:15 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo comentan con Luis Herrero, José Luis Garci, Juanma Rodríguez y David Vinuesa toda la actualidad del fútbol.</itunes:summary>
+    <itunes:duration>51:10</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Dieter y Juan Pablo comentan con Isidoro San José, Gonzalo Heredero y Azpitarte toda la actualidad del fútbol. </description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-19/futbol-es-radio-vuelve-la-champions-para-barca-y-atletico-133502.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/19/futbol-es-radio-vuelve-la-champions-para-barca-y-atletico-133502.mp3?aw_0_req.gdpr=false" length="24737038" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-19/futbol-es-radio-vuelve-la-champions-para-barca-y-atletico-133502.html</guid>
+    <title>Fútbol es Radio: Vuelve la Champions para Barça y Atlético </title>
+    <pubDate>Tue, 19 Feb 2019 15:59:48 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo comentan con Isidoro San José, Gonzalo Heredero y Azpitarte toda la actualidad del fútbol. </itunes:summary>
+    <itunes:duration>50:45</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Dieter y Juan Pablo comentan con Jaime Ugarte, Juanma Rodríguez y Sergio Valentín toda la actualidad del fútbol.</description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-18/futbol-es-radio-el-madrid-cae-contra-el-girona-133455.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/18/futbol-es-radio-el-madrid-cae-contra-el-girona-133455.mp3?aw_0_req.gdpr=false" length="24921985" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-18/futbol-es-radio-el-madrid-cae-contra-el-girona-133455.html</guid>
+    <title>Fútbol es Radio: El Madrid cae contra el Girona</title>
+    <pubDate>Mon, 18 Feb 2019 15:59:20 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo comentan con Jaime Ugarte, Juanma Rodríguez y Sergio Valentín toda la actualidad del fútbol.</itunes:summary>
+    <itunes:duration>51:08</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Juan Pablo Polvorinos comenta toda la actualidad del fútbol con Dani Blanco, Isidoro San José, David Vinuesa y Sergio Valentín.</description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-15/futbol-es-radio-jornada-de-respiro-para-los-tres-grandes-133387.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/15/futbol-es-radio-jornada-de-respiro-para-los-tres-grandes-133387.mp3?aw_0_req.gdpr=false" length="24320333" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-15/futbol-es-radio-jornada-de-respiro-para-los-tres-grandes-133387.html</guid>
+    <title>Fútbol es Radio: Jornada de respiro para los tres grandes</title>
+    <pubDate>Fri, 15 Feb 2019 15:59:35 +0100</pubDate>
+    <itunes:summary>Juan Pablo Polvorinos comenta toda la actualidad del fútbol con Dani Blanco, Isidoro San José, David Vinuesa y Sergio Valentín.</itunes:summary>
+    <itunes:duration>49:53</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Dieter y Juan Pablo comentan con Isidoro San José, David Vinuesa y Dani Blanco la victoria del Real Madrid en Ámsterdam frente al Ajax.</description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-14/futbol-es-radio-victoria-del-real-madrid-frente-al-ajax-133335.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/14/futbol-es-radio-victoria-del-real-madrid-frente-al-ajax-133335.mp3?aw_0_req.gdpr=false" length="25011637" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-14/futbol-es-radio-victoria-del-real-madrid-frente-al-ajax-133335.html</guid>
+    <title>Fútbol es Radio: Victoria del Real Madrid frente al Ajax</title>
+    <pubDate>Thu, 14 Feb 2019 17:10:35 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo comentan con Isidoro San José, David Vinuesa y Dani Blanco la victoria del Real Madrid en Ámsterdam frente al Ajax.</itunes:summary>
+    <itunes:duration>51:19</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Dieter y Juan Pablo comentan la previa al Ajax-Real Madrid con Luis Herrero, José Luis Garci y Juanma Rodríguez. </description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-13/futbol-es-radio-previa-del-ajax-real-madrid-133287.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/13/futbol-es-radio-previa-del-ajax-real-madrid-133287.mp3?aw_0_req.gdpr=false" length="24298181" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-13/futbol-es-radio-previa-del-ajax-real-madrid-133287.html</guid>
+    <title>Fútbol es Radio: Previa del Ajax-Real Madrid</title>
+    <pubDate>Wed, 13 Feb 2019 15:59:36 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo comentan la previa al Ajax-Real Madrid con Luis Herrero, José Luis Garci y Juanma Rodríguez. </itunes:summary>
+    <itunes:duration>49:50</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Dieter y Juan Pablo comentan con Irene Ferreras, Isidoro San José y Azpitarte toda la actualidad del fútbol. </description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-12/futbol-es-radio-posible-11-de-solari-ante-el-ajax-133243.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/12/futbol-es-radio-posible-11-de-solari-ante-el-ajax-133243.mp3?aw_0_req.gdpr=false" length="24493995" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-12/futbol-es-radio-posible-11-de-solari-ante-el-ajax-133243.html</guid>
+    <title>Fútbol es Radio: Posible 11 de Solari ante el Ajax</title>
+    <pubDate>Tue, 12 Feb 2019 15:59:07 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo comentan con Irene Ferreras, Isidoro San José y Azpitarte toda la actualidad del fútbol. </itunes:summary>
+    <itunes:duration>50:15</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Dieter y Juan Pablo comentan con Jaime Ugarte, Juanma Rodríguez y Petón toda la actualidad del fútbol. </description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-11/futbol-es-radio-las-polemicas-del-atletico-real-madrid-133199.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/11/futbol-es-radio-las-polemicas-del-atletico-real-madrid-133199.mp3?aw_0_req.gdpr=false" length="24493368" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-11/futbol-es-radio-las-polemicas-del-atletico-real-madrid-133199.html</guid>
+    <title>Fútbol es Radio: Las polémicas del Atlético-Real Madrid</title>
+    <pubDate>Mon, 11 Feb 2019 16:25:37 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo comentan con Jaime Ugarte, Juanma Rodríguez y Petón toda la actualidad del fútbol. </itunes:summary>
+    <itunes:duration>50:15</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Juan Pablo Polvorinos comenta la actualidad del fútbol con David Vinuesa, Gonzalo Heredero y Alfredo Somoza. </description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-08/futbol-es-radio-derbi-clave-en-el-metropolitano-133126.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/08/futbol-es-radio-derbi-clave-en-el-metropolitano-133126.mp3?aw_0_req.gdpr=false" length="23581381" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-08/futbol-es-radio-derbi-clave-en-el-metropolitano-133126.html</guid>
+    <title>Fútbol es Radio: Derbi clave en el Metropolitano</title>
+    <pubDate>Fri, 8 Feb 2019 15:59:11 +0100</pubDate>
+    <itunes:summary>Juan Pablo Polvorinos comenta la actualidad del fútbol con David Vinuesa, Gonzalo Heredero y Alfredo Somoza. </itunes:summary>
+    <itunes:duration>48:21</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Dieter y Juan Pablo analizan toda la actualidad del fútbol con Isidoro San José, Dani Blanco, Sergio Valentín y David Vinuesa.</description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-07/futbol-es-radio-todo-abierto-para-la-vuelta-en-el-bernabeu-133075.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/07/futbol-es-radio-todo-abierto-para-la-vuelta-en-el-bernabeu-133075.mp3?aw_0_req.gdpr=false" length="24256803" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-07/futbol-es-radio-todo-abierto-para-la-vuelta-en-el-bernabeu-133075.html</guid>
+    <title>Fútbol es Radio: Todo abierto para la vuelta en el Bernabéu</title>
+    <pubDate>Thu, 7 Feb 2019 15:59:55 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo analizan toda la actualidad del fútbol con Isidoro San José, Dani Blanco, Sergio Valentín y David Vinuesa.</itunes:summary>
+    <itunes:duration>49:45</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+  </item>
+  <item>
+    <description>Dieter y Juan Pablo comentan con Luis Herrero, Juanma Rodríguez y José Luis Garci toda la actualidad del fútbol. </description>
+    <link>https://esradio.libertaddigital.com/fonoteca/2019-02-06/futbol-es-radio-el-clasico-de-semifinales-de-copa-133033.html</link>
+    <enclosure url="http://audios.esradio.fm/deportes/19/02/06/futbol-es-radio-el-clasico-de-semifinales-de-copa-133033.mp3?aw_0_req.gdpr=false" length="24271850" type="audio/mpeg" />
+        <guid>https://esradio.libertaddigital.com/fonoteca/2019-02-06/futbol-es-radio-el-clasico-de-semifinales-de-copa-133033.html</guid>
+    <title>Fútbol es Radio: El Clásico de semifinales de Copa</title>
+    <pubDate>Wed, 6 Feb 2019 15:59:18 +0100</pubDate>
+    <itunes:summary>Dieter y Juan Pablo comentan con Luis Herrero, Juanma Rodríguez y José Luis Garci toda la actualidad del fútbol. </itunes:summary>
+    <itunes:duration>49:47</itunes:duration>
+    <itunes:keywords></itunes:keywords>
+ 

@@ -1,0 +1,227 @@
+Create table Escuderias
+(
+Nombre Varbinary(15),
+Manager Varbinary(15),
+FabricanteMotor Varbinary(15),
+Sede Varbinary(15),
+CONSTRAINT pk_Escuderias PRIMARY KEY(Nombre),
+CONSTRAINT fabricantemotornombre check(FabricanteMotor='Honda' or FabricanteMotor='Yamaha' or FabricanteMotor='Ducati'),
+CONSTRAINT sedeconstr check(Sede like '%Belgica%' or Sede like '%Francia%' or Sede like '%Italia%')
+);
+
+
+Create table Pilotos
+(
+Codigo Varbinary(3),
+Nombre Varbinary(15),
+Nacionalidad Varbinary(15),
+FechaNacimiento DATETIME,
+CarreraDebut Varbinary(20),
+NombreEscuderia Varbinary(20),
+CONSTRAINT pk_Pilotos PRIMARY KEY(Codigo),
+CONSTRAINT fk_nombreescuderia FOREIGN KEY(NombreEscuderia) REFERENCES Escuderias(Nombre),
+CONSTRAINT inicialesmayus check(Nombre RLIKE '^([A-Z].*)(\ [A-Z].*){1,3}'),
+CONSTRAINT esauiteu check(Nacionalidad in ('Espanola','Australiana','Italiana','Estadounidense')),
+CONSTRAINT fechanacimiento check((extract(YEAR from FechaNacimiento)) < '1999'),
+CONSTRAINT caracteres_debut check(substring(CarreraDebut,length(CarreraDebut)-3) between '2000' and '2010') 
+);
+
+Create table Circuitos
+(
+Nombre Varbinary(15),
+Pais Varbinary(15),
+Tipo Varbinary(15),
+Longitud Numeric(5,1),
+Diseñador Varbinary(15),
+CONSTRAINT pk_Circuitos PRIMARY KEY(Nombre),
+CONSTRAINT menor7000 check(Longitud<7000)
+);
+
+Create table Carreras
+(
+NombreGP Varbinary(15),
+Anyo Varbinary(4),
+FechaHoraInicio DATETIME,
+NumVueltas Numeric(2),
+NombreCircuito Varbinary(15),
+CONSTRAINT fk_carrera_nombregp FOREIGN KEY(NombreCircuito) REFERENCES Circuitos(Nombre),
+CONSTRAINT pk_Carreras PRIMARY KEY(NombreGP,Anyo),
+CONSTRAINT anyovalido check(Anyo between '2000' and '2099'),
+CONSTRAINT fechavalida check(extract(MONTH from FechaHoraInicio) between '03' and '10'),
+CONSTRAINT numvueltasval check(NumVueltas between 16 and 32)
+);
+
+Create table Resultados
+(
+NombreGP Varbinary(15),
+Anyo Varbinary(4),
+CodPiloto Varbinary(4),
+Puesto Numeric(2),
+DistanciaGanador Varbinary(8),
+CONSTRAINT fk_nombregpresult FOREIGN KEY(NombreGP,Anyo) REFERENCES Carreras(NombreGP,Anyo),
+CONSTRAINT fk_codpilotoresult FOREIGN KEY(CodPiloto) REFERENCES Pilotos(Codigo),
+CONSTRAINT distanciacorrecta check(DistanciaGanador like '+__:__' or DistanciaGanador='Abandono' or DistanciaGanador is null)
+);
+
+
+Modificacion de datos
+-----------------------
+Alter table Escuderias
+Modify Manager Varbinary(50);
+
+Alter table Escuderias
+Modify Sede Varbinary(50);
+
+Alter table Escuderias
+Modify Nombre Varbinary(100);
+
+Alter table Pilotos
+Modify Nombre Varbinary(100);
+
+Alter table Carreras
+Modify NombreGP Varbinary(100);
+
+Alter table Resultados
+Modify NombreGP Varbinary(100);
+
+Insercion de datos
+-------------------
+// Insertamos Escuderias
+
+insert into Escuderias(nombre, manager, fabricantemotor, sede)
+values('Ducati Team','Bernhard Gobmeier','Ducati','Bolonia (Italia)');
+insert into Escuderias(nombre, manager, fabricantemotor, sede)
+values('Go&Fun Honda Gresini', 'Fausto Gresini','Honda','Faenza (Italia)');
+insert into Escuderias(nombre, manager, fabricantemotor, sede)
+values('Yamaha Racing Team','Wilco Zeelenberg','Yamaha','Gerno di Lesmo(Italia)');
+insert into Escuderias(nombre, manager, fabricantemotor, sede)
+values('Repsol Honda Team','Kazuhiko Yamano','Honda','Aalst (Belgica)');
+insert into Escuderias(nombre, manager, fabricantemotor, sede)
+values('Monster Yamaha Tech3','Hervé Poncharal','Yamaha','Provence (Francia)');
+
+
+// Insertamos Circuitos
+
+insert into Circuitos(nombre, pais, tipo, longitud)
+values('Albert Park','Australia','Urbano',5300);
+insert into Circuitos(nombre, pais, longitud, diseñador)
+values('Spa','Belgica',6999,'Jules de Their');
+insert into Circuitos(nombre, pais, longitud)
+values('Indianapolis','Estados Unidos',4168);
+insert into Circuitos(nombre, pais, longitud, diseñador)
+values('Sepang','Malasia',5540,'Hermann Tilke');
+insert into Circuitos(nombre, pais, tipo, longitud)
+values('Montecarlo','Monaco','Urbano',3340);
+insert into Circuitos(nombre, pais, longitud)
+values('Interlagos','Brasil',4309);
+
+
+// Insertamos Pilotos
+
+insert into Pilotos
+values('4','Andrea Dovizioso','Italiana','1986-03-23','Australia 2008','Ducati Team');
+insert into Pilotos
+values('69','Nicky Hayden','Estadounidense','1981-07-30','Estados Unidos 2005','Ducati Team');
+insert into Pilotos
+values('19','Alvaro Bautista','Espanola','1984-11-21','Australia 2004','Go&Fun Honda Gresini');
+insert into Pilotos
+values('67','Bryan Staring','Australiana','1987-06-01','Australia 2010','Go&Fun Honda Gresini');
+insert into Pilotos
+values('99','Jorge Lorenzo','Espanola','1987-05-04','Belgica 2006','Yamaha Racing Team');
+insert into Pilotos
+values('46','Valentino Rossi','Italiana','1979-02-16','Australia 2000','Yamaha Racing Team');
+insert into Pilotos
+values('26','Dani Pedrosa','Espanola','1985-09-29','Australia 2007','Repsol Honda Team');
+
+
+// Insertamos Carreras
+
+insert into Carreras
+values('GP de Australia','2010','2010-03-15 19:00',27,'Albert Park');
+insert into Carreras
+values('GP de Europa','2010','2010-03-22 14:00',18,'Spa');
+insert into Carreras
+values('GP de Estados Unidos','2010','2010-03-29 19:00',20,'Indianapolis');
+insert into Carreras
+values('GP de Malasia','2010','2010-04-05 13:00',23,'Sepang');
+insert into Carreras
+values('GP de Brasil','2010','2010-04-12 20:00',24,'Interlagos');
+insert into Carreras
+values('GP de Australia','2011','2011-03-14 19:00',27,'Albert Park');
+insert into Carreras
+values('GP de Europa','2011','2011-03-21 14:00',23,'Montecarlo');
+insert into Carreras
+values('GP de Estados Unidos','2011','2011-03-28 19:00',20,'Indianapolis');
+insert into Carreras
+values('GP de Malasia','2011','2011-04-04 13:00',23,'Sepang');
+insert into Carreras
+values('GP de Brasil','2011','2011-04-11 20:45',24,'Interlagos');
+
+
+// Insertamos Resultados
+
+insert into Resultados(nombregp, anyo, codpiloto, puesto)
+values('GP de Australia','2010','26',1);
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Australia','2010','99',2, '+00:12');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Australia','2010','4',3, '+00:23');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Australia','2010','19',4, '+01:02');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Australia','2010','69',5, 'Abandono');
+
+insert into Resultados(nombregp, anyo, codpiloto, puesto)
+values('GP de Europa','2010','4',1);
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Europa','2010','26',2, '+00:22');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Europa','2010','99',3, '+00:42');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Europa','2010','46',4, 'Abandono');
+
+insert into Resultados(nombregp, anyo, codpiloto, puesto)
+values('GP de Estados Unidos','2010','99',1);
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Estados Unidos','2010','19',2, '+00:03');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Estados Unidos','2010','26',3, '+02:12');
+
+insert into Resultados(nombregp, anyo, codpiloto, puesto)
+values('GP de Malasia','2010','26',1);
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Malasia','2010','99',2, '+01:12');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Malasia','2010','4',3, '+01:14');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Malasia','2010','46',4, 'Abandono');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Malasia','2010','19',5, 'Abandono');
+
+insert into Resultados(nombregp, anyo, codpiloto, puesto)
+values('GP de Brasil','2011','26',1);
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Brasil','2011','19',2, '+00:02');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Brasil','2011','99',3, '+00:12');
+
+insert into Resultados(nombregp, anyo, codpiloto, puesto)
+values('GP de Australia','2011','19',1);
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Australia','2011','26',2, '+00:01');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Australia','2011','4',3, '+01:01');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Australia','2011','46',4, 'Abandono');d
+
+insert into Resultados(nombregp, anyo, codpiloto, puesto)
+values('GP de Europa','2011','4',1);
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Europa','2011','19',2, '+00:06');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Europa','2011','99',3, '+00:09');
+insert into Resultados(nombregp, anyo, codpiloto, puesto, distanciaganador)
+values('GP de Europa','2011','26',4, 'Abandono');
+
+
+

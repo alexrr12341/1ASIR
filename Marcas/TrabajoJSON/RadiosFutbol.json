@@ -1,0 +1,523 @@
+{
+	"rss": {
+		"channel": {
+			"title": "Fútbol es Radio",
+			"description": "Un programa deportivo sin periodistas deportivos. Conducido por Dieter Brandau y Juan Pablo Polvorinos.",
+			"link": [
+				"https://esradio.libertaddigital.com/",
+				{
+					"_href": "https://esradio.libertaddigital.com/futbol:es:radio/podcast.xml",
+					"_rel": "self",
+					"_type": "application/rss+xml",
+					"__prefix": "atom"
+				}
+			],
+			"language": "es:ES",
+			"lastBuildDate": "Wed, 20 Feb 2019 15:59:15 +0100",
+			"image": [
+				{
+					"description": "Un programa deportivo sin periodistas deportivos. Conducido por Dieter Brandau y Juan Pablo Polvorinos.",
+					"title": "esRadio. Fútbol es Radio",
+					"url": "https://s.libertaddigital.com/2016/10/03/futbol:es:radio:podcast:baja.jpg",
+					"link": "https://esradio.libertaddigital.com/"
+				},
+				{
+					"_href": "http://s.libertaddigital.com/2016/10/03/futbol:es:radio:podcast:baja.jpg",
+					"__prefix": "itunes"
+				}
+			],
+			"summary": {
+				"__prefix": "itunes",
+				"__text": "Un programa deportivo sin periodistas deportivos. Conducido por Dieter Brandau y Juan Pablo Polvorinos."
+			},
+			"owner": {
+				"name": {
+					"__prefix": "itunes",
+					"__text": "esRadio"
+				},
+				"email": {
+					"__prefix": "itunes",
+					"__text": "info@esradio.fm"
+				},
+				"__prefix": "itunes"
+			},
+			"author": {
+				"__prefix": "itunes",
+				"__text": "esRadio"
+			},
+			"explicit": {
+				"__prefix": "itunes",
+				"__text": "no"
+			},
+			"category": {
+				"_text": "Deportes y ocio",
+				"__prefix": "itunes"
+			},
+			"item": [
+				{
+					"description": "Dieter y Juan Pablo comentan con Luis Herrero, José Luis Garci, Juanma Rodríguez y David Vinuesa toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:20/futbol:es:radio:momento:clave:del:atletico:en:la:champions:133556.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/20/futbol:es:radio:momento:clave:del:atletico:en:la:champions:133556.mp3?aw_0_req.gdpr=false",
+						"_length": "24936196",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:20/futbol:es:radio:momento:clave:del:atletico:en:la:champions:133556.html",
+					"title": "Fútbol es Radio: Momento clave del Atlético en la Champions",
+					"pubDate": "Wed, 20 Feb 2019 15:59:15 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Luis Herrero, José Luis Garci, Juanma Rodríguez y David Vinuesa toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "51:10"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Isidoro San José, Gonzalo Heredero y Azpitarte toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:19/futbol:es:radio:vuelve:la:champions:para:barca:y:atletico:133502.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/19/futbol:es:radio:vuelve:la:champions:para:barca:y:atletico:133502.mp3?aw_0_req.gdpr=false",
+						"_length": "24737038",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:19/futbol:es:radio:vuelve:la:champions:para:barca:y:atletico:133502.html",
+					"title": "Fútbol es Radio: Vuelve la Champions para Barça y Atlético",
+					"pubDate": "Tue, 19 Feb 2019 15:59:48 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Isidoro San José, Gonzalo Heredero y Azpitarte toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "50:45"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Jaime Ugarte, Juanma Rodríguez y Sergio Valentín toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:18/futbol:es:radio:el:madrid:cae:contra:el:girona:133455.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/18/futbol:es:radio:el:madrid:cae:contra:el:girona:133455.mp3?aw_0_req.gdpr=false",
+						"_length": "24921985",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:18/futbol:es:radio:el:madrid:cae:contra:el:girona:133455.html",
+					"title": "Fútbol es Radio: El Madrid cae contra el Girona",
+					"pubDate": "Mon, 18 Feb 2019 15:59:20 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Jaime Ugarte, Juanma Rodríguez y Sergio Valentín toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "51:08"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Juan Pablo Polvorinos comenta toda la actualidad del fútbol con Dani Blanco, Isidoro San José, David Vinuesa y Sergio Valentín.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:15/futbol:es:radio:jornada:de:respiro:para:los:tres:grandes:133387.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/15/futbol:es:radio:jornada:de:respiro:para:los:tres:grandes:133387.mp3?aw_0_req.gdpr=false",
+						"_length": "24320333",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:15/futbol:es:radio:jornada:de:respiro:para:los:tres:grandes:133387.html",
+					"title": "Fútbol es Radio: Jornada de respiro para los tres grandes",
+					"pubDate": "Fri, 15 Feb 2019 15:59:35 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Juan Pablo Polvorinos comenta toda la actualidad del fútbol con Dani Blanco, Isidoro San José, David Vinuesa y Sergio Valentín."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:53"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Isidoro San José, David Vinuesa y Dani Blanco la victoria del Real Madrid en Ámsterdam frente al Ajax.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:14/futbol:es:radio:victoria:del:real:madrid:frente:al:ajax:133335.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/14/futbol:es:radio:victoria:del:real:madrid:frente:al:ajax:133335.mp3?aw_0_req.gdpr=false",
+						"_length": "25011637",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:14/futbol:es:radio:victoria:del:real:madrid:frente:al:ajax:133335.html",
+					"title": "Fútbol es Radio: Victoria del Real Madrid frente al Ajax",
+					"pubDate": "Thu, 14 Feb 2019 17:10:35 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Isidoro San José, David Vinuesa y Dani Blanco la victoria del Real Madrid en Ámsterdam frente al Ajax."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "51:19"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan la previa al Ajax:Real Madrid con Luis Herrero, José Luis Garci y Juanma Rodríguez.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:13/futbol:es:radio:previa:del:ajax:real:madrid:133287.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/13/futbol:es:radio:previa:del:ajax:real:madrid:133287.mp3?aw_0_req.gdpr=false",
+						"_length": "24298181",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:13/futbol:es:radio:previa:del:ajax:real:madrid:133287.html",
+					"title": "Fútbol es Radio: Previa del Ajax:Real Madrid",
+					"pubDate": "Wed, 13 Feb 2019 15:59:36 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan la previa al Ajax:Real Madrid con Luis Herrero, José Luis Garci y Juanma Rodríguez."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:50"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Irene Ferreras, Isidoro San José y Azpitarte toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:12/futbol:es:radio:posible:11:de:solari:ante:el:ajax:133243.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/12/futbol:es:radio:posible:11:de:solari:ante:el:ajax:133243.mp3?aw_0_req.gdpr=false",
+						"_length": "24493995",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:12/futbol:es:radio:posible:11:de:solari:ante:el:ajax:133243.html",
+					"title": "Fútbol es Radio: Posible 11 de Solari ante el Ajax",
+					"pubDate": "Tue, 12 Feb 2019 15:59:07 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Irene Ferreras, Isidoro San José y Azpitarte toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "50:15"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Jaime Ugarte, Juanma Rodríguez y Petón toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:11/futbol:es:radio:las:polemicas:del:atletico:real:madrid:133199.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/11/futbol:es:radio:las:polemicas:del:atletico:real:madrid:133199.mp3?aw_0_req.gdpr=false",
+						"_length": "24493368",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:11/futbol:es:radio:las:polemicas:del:atletico:real:madrid:133199.html",
+					"title": "Fútbol es Radio: Las polémicas del Atlético:Real Madrid",
+					"pubDate": "Mon, 11 Feb 2019 16:25:37 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Jaime Ugarte, Juanma Rodríguez y Petón toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "50:15"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Juan Pablo Polvorinos comenta la actualidad del fútbol con David Vinuesa, Gonzalo Heredero y Alfredo Somoza.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:08/futbol:es:radio:derbi:clave:en:el:metropolitano:133126.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/08/futbol:es:radio:derbi:clave:en:el:metropolitano:133126.mp3?aw_0_req.gdpr=false",
+						"_length": "23581381",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:08/futbol:es:radio:derbi:clave:en:el:metropolitano:133126.html",
+					"title": "Fútbol es Radio: Derbi clave en el Metropolitano",
+					"pubDate": "Fri, 8 Feb 2019 15:59:11 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Juan Pablo Polvorinos comenta la actualidad del fútbol con David Vinuesa, Gonzalo Heredero y Alfredo Somoza."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "48:21"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo analizan toda la actualidad del fútbol con Isidoro San José, Dani Blanco, Sergio Valentín y David Vinuesa.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:07/futbol:es:radio:todo:abierto:para:la:vuelta:en:el:bernabeu:133075.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/07/futbol:es:radio:todo:abierto:para:la:vuelta:en:el:bernabeu:133075.mp3?aw_0_req.gdpr=false",
+						"_length": "24256803",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:07/futbol:es:radio:todo:abierto:para:la:vuelta:en:el:bernabeu:133075.html",
+					"title": "Fútbol es Radio: Todo abierto para la vuelta en el Bernabéu",
+					"pubDate": "Thu, 7 Feb 2019 15:59:55 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo analizan toda la actualidad del fútbol con Isidoro San José, Dani Blanco, Sergio Valentín y David Vinuesa."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:45"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Luis Herrero, Juanma Rodríguez y José Luis Garci toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:06/futbol:es:radio:el:clasico:de:semifinales:de:copa:133033.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/06/futbol:es:radio:el:clasico:de:semifinales:de:copa:133033.mp3?aw_0_req.gdpr=false",
+						"_length": "24271850",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:06/futbol:es:radio:el:clasico:de:semifinales:de:copa:133033.html",
+					"title": "Fútbol es Radio: El Clásico de semifinales de Copa",
+					"pubDate": "Wed, 6 Feb 2019 15:59:18 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Luis Herrero, Juanma Rodríguez y José Luis Garci toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:47"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Irene Ferreras, Isidoro San José, Sergio Valentín y Azpitarte toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:05/futbol:es:radio:que:ocurre:con:isco:132982.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/05/futbol:es:radio:que:ocurre:con:isco:132982.mp3?aw_0_req.gdpr=false",
+						"_length": "24290658",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:05/futbol:es:radio:que:ocurre:con:isco:132982.html",
+					"title": "Fútbol es Radio: ¿Qué ocurre con Isco?",
+					"pubDate": "Tue, 5 Feb 2019 16:08:44 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Irene Ferreras, Isidoro San José, Sergio Valentín y Azpitarte toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:49"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter Brandau y Juan Pablo Polvorinos analizan toda la actualidad del fútbol con Juanma Rodríguez y Petón.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:04/futbol:es:radio:buena:imagen:del:madrid:antes:del:clasico:132941.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/04/futbol:es:radio:buena:imagen:del:madrid:antes:del:clasico:132941.mp3?aw_0_req.gdpr=false",
+						"_length": "24745188",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:04/futbol:es:radio:buena:imagen:del:madrid:antes:del:clasico:132941.html",
+					"title": "Fútbol es Radio: Buena imagen del Madrid antes del Clásico",
+					"pubDate": "Mon, 4 Feb 2019 15:59:21 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter Brandau y Juan Pablo Polvorinos analizan toda la actualidad del fútbol con Juanma Rodríguez y Petón."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "50:46"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Juan Pablo Polvorinos comenta con Alfredo Somoza, Azpitarte, Gonzalo Heredero y Dani Blanco toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:02:01/futbol:es:radio:betis:valencia:y:barca:madrid:en:las:semis:de:copa:132868.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/02/01/futbol:es:radio:betis:valencia:y:barca:madrid:en:las:semis:de:copa:132868.mp3?aw_0_req.gdpr=false",
+						"_length": "23952947",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:02:01/futbol:es:radio:betis:valencia:y:barca:madrid:en:las:semis:de:copa:132868.html",
+					"title": "Fútbol es Radio: Betis:Valencia y Barça:Madrid en las semis de Copa",
+					"pubDate": "Fri, 1 Feb 2019 15:59:21 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Juan Pablo Polvorinos comenta con Alfredo Somoza, Azpitarte, Gonzalo Heredero y Dani Blanco toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:07"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Isidoro San José, Sergio Valentín y Dani Blanco toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:01:31/futbol:es:radio:barca:y:betis:pasan:a:semis:de:copa:132820.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/01/31/futbol:es:radio:barca:y:betis:pasan:a:semis:de:copa:132820.mp3?aw_0_req.gdpr=false",
+						"_length": "24500891",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:01:31/futbol:es:radio:barca:y:betis:pasan:a:semis:de:copa:132820.html",
+					"title": "Fútbol es Radio: Barça y Betis pasan a semis de Copa",
+					"pubDate": "Thu, 31 Jan 2019 15:59:27 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Isidoro San José, Sergio Valentín y Dani Blanco toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "50:16"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Luis Herrero, Juanma Rodríguez y José Luis Garci toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:01:30/futbol:es:radio:remontada:del:valencia:132766.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/01/30/futbol:es:radio:remontada:del:valencia:132766.mp3?aw_0_req.gdpr=false",
+						"_length": "24758772",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:01:30/futbol:es:radio:remontada:del:valencia:132766.html",
+					"title": "Fútbol es Radio: Remontada del Valencia",
+					"pubDate": "Wed, 30 Jan 2019 15:59:10 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Luis Herrero, Juanma Rodríguez y José Luis Garci toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "50:48"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Irene Ferreras, Isidoro San José y Azpitarte toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:01:29/futbol:es:radio:morata:ya:es:jugador:del:atletico:de:madrid:132722.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/01/29/futbol:es:radio:morata:ya:es:jugador:del:atletico:de:madrid:132722.mp3?aw_0_req.gdpr=false",
+						"_length": "24102994",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:01:29/futbol:es:radio:morata:ya:es:jugador:del:atletico:de:madrid:132722.html",
+					"title": "Fútbol es Radio: Morata ya es jugador del Atlético de Madrid",
+					"pubDate": "Tue, 29 Jan 2019 15:59:17 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Irene Ferreras, Isidoro San José y Azpitarte toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:26"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan la actualidad del fútbol con Jaime Ugarte, David Vinuesa y Petón.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:01:28/futbol:es:radio:gran:nivel:del:madrid:y:de:benzema:frente:al:espanyol:132675.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/01/28/futbol:es:radio:gran:nivel:del:madrid:y:de:benzema:frente:al:espanyol:132675.mp3?aw_0_req.gdpr=false",
+						"_length": "24291285",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:01:28/futbol:es:radio:gran:nivel:del:madrid:y:de:benzema:frente:al:espanyol:132675.html",
+					"title": "Fútbol es Radio: Gran nivel del Madrid y de Benzema frente al Espanyol",
+					"pubDate": "Mon, 28 Jan 2019 15:59:47 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan la actualidad del fútbol con Jaime Ugarte, David Vinuesa y Petón."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:49"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Azpitarte, Valentín, Heredero, Vinuesa, Dani Blanco y Somoza la victoria del Real Madrid sobre el Girona.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:01:25/futbol:es:radio:victoria:del:real:madrid:132609.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/01/25/futbol:es:radio:victoria:del:real:madrid:132609.mp3?aw_0_req.gdpr=false",
+						"_length": "24775281",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:01:25/futbol:es:radio:victoria:del:real:madrid:132609.html",
+					"title": "Fútbol es Radio: Victoria del Real Madrid",
+					"pubDate": "Fri, 25 Jan 2019 16:44:45 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Azpitarte, Valentín, Heredero, Vinuesa, Dani Blanco y Somoza la victoria del Real Madrid sobre el Girona."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "50:50"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				},
+				{
+					"description": "Dieter y Juan Pablo comentan con Isidoro San José, Dani Blanco y David Vinuesa toda la actualidad del fútbol.",
+					"link": "https://esradio.libertaddigital.com/fonoteca/2019:01:24/futbol:es:radio:el:sevilla:toma:la:delantera:al:barca:en:la:copa:132559.html",
+					"enclosure": {
+						"_url": "http://audios.esradio.fm/deportes/19/01/24/futbol:es:radio:el:sevilla:toma:la:delantera:al:barca:en:la:copa:132559.mp3?aw_0_req.gdpr=false",
+						"_length": "24032777",
+						"_type": "audio/mpeg"
+					},
+					"guid": "https://esradio.libertaddigital.com/fonoteca/2019:01:24/futbol:es:radio:el:sevilla:toma:la:delantera:al:barca:en:la:copa:132559.html",
+					"title": "Fútbol es Radio: El Sevilla toma la delantera al Barça en la Copa",
+					"pubDate": "Thu, 24 Jan 2019 15:59:48 +0100",
+					"summary": {
+						"__prefix": "itunes",
+						"__text": "Dieter y Juan Pablo comentan con Isidoro San José, Dani Blanco y David Vinuesa toda la actualidad del fútbol."
+					},
+					"duration": {
+						"__prefix": "itunes",
+						"__text": "49:17"
+					},
+					"keywords": {
+						"__prefix": "itunes"
+					}
+				}
+			]
+		},
+		"_xmlns:itunes": "http://www.itunes.com/dtds/podcast:1.0.dtd",
+		"_version": "2.0",
+		"_xmlns:atom": "http://www.w3.org/2005/Atom"
+	}
+}

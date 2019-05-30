@@ -1,0 +1,29 @@
+Salario base->970
+G7
+Indefinido
+2 pagas extras->Salario base + Antiguedad
+IRPF->2%
+Nocturnidad- 25
+Transporte- 40
+Antiguerdad-30 por trienio
+
+-Idad->Complementos salariales
+Transporte no es complemento salarial
+
+Bccc=SB+Complemnto+Exceso no salarial+PPE
+PPE=970+ 30+25+90+ 40+ (2*(970+90)/12)
+ 			 SB  Ant Meses
+BCCC=1331,67
+1155
+
+BCCP=BCCC+Horas extras=1331,67
+BIRPF=Salario Bruto(A)-lo que no cotiza=A=1115
+Deducciones->
+1º->4,7%
+2º->Indefinido 1,5%, Temporal 1,6%
+3º->0.1%
+IRPF->2%
+
+1ª-> 4,7% DEL BCCC 4,7% de 1331,67=62,59
+2ª->1,5% DEL BCCP 1,5% de 1331,67=20,64
+3ª->0,1

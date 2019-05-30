@@ -1,0 +1,102 @@
+1)
+Hacer funcion y controlar excepciones. 0.5
+
+2)
+Informes muy parecido a el 10 de la practica. 1.5
+
+3)
+Trigger que no es de tabla mutante(normalmente) 1
+
+4)
+Problema dificil.
+Para el final mejor.
+Problema de mandar correos electronicos(Ultimo ejercicio de la practica de triggers) 1.5
+
+5)
+Trigger de tabla mutante como el problema del boletin (Ultimo) 1
+
+6)
+Trigger de tabla mutante 1.5
+
+7)
+Trigger de tabla mutante. 1.5
+
+8)
+Trigger de tabla mutante. 1.5
+
+Cada uno de postgres que no esté hecho -1
+
+
+EVITAR QUE EN UNA MISMA AULA HAYAN 4 EJEMPLARES del mismo material (no puede haber mas de 4 ejemplares de caperucita, etc)
+
+Paso 1)
+Necesito una tabla que sea: AULA | MATERIAL | NUMERO DE MATERIALES
+Paso 2)
+CREATE OR REPLACE PACKAGE PKG_NumEjemplares
+as
+	type tRegistroTabla is record
+	(
+		Cod_Aula Aulas.Codigo%type;
+		Cod_Material Materiales.Codigo%type;
+		Num_Ejemplares number;
+	);
+	type tTablaEjemplares is table of tRegistroTabla
+	index by binary_integer;
+	v_tabla_ejemplares tTablaEjemplares;
+end;
+/
+
+Paso 3)
+Create or replace trigger RellenarNumEjemplares
+before insert on Ejemplares
+is
+	cursor c_registro_ejemplares
+	is
+	Select Cod_Aula,Cod_Material,count(*) as Num_Ejemplares
+	from Ejemplares
+	group by Cod_Aula,Cod_Material;
+	v_indice number:=0;
+begin
+	for v_emp in c_registro_ejemplares loop
+		PKG_NumEjemplares(v_indice).Cod_Aula:=v_emp.Cod_Aula;
+		PKG_NumEjemplares(v_indice).Cod_Material:=v_emp.Cod_Material;
+		PKG_NumEjemplares(v_indice).Num_Ejemplares:=v_emp.Num_Ejemplares;
+		v_indice:=v_indice+1;
+	end loop;
+end;
+/
+
+Create or replace function DevolverNumEjemplares(Cod_Aula Ejemplares.Cod_Aula%type,Cod_Material Ejemplares.Cod_Material%type)
+return number
+is
+begin
+	for i in PKG_NumEjemplares.v_tabla_ejemplares.FIRST.. PKG_NumEjemplares.v_tabla_ejemplares.LAST loop
+		if  Cod_Aula=PKG_NumEjemplares(i).v_tabla_ejemplares.(i).Cod_Aula and Cod_Material=PKG_NumEjemplares.v_tabla_ejemplares(i).Cod_Material then
+			return PKG_NumEjemplares.v_tabla_ejemplares.Num_Ejemplares(i);
+	end loop;
+end;
+
+Create or replace procedure CrearFilaNueva(p_aula aulas.Codigo%type
+					   p_mat materiales.Codigo%type)
+is
+begin
+	for i in PKG_NumEjemplares.v_tabla_ejemplares.FIRST..PKG_NumEjemplares.v_tabla_ejemplares.LAST loop
+		
+	end loop;
+
+
+Paso 4)
+NEcesito mirar cuantos ejemplares hay ya de ese material en ese aula, si son 4 levanto una excepcion para impedir que se meta un quinto, y sino meto la informacion pero se debe actualizar la tabla persistente.
+Create or replace trigger CalcularNumEjemplares
+before insert on Ejemplares
+for each row
+is
+	v_numempactual number:=0;
+begin
+	v_numempactual:=CalcularNumEmpActual(:new.Cod_Aula,:new.Cod_Material);
+	if v_numempactual>=4 then
+		raise_application_error(-2000,'Ya hay 4 ejemplares del mismo material');
+	else
+		IncrementarNumMateriales(:new.Cod_Aula,:new.Cod_Material);
+	end if;	
+	
