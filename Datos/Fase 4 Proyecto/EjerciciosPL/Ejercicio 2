@@ -119,6 +119,15 @@ exception
 end;
 /
 
+Create or replace function DarInfo(p_dia varchar2,p_hora varchar2,p_cantidad RiegosPorZona.Cantidad%type,p_duracion RiegosPorZona.Duracion%type,p_humedadant Datos.Humedad%type,p_humedad Datos.Humedad%type)
+return number
+is
+begin
+	dbms_output.put_line(chr(9)||'Dia: '||p_dia||' Hora: '||p_hora||' Cantidad: '||p_cantidad||' Duracion: '||p_duracion||' HumedadPrevia: '||p_humedadant||' HumedadPosterior: '||p_humedad);
+	return p_cantidad;
+end;
+/
+
 Create or replace procedure InformesRiegoT1(p_nombremes varchar2,p_anyo varchar2,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
 is
 	p_mes varchar2(2):=DarMesEnNum(p_nombremes);
@@ -133,32 +142,19 @@ is
 	and r.Cod_Zona=p_codzona
 	and to_char(r.FechaMasHora,'YYYY')=p_anyo
 	order by dia;
-	cursor c_info2 is
-	Select Humedad
-	from Datos d
-	where to_char(FechaMasHora,'YYYY')=p_anyo
-	and to_char(FechaMasHora,'MM')=p_mes
-	and Cod_Vivero=p_codvivero
-	and Cod_Zona=p_codzona;
-	
 	v_nombrezona varchar(100):=ConseguirNombrezona(p_codzona);
 	v_maxcantidad number:=0;
-	v_info1 c_info%rowtype;
-	v_info2 c_info%rowtype;
+	v_cantidad number:=0;
 	v_dia_Anterior Datos.Humedad%type;
 begin
 	ComprobarExcepcionesT1(p_codvivero,p_codzona);
-	open c_info;
-	fetch c_info into v_info1;
 	MostrarInfoBasicaT1(p_nombremes,p_anyo,p_codvivero,v_nombrezona);
-	while c_info%FOUND loop
-		v_dia_Anterior:=DiaAnterior(p_mes,p_anyo,v_info1.dia,p_codvivero,p_codzona);
-		dbms_output.put_line(chr(9)||'Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
-		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
-		fetch c_info into v_info1;
+	for v_info in c_info loop
+		v_dia_Anterior:=DiaAnterior(p_mes,p_anyo,v_info.dia,p_codvivero,p_codzona);
+		v_cantidad:=DarInfo(v_info.dia,v_info.hora,v_info.cantidad,v_info.duracion,v_dia_Anterior,v_info.humedad);
+		v_maxcantidad:=v_maxcantidad+v_cantidad;
 	end loop;
 	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
-	close c_info;
 end;
 /
 
@@ -168,7 +164,6 @@ begin
 	ViveroNoExiste(p_codvivero);
 end;
 /
-
 
 
 Create or replace procedure MostrarLineasRiegosT2(p_codzonas Zonas.Codigo%type,v_maxcantidad in out number,p_nombremes varchar2,p_anyo varchar2)
@@ -185,21 +180,16 @@ is
 	and r.Cod_Zona=p_codzonas
 	order by dia;
 	v_nombrezona varchar2(100):=ConseguirNombrezona(p_codzonas);
-	v_info1 c_info%rowtype;
-	v_info2 c_info%rowtype;
 	v_dia_Anterior Datos.Humedad%type;
+	v_cantidad number:=0;
 begin
 	dbms_output.put_line(chr(9)||'Nombre Zona: '||v_nombrezona);
-	open c_info;
-	fetch c_info into v_info1;
-	while c_info%FOUND loop
-		v_dia_Anterior:=DiaAnterior(v_info1.mes,v_info1.anyo,v_info1.dia,v_info1.Cod_Vivero,p_codzonas);
-		dbms_output.put_line(chr(9)||chr(9)||'Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
-		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
-		fetch c_info into v_info1;
+	for v_info in c_info loop
+		v_dia_Anterior:=DiaAnterior(v_info.mes,v_info.anyo,v_info.dia,v_info.Cod_Vivero,p_codzonas);
+		v_cantidad:=DarInfo(v_info.dia,v_info.hora,v_info.cantidad,v_info.duracion,v_dia_Anterior,v_info.humedad);
+		v_maxcantidad:=v_maxcantidad+v_cantidad;
 	end loop;
 	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
-	close c_info;
 end;
 /
 
@@ -253,22 +243,16 @@ is
 	and to_char(r.FechaMasHora,'MM')=p_mes
 	and r.Cod_Zona=p_codzona
 	order by dia;
-	v_info1 c_info%rowtype;
-	v_info2 c_info%rowtype;
 	v_dia_Anterior Datos.Humedad%type;
+	v_cantidad number:=0;
 begin
 	dbms_output.put_line('Nombre Zona: '||v_nombrezona);
-	open c_info;
-	fetch c_info into v_info1;
-	fetch c_info into v_info2;
-	while c_info%FOUND loop
-		v_dia_Anterior:=DiaAnterior(v_info1.mes,v_info1.anyo,v_info1.dia,v_info1.Cod_Vivero,p_codzona);
-		dbms_output.put_line(chr(9)||chr(9)||' Dia: '||v_info1.dia||' Hora: '||v_info1.hora||' Cantidad: '||v_info1.cantidad||' Duracion: '||v_info1.duracion||' HumedadPrevia: '||v_dia_Anterior||' HumedadPosterior: '||v_info1.humedad);
-		v_maxcantidad:=v_maxcantidad+v_info1.cantidad;
-		fetch c_info into v_info1;
+	for v_info in c_info loop
+		v_dia_Anterior:=DiaAnterior(v_info.mes,v_info.anyo,v_info.dia,v_info.Cod_Vivero,p_codzona);
+		v_cantidad:=DarInfo(v_info.dia,v_info.hora,v_info.cantidad,v_info.duracion,v_dia_Anterior,v_info.humedad);
+		v_maxcantidad:=v_maxcantidad+v_cantidad;
 	end loop;
 	dbms_output.put_line('Número Litros Totales Zona: '||v_maxcantidad);
-	close c_info;
 end;
 /
 

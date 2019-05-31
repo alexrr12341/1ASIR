@@ -79,7 +79,7 @@ is
 begin
 	for i in PkgDiasTrabajados.vTabTrabajadores.FIRST..PkgDiasTrabajados.vTabTrabajadores.LAST loop
 		if PkgDiasTrabajados.vTabTrabajadores(i).DNI_Empleado=p_dni then
-			PkgDiasTrabajados.vTabTrabajadores(i).Dias_Trabajados:=PkgDiasTrabajados.vTabTrabajadores(i).Dias_Trabajados+p_dias;
+			PkgDiasTrabajados.vTabTrabajadores(i).Dias_Trabajados:=p_dias;
 		end if;
 	end loop;
 end;
@@ -87,19 +87,20 @@ end;
 
 create or replace procedure TratarDiasAñadidos ( p_dni Empleados.DNI%type,p_fin TurnosPorZona.FechaFin%Type,p_inicio TurnosPorZona.FechaInicio%type)
 is
-	v_diastrabajados NUMBER;
-	v_diasnuevos number;
+	v_diastrabajados NUMBER:=0;
+	v_diasnuevos number:=0;
+	v_diasnuevosañadidos number:=0;
 begin
 	ObtenerInfoEmpleados(p_dni,v_diastrabajados);
-	Select p_fin-p_inicio into v_diasnuevos
-	from dual;
+	v_diasnuevos:=p_fin-p_inicio;
+	v_diasnuevosañadidos:=v_diastrabajados+v_diasnuevos;
 	update Empleados
-	set DiasTrabajados=v_diastrabajados+v_diasnuevos
+	set DiasTrabajados=v_diasnuevosañadidos
 	where dni = p_dni;
-	if v_diastrabajados=0 then
-		InsertarTrabajadorTablaPL(p_dni,v_diasnuevos);
+	if v_diasnuevosañadidos=0 then
+		InsertarTrabajadorTablaPL(p_dni,v_diasnuevosañadidos);
 	else
-		AñadirDiasTrabajadorenTabla(p_dni,v_diasnuevos);	
+		AñadirDiasTrabajadorenTabla(p_dni,v_diasnuevosañadidos);	
 	end if;
 end;
 /
@@ -113,19 +114,6 @@ end;
 /
 
 --Creamos el trigger por filas de update
-create or replace trigger UpdateFilasEmpleados
-before update on TurnosPorZona
-for each row
-declare
-	v_diastrabajados NUMBER;
-begin
-	ObtenerInfoEmpleados(:old.DNIEmpleado,v_diastrabajados);
-	update Empleados
-	set DiasTrabajados=v_diastrabajados
-	where DNI=:old.DNIEmpleado;
-end;
-/
-
 create or replace procedure EliminarEmpleadoTablaPL (p_dni Empleados.DNI%type)
 is
 begin
@@ -142,7 +130,7 @@ is
 begin
 	for i in PkgDiasTrabajados.vTabTrabajadores.FIRST..PkgDiasTrabajados.vTabTrabajadores.LAST loop
 		if PkgDiasTrabajados.vTabTrabajadores(i).DNI_Empleado=p_dni then
-			PkgDiasTrabajados.vTabTrabajadores(i).Dias_Trabajados:=PkgDiasTrabajados.vTabTrabajadores(i).Dias_Trabajados-p_dias;
+			PkgDiasTrabajados.vTabTrabajadores(i).Dias_Trabajados:=p_dias;
 		end if;
 	end loop;
 end;
@@ -150,29 +138,35 @@ end;
 
 create or replace procedure TratarDiasEliminados(p_dni Empleados.DNI%type,p_fin TurnosPorZona.FechaFin%type,p_inicio TurnosPorZona.FechaInicio%type)
 is
-	v_diastrabajados NUMBER;
-	v_diasquitados number;
+	v_diastrabajados NUMBER:=0;
+	v_diasquitados number:=0;
+	v_nuevosdiastrabajados number:=0;
 begin
 	ObtenerInfoEmpleados(p_dni,v_diastrabajados);
-
-	if v_diastrabajados = 1 then
-		update Empleados
-		set DiasTrabajados = NULL
-		where DNI = p_dni;
-	else
-		Select p_fin-p_inicio into v_diasquitados
-		from dual;
-		update Empleados
-		set DiasTrabajados= v_diastrabajados-v_diasquitados
-		where DNI = p_dni;
-	end if;
-	if v_diastrabajados=1 then
+	v_diasquitados:=p_fin-p_inicio;
+	v_nuevosdiastrabajados:=v_diastrabajados-v_diasquitados;
+	update Empleados
+	set DiasTrabajados= v_nuevosdiastrabajados
+	where DNI = p_dni;
+	if v_nuevosdiastrabajados=0 then
 		EliminarEmpleadoTablaPL(p_dni);
 	else
-		QuitarDiasTrabajadosTablaPL(p_dni,v_diasquitados);	
+		QuitarDiasTrabajadosTablaPL(p_dni,v_nuevosdiastrabajados);	
 	end if;
 end;
 /
+
+Create table TurnosPorZonaAuxiliar
+(
+	Cod_Vivero Varchar2(10),
+	Cod_Zona Varchar2(10),
+	FechaInicio DATE,
+	DNIEmpleado Varchar2(9),
+	FechaFin DATE,
+	CONSTRAINT fk_dniempleado_turnoszonas1 FOREIGN KEY (DNIEmpleado) REFERENCES Empleados(DNI),
+	CONSTRAINT fk_zonas_turnoszonas1 FOREIGN KEY (Cod_Zona,Cod_Vivero) REFERENCES Zonas(Codigo,Cod_Vivero),
+	CONSTRAINT pk_clave_turnoszonas1 PRIMARY KEY(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado)	
+);
 
 create or replace trigger DiasTrabajadosUpdate
 before update on TurnosPorZona
