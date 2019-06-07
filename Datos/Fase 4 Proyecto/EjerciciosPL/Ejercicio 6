@@ -3,8 +3,9 @@ Create or replace package PkgZonasRiegos
 as
 	TYPE tZonRiegos is RECORD
 	(
+		CodVivero Viveros.Codigo%type,
 		CodZona Zonas.Codigo%type,
-		HorasRiego number
+		Fecha RiegosPorZona.FechaMasHora%type
 	);
 	TYPE tRiegosZonas is table of tZonRiegos
 	index by binary_integer;
@@ -12,42 +13,79 @@ as
 end;
 /
 
+
 --Creamos un trigger que recoja en un cursor la información que necesitamos.
 
 Create or replace trigger RellenarHorasZonas
 before insert on RiegosPorZona
 declare
 	cursor c_horas is
-	Select Cod_Zona,min(trunc(sysdate-FechaMasHora)*24) as horas
-	from RiegosPorZona
-	group by Cod_Zona;
+	Select Cod_Vivero,Cod_Zona,FechaMasHora
+	from RiegosPorZona;
 	i number:=0;
 begin
+	PkgZonasRiegos.vTabRiegos.delete;
 	for v_horas in c_horas loop
 		PkgZonasRiegos.vTabRiegos(i).CodZona:=v_horas.Cod_Zona;
-		PkgZonasRiegos.vTabRiegos(i).HorasRiego:=v_horas.horas;
+		PkgZonasRiegos.vTabRiegos(i).CodVivero:=v_horas.Cod_Vivero;
+		PkgZonasRiegos.vTabRiegos(i).Fecha:=v_horas.FechaMasHora;
 		i:=i+1;
 	end loop;
 end;
 /
 
-Create or replace function SacarHorasPorRiego(p_codzona RiegosPorZona.Cod_Zona%type)
-return number
-is
-begin
-	for i in PkgZonasRiegos.vTabRiegos.FIRST..PkgZonasRiegos.vTabRiegos.LAST loop
-		if PkgZonasRiegos.vTabRiegos(i).CodZona=p_codzona then
-			return PkgZonasRiegos.vTabRiegos(i).HorasRiego;
-		end if;
-	end loop;
-end;
-/
 
-Create or replace procedure ActualizarPaqueteriaHoras(p_codzona RiegosPorZona.Cod_Zona%type,p_horas number)
+Create or replace procedure ActualizarTablaFechas(p_codzona RiegosPorZona.Cod_Zona%type,p_fecha RiegosPorZona.FechaMasHora%type)
 is
 begin
 	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST+1).CodZona:=p_codzona;
-	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST).HorasRiego:=p_horas;
+	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST).Fecha:=p_fecha;
+end;
+/
+
+Create table RiegosPorZonaAuxiliar
+(
+FechaMasHora DATE,
+Cod_Vivero Varchar2(10),
+Cod_Riego Varchar2(10),
+Cod_zona Varchar2(10),
+Cantidad Number(5),
+Duracion Number(3),
+CONSTRAINT fk_codriego_riegosporzona1 FOREIGN KEY (Cod_Riego) REFERENCES Riegos(Codigo),
+CONSTRAINT fk_codigozona_riegosporzona1 FOREIGN Key (Cod_zona,Cod_Vivero) REFERENCES Zonas(Codigo,Cod_Vivero),
+CONSTRAINT pk_claveriegosporzona1 PRIMARY KEY(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona),
+CONSTRAINT horarioriegos_correcto1 check(to_char(FechaMasHora,'HH24:MI') Between '07:00' and '10:00' or to_char(FechaMasHora,'HH24:MI') Between '18:00' and '20:00')
+);
+
+insert into RiegosPorZonaAuxiliar(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values(to_date('2015-12-11 19:01:00','YYYY-MM-DD HH24:MI:SS'),'11567','12345','65321',2,20);
+
+insert into RiegosPorZonaAuxiliar(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
+values(to_date('2018-01-12 19:50:00','YYYY-MM-DD HH24:MI:SS'),'64443','10001','67431',1,1); 
+
+
+Create or replace procedure CalculoDeFechas(p_fecha RiegosPorZona.FechaMasHora%type,p_fechaMutante RiegosPorZona.FechaMasHora%type)
+is
+	v_fecharesta number;
+begin
+	v_fecharesta:=abs((p_fecha-p_fechaMutante)*24);
+	dbms_output.put_line(v_fecharesta);
+	if v_fecharesta <8 then
+		raise_application_error(-20001,'El tiempo entre un riego y otro no supera las 8 horas');
+	end if;
+end;
+/
+
+exec CalculoDeFechas(to_date('2005/02/07 13:00:00','YYYY/MM/DD HH24:MI:SS'),to_date('2005/02/05 12:00:00','YYYY/MM/DD HH24:MI:SS'))
+
+Create or replace procedure ComprobarFechas(p_fecha RiegosPorZona.FechaMasHora%type,p_vivero RiegosPorZona.Cod_Vivero%type,p_zona RiegosPorZona.Cod_Zona%type)
+is
+begin
+	for i in PkgZonasRiegos.vTabRiegos.FIRST..PkgZonasRiegos.vTabRiegos.LAST loop
+		if PkgZonasRiegos.vTabRiegos(i).CodVivero=p_vivero and PkgZonasRiegos.vTabRiegos(i).CodZona=p_zona then
+			CalculoDeFechas(p_fecha,PkgZonasRiegos.vTabRiegos(i).Fecha);
+		end if;
+	end loop;
 end;
 /
 
@@ -55,13 +93,7 @@ Create or replace trigger ControlHorasZonas
 before insert on RiegosPorZona
 for each row
 declare
-	v_horasporriego number:=0;
 begin
-	v_horasporriego:=SacarHorasPorRiego(:new.Cod_Zona);
-	if v_horasporriego>8 then
-		raise_application_error(-20001,'Riego realizado en menos de 8 horas');
-	else
-		ActualizarPaqueteriaHoras(:new.Cod_Zona,v_horasporriego);
-	end if;
+	ComprobarFechas(:new.FechaMasHora,:new.Cod_Vivero,:new.Cod_Zona);
 end;
 /

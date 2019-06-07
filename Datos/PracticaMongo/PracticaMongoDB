@@ -1,0 +1,16 @@
+
+1. Instala MongoDB sobre Linux o Windows.
+2. Empleando la utilidad mongoimport introduce los documentos correspondientes a las colecciones productos y zips (códigos postales).
+3. Introduce un registro con los datos de tu teléfono móvil.
+4. Introduce un registro con los datos de tu tarifa.
+5. Muestra los documentos correspondientes a productos cuyo precio es 200.
+6. Muestra el número de productos de precio menor o igual que 10.
+7. Muestra el nombre y precio de los productos cuyo tipo es teléfono.
+8. Muestra los datos de los cargadores que sirven para el teléfono AC3.
+9. Muestra las tarifas que permiten un tráfico de datos ilimitado.
+10. Muestra el nombre de los dos teléfonos más caros.
+11.  Muestra el nombre de la ciudad más poblada de Alabama.
+12.  Muestra el nombre de las ciudades de Michigan situadas al norte del paralelo 46.
+13. Muestra el número de ciudades agrupadas por estado.
+14. Muestra la ciudad más poblada de cada estado.
+15. Muestra la población total de cada estado.
