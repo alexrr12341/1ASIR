@@ -1,16 +1,61 @@
 
 1. Instala MongoDB sobre Linux o Windows.
+
+-Para instalar MongoDB debemos irnos a la página https://www.mongodb.com/download-center, vamos al apartado de Server y en donde pone OS en mi caso pondré Debian 9 x64.
+-Donde pone Package descargamos el server,el shell y tools.
+-Instalamos los paquetes con dpkg -i {nombre archivo}
+-Para iniciar el servicio escribimos en la terminal mongod y para iniciar mongo escribimos en la terminal mongo
+
 2. Empleando la utilidad mongoimport introduce los documentos correspondientes a las colecciones productos y zips (códigos postales).
+
+mongoimport --db practica --collection cps --drop --file zips.json
+mongoimport --db practica --collection productos --drop --file Products.json
+
 3. Introduce un registro con los datos de tu teléfono móvil.
+
+db.productos.insertOne({ "_id" : "ok3", "name" : "Oukitel K3", "brand" : "Oukitel", "type" : "phone", "price" : 120, "warranty_years" : 1, "available" : true })
+
 4. Introduce un registro con los datos de tu tarifa.
+
+db.productos.insertOne(
+{ "_id" : { "$oid" : "507d95d5719dbef170f15c02" }, "name" : "República Movil", "type" : "service", "monthly_price" : 10, "limits" : { "voice" : { "units" : "minutes", "n" : 150, "over_rate" : 0.1089 }, "data" : { "n" : "unlimited", "over_rate" : 0 }, "sms" : { "n" : "unlimited", "over_rate" : 0 } }, "term_years" : 1 }
+)
+
 5. Muestra los documentos correspondientes a productos cuyo precio es 200.
+
+db.productos.find({ "price" : 200}).pretty()
+
 6. Muestra el número de productos de precio menor o igual que 10.
+
+db.productos.find({ "price": {$lte : 10}}).pretty()
+
 7. Muestra el nombre y precio de los productos cuyo tipo es teléfono.
+
+db.productos.find({"type":"phone"},{"name":1,"price":1})
+
 8. Muestra los datos de los cargadores que sirven para el teléfono AC3.
+
+db.productos.find({"for":"ac3"}).pretty()
+
 9. Muestra las tarifas que permiten un tráfico de datos ilimitado.
+
+db.productos.find({"limits.data.n":"unlimited"}).pretty()
+
 10. Muestra el nombre de los dos teléfonos más caros.
+
+db.productos.find({"type":"phone"}).limit(2).sort({"price":-1}).pretty()
+
 11.  Muestra el nombre de la ciudad más poblada de Alabama.
+
+db.cps.find({"state":"AL"},{"city":1}).sort({"pop":-1}).limit(1).pretty()
+
 12.  Muestra el nombre de las ciudades de Michigan situadas al norte del paralelo 46.
+
+db.cps.find({"state":"MI"})
+
 13. Muestra el número de ciudades agrupadas por estado.
+
+db.cps.aggregate({$group:{count:{$sum:"city"}},"state":1})
+
 14. Muestra la ciudad más poblada de cada estado.
 15. Muestra la población total de cada estado.
