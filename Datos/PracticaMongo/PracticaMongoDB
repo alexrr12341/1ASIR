@@ -18,24 +18,27 @@ db.productos.insertOne({ "_id" : "ok3", "name" : "Oukitel K3", "brand" : "Oukite
 4. Introduce un registro con los datos de tu tarifa.
 
 db.productos.insertOne(
-{ "_id" : { "$oid" : "507d95d5719dbef170f15c02" }, "name" : "República Movil", "type" : "service", "monthly_price" : 10, "limits" : { "voice" : { "units" : "minutes", "n" : 150, "over_rate" : 0.1089 }, "data" : { "n" : "unlimited", "over_rate" : 0 }, "sms" : { "n" : "unlimited", "over_rate" : 0 } }, "term_years" : 1 }
+{ "_id" : { "$oid" : "507d95d5719dbef170f15c02" }, "name" : "República Movil", "type" : "service", "monthly_price" : 5, "limits" : { "voice" : { "units" : "minutes", "n" : 150, "over_rate" : 0.1089 }, "data" : { "units" : "gigabytes", "n" : 3, "over_rate" : 1 }, "sms" : { "n" : "unlimited", "over_rate" : 0 } }, "term_years" : 1 }
 )
 
 5. Muestra los documentos correspondientes a productos cuyo precio es 200.
 
-db.productos.find({ "price" : 200}).pretty()
+db.productos.find({"price" : 200}).pretty()
 
 6. Muestra el número de productos de precio menor o igual que 10.
 
-db.productos.find({ "price": {$lte : 10}}).pretty()
+db.productos.find({ "price": {$lte : 10}}).count()
 
 7. Muestra el nombre y precio de los productos cuyo tipo es teléfono.
 
 db.productos.find({"type":"phone"},{"name":1,"price":1})
 
+#Sin ID
+db.productos.find({"type":"phone"},{"name":1,"price":1,"_id":0})
+
 8. Muestra los datos de los cargadores que sirven para el teléfono AC3.
 
-db.productos.find({"for":"ac3"}).pretty()
+db.productos.find({"type":"charger","for":"ac3"}).pretty()
 
 9. Muestra las tarifas que permiten un tráfico de datos ilimitado.
 
@@ -43,19 +46,35 @@ db.productos.find({"limits.data.n":"unlimited"}).pretty()
 
 10. Muestra el nombre de los dos teléfonos más caros.
 
-db.productos.find({"type":"phone"}).limit(2).sort({"price":-1}).pretty()
+db.productos.find({"type":"phone"},{"name":1}).limit(2).sort({"price":-1}).pretty()
+
+#Sin ID
+
+db.productos.find({"type":"phone"},{"name":1,_id:0}).limit(2).sort({"price":-1}).pretty()
 
 11.  Muestra el nombre de la ciudad más poblada de Alabama.
 
 db.cps.find({"state":"AL"},{"city":1}).sort({"pop":-1}).limit(1).pretty()
 
+#Sin ID
+
+db.cps.find({"state":"AL"},{"city":1,"_id":0}).sort({"pop":-1}).limit(1).pretty()
+
 12.  Muestra el nombre de las ciudades de Michigan situadas al norte del paralelo 46.
 
-db.cps.find({"state":"MI"})
+db.cps.find({"state":"MI","loc.1":{$gt:46}},{"city":1})
+
+#Sin ID
+
+db.cps.find({"state":"MI","loc.1":{$gt:46}},{"city":1,"_id":0})
 
 13. Muestra el número de ciudades agrupadas por estado.
 
-db.cps.aggregate({$group:{count:{$sum:"city"}},"state":1})
+db.cps.aggregate([{$group: {"_id": "$state", "count":{$sum: 1}}}])
 
 14. Muestra la ciudad más poblada de cada estado.
+
+db.cps.aggregate([{$group: {"_id": {"Estado":"$state","Ciudad":"$city"},"Poblacion":{$max:"$pop"}}}])
+
 15. Muestra la población total de cada estado.
+db.cps.aggregate([{$group: {"_id": "$state","Total Poblacion":{$sum: "$pop"}}}])

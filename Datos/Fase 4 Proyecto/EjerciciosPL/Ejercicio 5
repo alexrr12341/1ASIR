@@ -14,18 +14,6 @@ Update Empleados e
 set e.DiasTrabajados = (Select dias
 		        from DiasTrabajados
 			where DNIEmpleado=e.DNI);
---Con procedimiento
-
-Create or replace procedure ActualizarEmpleados
-is
-begin
-	Update Empleados e
-	set e.DiasTrabajados = (Select dias
-			        from DiasTrabajados
-				where DNIEmpleado=e.DNI);
-end;
-/
-
 --Añadimos el paquete
 Create or replace package PkgDiasTrabajados
 as
@@ -96,39 +84,23 @@ begin
 end;
 /
 
-Create table TurnosporZonaAuxiliar
-(
-Cod_Vivero Varchar2(10),
-Cod_Zona Varchar2(10),
-FechaInicio DATE,
-DNIEmpleado Varchar2(9),
-FechaFin DATE,
-CONSTRAINT fk_dniempleado_turnoszonas1 FOREIGN KEY (DNIEmpleado) REFERENCES Empleados(DNI),
-CONSTRAINT fk_zonas_turnoszonas1 FOREIGN KEY (Cod_Zona,Cod_Vivero) REFERENCES Zonas(Codigo,Cod_Vivero),
-CONSTRAINT pk_clave_turnoszonas1 PRIMARY KEY(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado)
-);
-
-insert into TurnosporZonaAuxiliar(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
-values('11567','57777',to_date('2017-11-12','YYYY-MM-DD'),'32953415B',to_date('2018-10-08','YYYY-MM-DD'));
-insert into TurnosporZonaAuxiliar(Cod_Vivero,Cod_Zona,FechaInicio,DNIEmpleado,FechaFin)
-values('11567','57777',to_date('2017-01-16','YYYY-MM-DD'),'32953415B',to_date('2017-07-20','YYYY-MM-DD'));
 
 create or replace procedure TratarDiasAñadidos (p_dni Empleados.DNI%type,p_fin TurnosPorZona.FechaFin%Type,p_inicio TurnosPorZona.FechaInicio%type)
 is
 	v_diastrabajados NUMBER:=0;
 	v_diasnuevos number:=0;
-	v_diasnuevosañadidos number:=0;
+	v_sumadias number:=0;
 begin
 	ObtenerInfoEmpleados(p_dni,v_diastrabajados);
 	v_diasnuevos:=p_fin-p_inicio;
-	v_diasnuevosañadidos:=v_diastrabajados+v_diasnuevos;
+	v_sumadias:=v_diastrabajados+v_diasnuevos;
 	update Empleados
-	set DiasTrabajados=v_diasnuevosañadidos
+	set DiasTrabajados=v_sumadias
 	where dni = p_dni;
 	if v_diastrabajados=0 then
-		InsertarTrabajadorTablaPL(p_dni,v_diasnuevosañadidos);
+		InsertarTrabajadorTablaPL(p_dni,v_sumadias);
 	else
-		ActualizarTablaPL(p_dni,v_diasnuevosañadidos);	
+		ActualizarTablaPL(p_dni,v_sumadias);	
 	end if;
 end;
 /

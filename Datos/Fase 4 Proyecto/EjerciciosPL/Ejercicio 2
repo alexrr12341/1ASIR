@@ -100,6 +100,39 @@ begin
 end;
 /
 
+Create or replace function DarMesEnNum(p_nombremes varchar2)
+return varchar2
+is
+begin
+	case upper(p_nombremes)
+		when 'ENERO' then
+			return '01';
+		when 'FEBRERO' then
+			return '02';
+		when 'MARZO' then
+			return '03';
+		when 'ABRIL' then
+			return '04';
+		when 'MAYO' then
+			return '05';
+		when 'JUNIO' then
+			return '06';
+		when 'JULIO' then
+			return '07';
+		when 'AGOSTO' then
+			return '08';
+		when 'SEPTIEMBRE' then
+			return '09';
+		when 'OCTUBRE' then
+			return '10';
+		when 'NOVIEMBRE' then
+			return '11';
+		when 'DICIEMBRE' then
+			return '12';
+	end case;
+end;
+/
+
 Create or replace function DiaAnterior(p_mes varchar2,p_anyo varchar2,p_dia varchar2,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
 return Datos.Humedad%type
 is

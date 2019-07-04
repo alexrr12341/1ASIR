@@ -84,7 +84,7 @@ begin
 end;
 /
 
-Create or replace function UltimoStock(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
+Create or replace function DevolverUltimoStock(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type)
 return StockPorZona.stock%type
 is
 	v_codplanta varchar2(100):=ConseguirCodPlanta(p_nombreC);
@@ -186,7 +186,7 @@ begin
 end;
 $$ language plpgsql;
 
-Create function UltimoStock(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type) returns StockPorZona.stock%type as $$
+Create function DevolverUltimoStock(p_nombreC Plantas.NombreCientifico%type,p_codvivero Viveros.Codigo%type,p_codzona Zonas.Codigo%type) returns StockPorZona.stock%type as $$
 declare
 	v_codplanta varchar(100):=ConseguirCodPlanta(p_nombreC);
 	

@@ -35,65 +35,38 @@ end;
 /
 
 
-Create or replace procedure ActualizarTablaFechas(p_codzona RiegosPorZona.Cod_Zona%type,p_fecha RiegosPorZona.FechaMasHora%type)
+Create or replace procedure ActualizarTablaRiegos(p_codvivero RiegosPorZona.Cod_Vivero%type,p_codzona RiegosPorZona.Cod_Zona%type,p_fecha RiegosPorZona.FechaMasHora%type)
 is
 begin
 	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST+1).CodZona:=p_codzona;
+	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST).CodVivero:=p_codvivero;
 	PkgZonasRiegos.vTabRiegos(PkgZonasRiegos.vTabRiegos.LAST).Fecha:=p_fecha;
 end;
 /
 
-Create table RiegosPorZonaAuxiliar
-(
-FechaMasHora DATE,
-Cod_Vivero Varchar2(10),
-Cod_Riego Varchar2(10),
-Cod_zona Varchar2(10),
-Cantidad Number(5),
-Duracion Number(3),
-CONSTRAINT fk_codriego_riegosporzona1 FOREIGN KEY (Cod_Riego) REFERENCES Riegos(Codigo),
-CONSTRAINT fk_codigozona_riegosporzona1 FOREIGN Key (Cod_zona,Cod_Vivero) REFERENCES Zonas(Codigo,Cod_Vivero),
-CONSTRAINT pk_claveriegosporzona1 PRIMARY KEY(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona),
-CONSTRAINT horarioriegos_correcto1 check(to_char(FechaMasHora,'HH24:MI') Between '07:00' and '10:00' or to_char(FechaMasHora,'HH24:MI') Between '18:00' and '20:00')
-);
 
-insert into RiegosPorZonaAuxiliar(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
-values(to_date('2015-12-11 19:01:00','YYYY-MM-DD HH24:MI:SS'),'11567','12345','65321',2,20);
-
-insert into RiegosPorZonaAuxiliar(FechaMasHora,Cod_Vivero,Cod_Riego,Cod_zona,Cantidad,Duracion)
-values(to_date('2018-01-12 19:50:00','YYYY-MM-DD HH24:MI:SS'),'64443','10001','67431',1,1); 
-
-
-Create or replace procedure CalculoDeFechas(p_fecha RiegosPorZona.FechaMasHora%type,p_fechaMutante RiegosPorZona.FechaMasHora%type)
+Create or replace procedure ComprobarFecha8Horas(p_fecha RiegosPorZona.FechaMasHora%type,p_fechaMutante RiegosPorZona.FechaMasHora%type)
 is
 	v_fecharesta number;
 begin
-	v_fecharesta:=abs((p_fecha-p_fechaMutante)*24);
-	dbms_output.put_line(v_fecharesta);
+	v_fecharesta:=trunc(abs((p_fecha-p_fechaMutante)*24));
 	if v_fecharesta <8 then
 		raise_application_error(-20001,'El tiempo entre un riego y otro no supera las 8 horas');
 	end if;
 end;
 /
+	
 
-exec CalculoDeFechas(to_date('2005/02/07 13:00:00','YYYY/MM/DD HH24:MI:SS'),to_date('2005/02/05 12:00:00','YYYY/MM/DD HH24:MI:SS'))
-
-Create or replace procedure ComprobarFechas(p_fecha RiegosPorZona.FechaMasHora%type,p_vivero RiegosPorZona.Cod_Vivero%type,p_zona RiegosPorZona.Cod_Zona%type)
-is
-begin
-	for i in PkgZonasRiegos.vTabRiegos.FIRST..PkgZonasRiegos.vTabRiegos.LAST loop
-		if PkgZonasRiegos.vTabRiegos(i).CodVivero=p_vivero and PkgZonasRiegos.vTabRiegos(i).CodZona=p_zona then
-			CalculoDeFechas(p_fecha,PkgZonasRiegos.vTabRiegos(i).Fecha);
-		end if;
-	end loop;
-end;
-/
-
-Create or replace trigger ControlHorasZonas
+Create or replace trigger ControlarRiegosMayor8H
 before insert on RiegosPorZona
 for each row
 declare
 begin
-	ComprobarFechas(:new.FechaMasHora,:new.Cod_Vivero,:new.Cod_Zona);
+	for i in PkgZonasRiegos.vTabRiegos.FIRST..PkgZonasRiegos.vTabRiegos.LAST loop
+		if PkgZonasRiegos.vTabRiegos(i).CodVivero=:new.Cod_Vivero and PkgZonasRiegos.vTabRiegos(i).CodZona=:new.Cod_Zona then
+			CalculoDeFechas(:new.FechaMasHora,PkgZonasRiegos.vTabRiegos(i).Fecha);
+		end if;
+	end loop;
+	ActualizarTablaRiegos(:new.Cod_Vivero,:new.Cod_Zona,:new.FechaMasHora);
 end;
 /
