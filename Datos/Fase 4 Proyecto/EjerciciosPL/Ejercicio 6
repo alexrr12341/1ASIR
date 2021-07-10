@@ -64,7 +64,7 @@ declare
 begin
 	for i in PkgZonasRiegos.vTabRiegos.FIRST..PkgZonasRiegos.vTabRiegos.LAST loop
 		if PkgZonasRiegos.vTabRiegos(i).CodVivero=:new.Cod_Vivero and PkgZonasRiegos.vTabRiegos(i).CodZona=:new.Cod_Zona then
-			CalculoDeFechas(:new.FechaMasHora,PkgZonasRiegos.vTabRiegos(i).Fecha);
+			ComprobarFecha8Horas(:new.FechaMasHora,PkgZonasRiegos.vTabRiegos(i).Fecha);
 		end if;
 	end loop;
 	ActualizarTablaRiegos(:new.Cod_Vivero,:new.Cod_Zona,:new.FechaMasHora);
